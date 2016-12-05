@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/sideBarToggleButton"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/show_navigation_bar"
+        android:background="@drawable/hamburger"
+        android:layout_gravity="left|center_vertical" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Custom action bar"
+        android:id="@+id/textView"
+        android:textSize="10pt"
+        android:textColor="#cfd8dc"
+        android:layout_gravity="left|center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/sideBarToggleButton"
+        android:layout_marginLeft="10dp" />
+
+</LinearLayout>
