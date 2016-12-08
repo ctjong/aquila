@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/sideBarToggleButton"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/show_navigation_bar"
+        android:contentDescription="@string/drawer_open"
         android:background="@drawable/hamburger"
         android:layout_gravity="left|center_vertical" />
 
