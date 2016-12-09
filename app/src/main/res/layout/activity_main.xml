@@ -4,27 +4,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/content_frame">
-        <TextView
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:minHeight="?attr/actionBarSize"
+            android:elevation="10dp"
+            android:theme="@style/ToolBarStyle"/>
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="drawer closed" />
-    </FrameLayout>
+            android:padding="10dp"
+            android:id="@+id/content_frame">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="content frame"/>
+        </FrameLayout>
+
+    </LinearLayout>
 
     <ListView
-        android:id="@+id/left_drawer"
+        android:id="@+id/drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:background="#ffffff">
-    </ListView>
+        android:padding="10dp"
+        android:background="#ffffff"/>
 
 </android.support.v4.widget.DrawerLayout>
 

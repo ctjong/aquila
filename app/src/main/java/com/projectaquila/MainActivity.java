@@ -1,8 +1,8 @@
 package com.projectaquila;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,9 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
-    private ActionBar mActionBar;
+    private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
+    private ListView mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
@@ -23,14 +23,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mActionBar = getSupportActionBar();
-        if(mActionBar == null) return;
-        mActionBar.setDisplayHomeAsUpEnabled(true);
-        mActionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
+        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        if(mToolBar == null) return;
+        setSupportActionBar(mToolBar);
+        mToolBar.setNavigationIcon(R.drawable.ic_drawer);
+
+        //mToolBar.setDisplayHomeAsUpEnabled(true);
+        //mToolBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        mDrawerList.setAdapter(new ArrayAdapter<>(this, R.layout.widget_left_drawer, new String[]{"drawer opened"}));
+        mDrawer = (ListView) findViewById(R.id.drawer);
+        mDrawer.setAdapter(new ArrayAdapter<>(this, R.layout.widget_drawer, new String[] {"drawer item 1", "drawer item 2"}));
 
         mDrawerToggle = new CustomDrawerToggle();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawer);
         MenuItem menuItem = menu.findItem(R.id.content_frame);
         if(menuItem != null) menuItem.setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class CustomDrawerToggle extends ActionBarDrawerToggle{
         public CustomDrawerToggle() {
-            super(MainActivity.this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+            super(MainActivity.this, mDrawerLayout, mToolBar, R.string.drawer_open, R.string.drawer_close);
         }
 
         public void onDrawerClosed(View view) {
