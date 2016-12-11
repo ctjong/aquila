@@ -1,10 +1,10 @@
 package com.projectaquila;
 
-public class MainActivity extends ShellActivity {
+public class TestActivity extends ShellActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.view_main;
+        return R.layout.view_test;
     }
 
     @Override
