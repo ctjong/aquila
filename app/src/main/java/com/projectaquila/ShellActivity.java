@@ -16,6 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import java.util.Iterator;
+import java.util.Map;
+
 public abstract class ShellActivity extends AppCompatActivity {
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
@@ -93,9 +96,20 @@ public abstract class ShellActivity extends AppCompatActivity {
         return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
-    public void navigate(Class newActivity, String parameter){
+    public void navigate(Class newActivity, Map<String, String> parameters){
         Intent intent = new Intent(this, newActivity);
-        intent.putExtra("parameter", parameter);
+        if(parameters != null){
+            Iterator it = parameters.entrySet().iterator();
+            while (it.hasNext()) {
+                Object pairRaw = it.next();
+                if(!(pairRaw instanceof Map.Entry)) continue;
+                Map.Entry pair = (Map.Entry) it.next();
+                Object key = pair.getKey();
+                Object value = pair.getValue();
+                if(!(key instanceof String) || !(value instanceof String)) continue;
+                intent.putExtra((String) key, (String) value);
+            }
+        }
         startActivity(intent);
     }
 
@@ -103,9 +117,9 @@ public abstract class ShellActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(position == 0){
-                navigate(MainActivity.class, "");
+                navigate(MainActivity.class, null);
             }else{
-                navigate(TestActivity.class, "");
+                navigate(TestActivity.class, null);
             }
         }
     }
