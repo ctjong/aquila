@@ -110,7 +110,9 @@ public abstract class ShellActivity extends AppCompatActivity {
                 intent.putExtra((String) key, (String) value);
             }
         }
+        mDrawerLayout.closeDrawers();
         startActivity(intent);
+        finish();
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
