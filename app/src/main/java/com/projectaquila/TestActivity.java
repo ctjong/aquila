@@ -4,7 +4,7 @@ public class TestActivity extends ShellActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.view_test;
+        return R.layout.page_test;
     }
 
     @Override

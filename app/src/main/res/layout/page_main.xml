@@ -1,0 +1,40 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/page_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/page_main_loading"
+        android:layout_toRightOf="@+id/page_main_loading"
+        android:layout_toEndOf="@+id/page_main_loading"
+        android:id="@+id/page_main_tasklistview"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/page_main_tasklist"/>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/page_main_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminate="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="error"
+        android:id="@+id/page_main_errortext"
+        android:visibility="gone"/>
+
+
+</RelativeLayout>
+

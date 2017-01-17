@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tasklistitem"
+    android:weightSum="5"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_tasklistitem_text"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:text="test" />
+
+        <Button
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        style="@style/AppTheme"
+        android:text="test"
+        android:id="@+id/view_tasklistitem_btn"
+        android:textAllCaps="false"
+        android:textSize="8sp"
+        android:layout_weight="4" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+</LinearLayout>

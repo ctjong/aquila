@@ -25,6 +25,7 @@ public abstract class ShellActivity extends AppCompatActivity {
     private ListView mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private View mCurentView;
+    private Bundle mBundle;
 
     protected abstract int getLayoutId();
 
@@ -34,25 +35,24 @@ public abstract class ShellActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // init layout
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shell);
-
+        setContentView(R.layout.shell);
 
         // init toolbar
-        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        mToolBar = (Toolbar) findViewById(R.id.shell_toolbar);
         if(mToolBar == null) return;
         setSupportActionBar(mToolBar);
         mToolBar.setNavigationIcon(R.drawable.ic_drawer);
 
         // init drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawer = (ListView) findViewById(R.id.drawer);
-        mDrawer.setAdapter(new ArrayAdapter<>(this, R.layout.widget_drawer, new String[] {"main view", "test view"}));
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.shell);
+        mDrawer = (ListView) findViewById(R.id.shell_drawer);
+        mDrawer.setAdapter(new ArrayAdapter<>(this, R.layout.view_draweritem, new String[] {"main view", "test view"}));
         mDrawer.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerToggle = new CustomDrawerToggle();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         // init content frame
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
+        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.shell_content);
         if(contentFrame == null){
             throw new IllegalStateException("failed to retrieve content frame");
         }
@@ -86,7 +86,7 @@ public abstract class ShellActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawer);
-        MenuItem menuItem = menu.findItem(R.id.content_frame);
+        MenuItem menuItem = menu.findItem(R.id.shell_content);
         if(menuItem != null) menuItem.setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -96,7 +96,7 @@ public abstract class ShellActivity extends AppCompatActivity {
         return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
-    public void navigate(Class newActivity, Map<String, String> parameters){
+    protected void navigate(Class newActivity, Map<String, String> parameters){
         Intent intent = new Intent(this, newActivity);
         if(parameters != null){
             Iterator it = parameters.entrySet().iterator();
@@ -113,6 +113,11 @@ public abstract class ShellActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawers();
         startActivity(intent);
         finish();
+    }
+
+    protected String getPageParameter(String key){
+        if(mBundle == null) return null;
+        return mBundle.getString(key);
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
