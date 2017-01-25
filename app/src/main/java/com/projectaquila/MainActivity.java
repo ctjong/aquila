@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends ShellActivity {
+    private final String TestDataUrl = "http://www.ctjong.com/aquila/test.json";
+
     private enum MainPageVisualState {LOADING, LOADED, ERROR};
     private LinearLayout mTaskList;
     private ProgressBar mProgressBar;
@@ -30,7 +32,7 @@ public class MainActivity extends ShellActivity {
         mTaskListView = (ScrollView) findViewById(R.id.page_main_tasklistview);
 
         setVisualState(MainPageVisualState.LOADING);
-        new ApiTask("http://cthome/test.json", new ApiCallback() {
+        new ApiTask(TestDataUrl, new ApiCallback() {
             @Override
             public void execute(JSONObject response) {
                 render(response);
@@ -48,6 +50,7 @@ public class MainActivity extends ShellActivity {
             JSONArray tasks = data.getJSONArray("tasks");
             for (int i = 0; i < tasks.length(); i++) {
                 TaskListItem item = TaskListItem.parse(tasks.getJSONObject(i));
+                if(item == null) continue;
                 mTaskList.addView(item.getView(this));
             }
             setVisualState(MainPageVisualState.LOADED);
