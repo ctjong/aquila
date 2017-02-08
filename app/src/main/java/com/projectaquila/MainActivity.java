@@ -1,6 +1,7 @@
 package com.projectaquila;
 
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -11,7 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends ShellActivity {
-    private final String TestDataUrl = "http://www.ctjong.com/aquila/test.json";
+    private static final String TestDataUrl = "http://www.ctjong.com/aquila/test.json";
 
     private enum MainPageVisualState {LOADING, LOADED, ERROR};
     private LinearLayout mTaskList;
@@ -40,6 +41,10 @@ public class MainActivity extends ShellActivity {
         }).execute();
     }
 
+    public void RemoveFromPage(FrameLayout taskView){
+        mTaskList.removeView(taskView);
+    }
+
     private void render(JSONObject data){
         if(data == null){
             setVisualState(MainPageVisualState.ERROR);
@@ -49,9 +54,9 @@ public class MainActivity extends ShellActivity {
         try{
             JSONArray tasks = data.getJSONArray("tasks");
             for (int i = 0; i < tasks.length(); i++) {
-                TaskListItem item = TaskListItem.parse(tasks.getJSONObject(i));
+                TaskListItem item = TaskListItem.create(tasks.getJSONObject(i), this);
                 if(item == null) continue;
-                mTaskList.addView(item.getView(this));
+                mTaskList.addView(item.getView());
             }
             setVisualState(MainPageVisualState.LOADED);
         }catch(JSONException e){
