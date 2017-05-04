@@ -27,7 +27,7 @@ module.exports = {
                     }
                     var size = stream.byteCount - stream.byteOffset;
                     var name = _this.guid.raw() + stream.filename.substring(stream.filename.lastIndexOf("."));
-                    blobService.createBlockBlobFromStream("orion", name, stream, size, {
+                    blobService.createBlockBlobFromStream(ctx.config.storageContainerName, name, stream, size, {
                         contentSettings: { contentType: _this.mime.lookup(name) }
                     }, function(error) {
                         if(error) {

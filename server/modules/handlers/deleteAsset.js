@@ -17,7 +17,7 @@ module.exports = {
             var blobService = _this.azure.createBlobService(ctx.config.storageConnectionString);
             var responseString = null;
             var errorObj = null;
-            blobService.deleteBlob("orion", assetName, function(error, response){
+            blobService.deleteBlob(ctx.config.storageContainerName, assetName, function(error, response){
                 _this.exec.safeExecute(ctx, function(){
                     if(error) {
                         throw new Error("400: asset not found");

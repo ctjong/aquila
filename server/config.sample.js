@@ -1,10 +1,11 @@
 module.exports = {
-    secretKey: "beELV6CRgkuRcU6bnj9zhit6ojAEGW3mlxWgSieFcXQXE7KgtNj8O2tFurHGbvpA",
-    salt: "4f263fd660521e51a950a5468bc1bb0c955a332051f501227c0cc030af5c61f9",
+    secretKey: "sampleSecretKeysampleSecretKeysampleSecretKeysampleSecretKey",
+    salt: "sampleSaltsampleSaltsampleSaltsampleSaltsampleSaltsampleSalt",
     databaseConnectionString: process.env.ORION_DB_CONNECTION_STRING,
     storageConnectionString: process.env.ORION_AZURE_STORAGE_CONNECTION_STRING,
     facebookAppSecret: process.env.ORION_FB_APP_SECRET,
     facebookAppId: process.env.ORION_FB_APP_ID,
+    storageContainerName: "orion",
     emailVerificationRequired: false,
     captchaEnabled: false,
     passwordReqs: {
@@ -35,7 +36,7 @@ module.exports = {
                 "createdtime": { type: "timestamp", perms: {read: ["member", "admin"], update: []}, createReq: 0, foreignKey: null }
             },
         },
-        "task": {
+        "sampleEntity": {
             perms: {create: ["member"], delete: ["owner", "admin"]},
             "fields": {
                 "id": { type: "id", perms: {read: ["owner", "admin"], update: []}, createReq: 0, foreignKey: null },
@@ -43,9 +44,9 @@ module.exports = {
                     foreignEntity: "user",
                     resolvedKeyName: "owner"
                 }},
-                "taskname": { type: "string", perms: {read: ["owner", "admin"], update: ["owner", "admin"]}, createReq: 2, foreignKey: null },
-                "taskdescription": { type: "string", perms: {read: ["owner", "admin"], update: ["owner", "admin"]}, createReq: 1, foreignKey: null },
-                "taskdate": { type: "int", perms: {read: ["owner", "admin"], update: ["owner", "admin"]}, createReq: 2, foreignKey: null },
+                "field1": { type: "string", perms: {read: ["owner", "admin"], update: ["owner", "admin"]}, createReq: 2, foreignKey: null },
+                "field2": { type: "string", perms: {read: ["owner", "admin"], update: ["owner", "admin"]}, createReq: 1, foreignKey: null },
+                "field3": { type: "int", perms: {read: ["owner", "admin"], update: ["owner", "admin"]}, createReq: 2, foreignKey: null },
                 "createdtime": { type: "timestamp", perms: {read: ["owner", "admin"], update: []}, createReq: 0, foreignKey: null }
             }
         }
