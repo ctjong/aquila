@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\cygwin64\home\chris\aquila\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.4.0_322336d0a4d99599e075671f2b4be0b21467ddb5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\cygwin64\home\chris\aquila\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.4.0\jars\libs\internal_impl-23.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.4.0_7892669143a3bb2b0271106d230f419328bfb1d0\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\cygwin64\home\chris\aquila\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="a3be359c36e5379b7e67f57afdb8971b4c6e006a">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_29af5e66c30dc90a0d19859d4f5a2d9434789654\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\cygwin64\home\chris\aquila\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-23.4.0_d64c6377336d4fd529ec3dcbc38eae272e4cae46\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\chris\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.4.0\support-annotations-23.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.4.0_4faa41b5cdbb017fdbf01aadf9a77ef4d50a5c72\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\cygwin64\home\chris\aquila\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.4.0_96a0a8ec4c068f290b54f0bfac02523ce0587ecb\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\cygwin64\home\chris\aquila\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="a00c7f537a850886c63171ec4a022e7654d369f1">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_1d94ff9acfee870a2c41074972afc8eb4436b208\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\cygwin64\home\chris\aquila\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.4.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.3"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="C:\cygwin64\home\chris\aquila\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-23.4.0_f3f3f4229faaf8b3fe27647cb7d748f0fc80dd69\classes.dex" />
+    </item>
+
+</items>
