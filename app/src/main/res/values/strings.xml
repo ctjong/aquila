@@ -2,4 +2,7 @@
     <string name="app_name">Project Aquila</string>
     <string name="drawer_open">Open left nav</string>
     <string name="drawer_close">Close left nav</string>
+
+    <string name="facebook_app_id">1323560431073064</string>
+    <string name="facebook_login_text">Log in with Facebook</string>
 </resources>

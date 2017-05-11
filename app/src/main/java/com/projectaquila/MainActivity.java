@@ -7,6 +7,12 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,10 +21,14 @@ public class MainActivity extends ShellActivity {
     private static final String TestDataUrl = "http://www.ctjong.com/aquila/test.json";
 
     private enum MainPageVisualState {LOADING, LOADED, ERROR};
-    private LinearLayout mTaskList;
+
     private ProgressBar mProgressBar;
     private TextView mErrorText;
-    private ScrollView mTaskListView;
+
+    private LoginButton mLoginButton;
+
+    /*private LinearLayout mTaskList;
+    private ScrollView mTaskListView;*/
 
     @Override
     protected int getLayoutId() {
@@ -27,22 +37,40 @@ public class MainActivity extends ShellActivity {
 
     @Override
     protected void initializeView(){
-        mTaskList = (LinearLayout) findViewById(R.id.page_main_tasklist);
         mProgressBar = (ProgressBar) findViewById(R.id.page_main_loading);
         mErrorText = (TextView) findViewById(R.id.page_main_errortext);
-        mTaskListView = (ScrollView) findViewById(R.id.page_main_tasklistview);
 
+        mLoginButton = (LoginButton) findViewById(R.id.page_main_loginbutton);
+        mLoginButton.registerCallback(CallbackManager.Factory.create(), new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+            }
+        });
+
+        /*mTaskList = (LinearLayout) findViewById(R.id.page_main_tasklist);
+        mTaskListView = (ScrollView) findViewById(R.id.page_main_tasklistview);
         setVisualState(MainPageVisualState.LOADING);
         new ApiTask(TestDataUrl, new ApiCallback() {
             @Override
             public void execute(JSONObject response) {
                 render(response);
             }
-        }).execute();
+        }).execute();*/
     }
 
     public void RemoveFromPage(FrameLayout taskView){
-        mTaskList.removeView(taskView);
+        //mTaskList.removeView(taskView);
     }
 
     private void render(JSONObject data){
@@ -50,7 +78,7 @@ public class MainActivity extends ShellActivity {
             setVisualState(MainPageVisualState.ERROR);
             return;
         }
-        mTaskList.removeAllViews();
+        /*mTaskList.removeAllViews();
         try{
             JSONArray tasks = data.getJSONArray("tasks");
             for (int i = 0; i < tasks.length(); i++) {
@@ -61,11 +89,11 @@ public class MainActivity extends ShellActivity {
             setVisualState(MainPageVisualState.LOADED);
         }catch(JSONException e){
             setVisualState(MainPageVisualState.ERROR);
-        }
+        }*/
     }
 
     private void setVisualState(MainPageVisualState visualState){
-        mTaskListView.setVisibility(View.GONE);
+        //mTaskListView.setVisibility(View.GONE);
         mErrorText.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.GONE);
         switch(visualState){
@@ -73,7 +101,7 @@ public class MainActivity extends ShellActivity {
                 mProgressBar.setVisibility(View.VISIBLE);
                 break;
             case LOADED:
-                mTaskListView.setVisibility(View.VISIBLE);
+                //mTaskListView.setVisibility(View.VISIBLE);
                 break;
             default:
                 mErrorText.setVisibility(View.VISIBLE);
