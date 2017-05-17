@@ -1,6 +1,7 @@
-package com.projectaquila;
+package com.projectaquila.common;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+
+import com.projectaquila.R;
+import com.projectaquila.activities.MainActivity;
+import com.projectaquila.activities.TestActivity;
+import com.projectaquila.context.AppContext;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -33,6 +39,9 @@ public abstract class ShellActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // init app context if it hasn't been initialized
+        AppContext.initialize(this.getApplicationContext());
+
         // init layout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shell);
@@ -118,6 +127,18 @@ public abstract class ShellActivity extends AppCompatActivity {
     protected String getPageParameter(String key){
         if(mBundle == null) return null;
         return mBundle.getString(key);
+    }
+
+    protected String getLocalSetting(String key){
+        SharedPreferences settings = getPreferences(0);
+        return settings.getString(key, null);
+    }
+
+    protected void setLocalSetting(String key, String value){
+        SharedPreferences settings = getPreferences(0);
+        SharedPreferences.Editor settingsEditor = settings.edit();
+        settingsEditor.putString(key, value);
+        settingsEditor.commit();
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

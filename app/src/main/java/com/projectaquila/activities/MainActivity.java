@@ -1,10 +1,9 @@
-package com.projectaquila;
+package com.projectaquila.activities;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.CallbackManager;
@@ -12,9 +11,10 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.projectaquila.R;
+import com.projectaquila.common.ShellActivity;
+import com.projectaquila.context.AppContext;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends ShellActivity {
@@ -26,6 +26,7 @@ public class MainActivity extends ShellActivity {
     private TextView mErrorText;
 
     private LoginButton mLoginButton;
+    private CallbackManager mCallbackManager;
 
     /*private LinearLayout mTaskList;
     private ScrollView mTaskListView;*/
@@ -40,23 +41,28 @@ public class MainActivity extends ShellActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.page_main_loading);
         mErrorText = (TextView) findViewById(R.id.page_main_errortext);
 
+        mCallbackManager = CallbackManager.Factory.create();
         mLoginButton = (LoginButton) findViewById(R.id.page_main_loginbutton);
-        mLoginButton.registerCallback(CallbackManager.Factory.create(), new FacebookCallback<LoginResult>() {
+        mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // App code
+                loginResult.getAccessToken();
+                setLocalSetting("fbtoken", loginResult.getAccessToken().getToken());
             }
 
             @Override
             public void onCancel() {
-                // App code
+                System.err.println("FB login cancelled");
             }
 
             @Override
             public void onError(FacebookException exception) {
-                // App code
+                System.err.println("FB login error");
             }
         });
+
+        //TODO
+        System.out.println(AppContext.current.getApiBase());
 
         /*mTaskList = (LinearLayout) findViewById(R.id.page_main_tasklist);
         mTaskListView = (ScrollView) findViewById(R.id.page_main_tasklistview);
@@ -67,6 +73,12 @@ public class MainActivity extends ShellActivity {
                 render(response);
             }
         }).execute();*/
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     public void RemoveFromPage(FrameLayout taskView){

@@ -1,4 +1,4 @@
-package com.projectaquila;
+package com.projectaquila.data;
 
 import org.json.JSONObject;
 

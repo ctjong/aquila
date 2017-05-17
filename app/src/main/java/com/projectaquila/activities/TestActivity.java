@@ -1,4 +1,7 @@
-package com.projectaquila;
+package com.projectaquila.activities;
+
+import com.projectaquila.R;
+import com.projectaquila.common.ShellActivity;
 
 public class TestActivity extends ShellActivity {
 

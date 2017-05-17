@@ -17,9 +17,9 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="29dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-    </LinearLayout>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+</LinearLayout>
 
     <!--<ScrollView
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
             android:id="@+id/page_main_tasklist"/>
     </ScrollView>-->
 
-    <ProgressBar
+<ProgressBar
         android:id="@+id/page_main_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

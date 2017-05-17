@@ -1,14 +1,14 @@
-package com.projectaquila;
+package com.projectaquila.controls;
 
-import android.app.Activity;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.projectaquila.R;
+import com.projectaquila.activities.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
