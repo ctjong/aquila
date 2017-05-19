@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.projectaquila.R;
 import com.projectaquila.activities.MainActivity;
+import com.projectaquila.common.ShellActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +20,7 @@ public class TaskListItem {
 
     private String mId;
     private String mTitle;
-    private MainActivity mPage;
+    private ShellActivity mPage;
     private FrameLayout mView;
     private float mSliderX;
     private float mTouchStartX;
@@ -48,7 +49,7 @@ public class TaskListItem {
     private void deleteTask(){
         //TODO
         System.out.println("deleting task " + mId);
-        mPage.RemoveFromPage(mView);
+        //mPage.RemoveFromPage(mView);
     }
 
     private void openTask(){

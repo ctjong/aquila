@@ -2,6 +2,8 @@ package com.projectaquila.context;
 
 import android.content.Context;
 
+import com.projectaquila.data.AuthHandler;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,7 +31,7 @@ public class AppContext {
         Singleton accessor
     ----------------------------------*/
 
-    public  static AppContext current;
+    public static AppContext current;
     public static void initialize(Context coreContext) {
         current = new AppContext(coreContext);
     }
@@ -41,6 +43,8 @@ public class AppContext {
     private Context mCore;
     private Document mDebugConfig;
     private String mApiBase;
+    private String mAccessToken;
+    private AuthHandler mAuthHandler;
 
     /*----------------------------------
         Constructor
@@ -49,6 +53,8 @@ public class AppContext {
     public AppContext(Context coreContext) {
         mCore = coreContext;
         initDebugConfig(DEBUG_CONFIG_FILENAME);
+        mAccessToken = null;
+        mAuthHandler = new AuthHandler();
     }
 
     /*----------------------------------
@@ -67,6 +73,22 @@ public class AppContext {
             mApiBase = apiBaseNode.getTextContent();
         }
         return mApiBase;
+    }
+
+    public String getAccessToken(){
+        return mAccessToken;
+    }
+
+    public AuthHandler getAuthHandler(){
+        return mAuthHandler;
+    }
+
+    /*----------------------------------
+        Member property setters
+    ----------------------------------*/
+
+    public void setAccessToken(String accessToken){
+        mAccessToken = accessToken;
     }
 
     /*----------------------------------

@@ -2,6 +2,9 @@ package com.projectaquila.data;
 
 import android.os.AsyncTask;
 
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.Helper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -11,20 +14,20 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ApiTask extends AsyncTask<Void, Void, String> {
+public class ApiGetTask extends AsyncTask<Void, Void, String> {
 
-    private String sourceUrl;
-    private ApiCallback callback;
+    private String mSourceUrl;
+    private Callback mCallback;
 
-    public ApiTask(String sourceUrl, ApiCallback callback){
-        this.sourceUrl = sourceUrl;
-        this.callback = callback;
+    public ApiGetTask(String sourceUrl, Callback callback){
+        this.mSourceUrl = sourceUrl;
+        this.mCallback = callback;
     }
 
     @Override
     protected String doInBackground(Void... urls) {
         try {
-            URL url = new URL(sourceUrl);
+            URL url = new URL(mSourceUrl);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -49,9 +52,9 @@ public class ApiTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String result) {
         try{
             JSONObject object = (JSONObject) new JSONTokener(result).nextValue();
-            callback.execute(object);
+            mCallback.execute(Helper.ConvertJson(object));
         }catch(JSONException e){
-            callback.execute(null);
+            mCallback.execute(null);
         }
     }
 }

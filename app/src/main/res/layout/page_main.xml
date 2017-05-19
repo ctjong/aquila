@@ -7,7 +7,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/page_main_loading"
+        android:layout_toRightOf="@+id/page_main_loading"
+        android:layout_toEndOf="@+id/page_main_loading"
+        android:id="@+id/page_main_content"
+        android:visibility="gone">
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/page_main_loginbutton"
@@ -17,27 +22,11 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="29dp"
             android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-</LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </LinearLayout>
 
-    <!--<ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/page_main_loading"
-        android:layout_toRightOf="@+id/page_main_loading"
-        android:layout_toEndOf="@+id/page_main_loading"
-        android:id="@+id/page_main_tasklistview"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/page_main_tasklist"/>
-    </ScrollView>-->
-
-<ProgressBar
+    <ProgressBar
         android:id="@+id/page_main_loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

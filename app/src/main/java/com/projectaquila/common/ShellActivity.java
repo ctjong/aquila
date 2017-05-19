@@ -22,7 +22,10 @@ import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.TestActivity;
 import com.projectaquila.context.AppContext;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public abstract class ShellActivity extends AppCompatActivity {
@@ -32,6 +35,9 @@ public abstract class ShellActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private View mCurentView;
     private Bundle mBundle;
+    private HashMap<String, List<Callback>> mEventHandlers;
+
+    protected final ShellActivity _this = this;
 
     protected abstract int getLayoutId();
 
@@ -70,6 +76,7 @@ public abstract class ShellActivity extends AppCompatActivity {
         mCurentView = factory.inflate(layoutId, null);
         contentFrame.removeAllViews();
         contentFrame.addView(mCurentView);
+        mEventHandlers = new HashMap<>();
 
         // init view
         initializeView();
@@ -105,6 +112,34 @@ public abstract class ShellActivity extends AppCompatActivity {
         return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
+    public List<Callback> getEventHandlers(String eventName){
+        List<Callback> list;
+        if(!mEventHandlers.containsKey(eventName)){
+            list = new ArrayList<Callback>();
+            mEventHandlers.put(eventName, list);
+        }else{
+            list = mEventHandlers.get(eventName);
+        }
+        return list;
+    }
+
+    public String getPageParameter(String key){
+        if(mBundle == null) return null;
+        return mBundle.getString(key);
+    }
+
+    public String getLocalSetting(String key){
+        SharedPreferences settings = getPreferences(0);
+        return settings.getString(key, null);
+    }
+
+    public void setLocalSetting(String key, String value){
+        SharedPreferences settings = getPreferences(0);
+        SharedPreferences.Editor settingsEditor = settings.edit();
+        settingsEditor.putString(key, value);
+        settingsEditor.commit();
+    }
+
     protected void navigate(Class newActivity, Map<String, String> parameters){
         Intent intent = new Intent(this, newActivity);
         if(parameters != null){
@@ -122,23 +157,6 @@ public abstract class ShellActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawers();
         startActivity(intent);
         finish();
-    }
-
-    protected String getPageParameter(String key){
-        if(mBundle == null) return null;
-        return mBundle.getString(key);
-    }
-
-    protected String getLocalSetting(String key){
-        SharedPreferences settings = getPreferences(0);
-        return settings.getString(key, null);
-    }
-
-    protected void setLocalSetting(String key, String value){
-        SharedPreferences settings = getPreferences(0);
-        SharedPreferences.Editor settingsEditor = settings.edit();
-        settingsEditor.putString(key, value);
-        settingsEditor.commit();
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
