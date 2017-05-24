@@ -15,13 +15,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ApiGetTask extends AsyncTask<Void, Void, String> {
-
     private String mSourceUrl;
     private Callback mCallback;
 
-    public ApiGetTask(String sourceUrl, Callback callback){
-        this.mSourceUrl = sourceUrl;
-        this.mCallback = callback;
+    public static void execute(String sourceUrl, Callback callback){
+        ApiGetTask task = new ApiGetTask();
+        task.mSourceUrl = sourceUrl;
+        task.mCallback = callback;
+        task.execute();
     }
 
     @Override

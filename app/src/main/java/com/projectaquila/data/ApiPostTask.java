@@ -28,10 +28,12 @@ public class ApiPostTask extends AsyncTask<Void, Void, String> {
     private HashMap<String,String> mData;
     private Callback mCallback;
 
-    public ApiPostTask(String sourceUrl, HashMap<String,String> data, Callback callback){
-        this.mSourceUrl = sourceUrl;
-        this.mData = data;
-        this.mCallback = callback;
+    public static void execute(String sourceUrl, HashMap<String,String> data, Callback callback){
+        ApiPostTask task = new ApiPostTask();
+        task.mSourceUrl = sourceUrl;
+        task.mData = data;
+        task.mCallback = callback;
+        task.execute();
     }
 
     @Override

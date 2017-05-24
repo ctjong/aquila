@@ -25,17 +25,20 @@ public class MainActivity extends ShellActivity {
             public void execute(HashMap<String, Object> params) {
                 boolean isLoggedIn = (boolean)params.get("isLoggedIn");
                 if(isLoggedIn){
-                    //TODO navigate to tasks list activity
+                    navigate(TasksActivity.class, null);
                     return;
                 }
                 LoginButton fbLoginButton = (LoginButton) findViewById(R.id.page_main_loginbutton);
                 AppContext.current.getAuthHandler().setupFacebookLogin(_this, fbLoginButton, new Callback(){
                     @Override
                     public void execute(HashMap<String, Object> params) {
-                        if(AppContext.current.getAccessToken() != null) {
-                            //TODO show login error message
+                        if(params.get("status") == "tokenConversionError"){
+                            //TODO display login error
+                        } else if(AppContext.current.getAccessToken() != null) {
+                            setVisualState(VisualState.LOADED);
+                            //TODO display login error
                         }else{
-                            //TODO navigate to tasks list activity
+                            navigate(TasksActivity.class, null);
                         }
                     }
                 });

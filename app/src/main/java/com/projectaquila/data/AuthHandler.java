@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.projectaquila.common.Callback;
@@ -56,16 +57,22 @@ public class AuthHandler {
             String apiUrl = AppContext.current.getApiBase() + "/auth/token/fb";
             HashMap<String, String> apiParams = new HashMap<>();
             apiParams.put("fbtoken", fbToken);
-            ApiPostTask task = new ApiPostTask(apiUrl, apiParams, new Callback() {
+            ApiPostTask.execute(apiUrl, apiParams, new Callback() {
                 @Override
                 public void execute(HashMap<String, Object> params) {
+                    HashMap<String, Object> callbackParams = new HashMap<>();
+                    if(params == null){
+                        LoginManager.getInstance().logOut();
+                        callbackParams.put("status", "tokenConversionError");
+                        mNextCallback.execute(callbackParams);
+                    }
                     String token = (String)params.get("token");
                     AppContext.current.setAccessToken(token);
                     mParentActivity.setLocalSetting("token", token);
+                    callbackParams.put("status", "success");
                     mNextCallback.execute(null);
                 }
             });
-            task.execute();
         }
 
         @Override
