@@ -16,6 +16,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.projectaquila.R;
 import com.projectaquila.activities.MainActivity;
@@ -29,13 +31,18 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class ShellActivity extends AppCompatActivity {
+
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
+    private FrameLayout mContentFrame;
     private View mCurentView;
-    private Bundle mBundle;
+    private ProgressBar mProgressBar;
+    private TextView mErrorText;
     private HashMap<String, List<Callback>> mEventHandlers;
+
+    protected enum VisualState {LOADING, LOADED, ERROR};
 
     protected final ShellActivity _this = this;
 
@@ -66,19 +73,24 @@ public abstract class ShellActivity extends AppCompatActivity {
         mDrawerToggle = new CustomDrawerToggle();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
+        // get error and loading UIs
+        mErrorText = (TextView) findViewById(R.id.shell_error);
+        mProgressBar = (ProgressBar) findViewById(R.id.shell_loading);
+
         // init content frame
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.shell_content);
-        if(contentFrame == null){
+        mContentFrame = (FrameLayout) findViewById(R.id.shell_content);
+        if(mContentFrame == null){
             throw new IllegalStateException("failed to retrieve content frame");
         }
         LayoutInflater factory = getLayoutInflater();
         int layoutId = getLayoutId();
         mCurentView = factory.inflate(layoutId, null);
-        contentFrame.removeAllViews();
-        contentFrame.addView(mCurentView);
+        mContentFrame.removeAllViews();
+        mContentFrame.addView(mCurentView);
         mEventHandlers = new HashMap<>();
 
         // init view
+        setVisualState(VisualState.LOADING);
         initializeView();
     }
 
@@ -124,8 +136,7 @@ public abstract class ShellActivity extends AppCompatActivity {
     }
 
     public String getPageParameter(String key){
-        if(mBundle == null) return null;
-        return mBundle.getString(key);
+        return getIntent().getStringExtra(key);
     }
 
     public String getLocalSetting(String key){
@@ -157,6 +168,25 @@ public abstract class ShellActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawers();
         startActivity(intent);
         finish();
+    }
+
+    protected void setVisualState(VisualState visualState){
+        mErrorText.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
+        mContentFrame.setVisibility(View.GONE);
+        System.out.println("setVisualState " + visualState.name());
+        switch(visualState){
+            case LOADING:
+                mProgressBar.setVisibility(View.VISIBLE);
+                break;
+            case LOADED:
+                mContentFrame.setVisibility(View.VISIBLE);
+                break;
+            case ERROR:
+            default:
+                mErrorText.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

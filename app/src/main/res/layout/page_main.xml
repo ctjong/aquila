@@ -1,6 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/page_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,11 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/page_main_loading"
-        android:layout_toRightOf="@+id/page_main_loading"
-        android:layout_toEndOf="@+id/page_main_loading"
-        android:id="@+id/page_main_content"
-        android:visibility="gone">
+        android:id="@+id/page_main_content">
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/page_main_loginbutton"
@@ -25,21 +22,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/page_main_loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:indeterminate="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="error"
-        android:id="@+id/page_main_errortext"
-        android:visibility="gone"/>
 
 
 </RelativeLayout>

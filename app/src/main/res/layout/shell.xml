@@ -21,13 +21,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="10dp"
-            android:id="@+id/shell_content">
+            android:id="@+id/shell_content"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="content frame"/>
         </FrameLayout>
+
+        <ProgressBar
+            android:id="@+id/shell_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="error"
+            android:id="@+id/shell_error"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

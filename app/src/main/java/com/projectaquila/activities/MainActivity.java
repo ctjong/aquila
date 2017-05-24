@@ -1,10 +1,6 @@
 package com.projectaquila.activities;
 
 import android.content.Intent;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.facebook.login.widget.LoginButton;
 import com.projectaquila.R;
@@ -12,17 +8,10 @@ import com.projectaquila.common.ShellActivity;
 import com.projectaquila.context.AppContext;
 import com.projectaquila.common.Callback;
 
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends ShellActivity {
-    private enum MainPageVisualState {LOADING, LOADED, ERROR};
-
-    private ProgressBar mProgressBar;
-    private TextView mErrorText;
-    private LinearLayout mContentView;
 
     @Override
     protected int getLayoutId() {
@@ -31,11 +20,6 @@ public class MainActivity extends ShellActivity {
 
     @Override
     protected void initializeView(){
-        mProgressBar = (ProgressBar) findViewById(R.id.page_main_loading);
-        mErrorText = (TextView) findViewById(R.id.page_main_errortext);
-        mContentView = (LinearLayout) findViewById(R.id.page_main_content);
-        setVisualState(MainPageVisualState.LOADING);
-
         AppContext.current.getAuthHandler().checkLoginStatus(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params) {
@@ -55,7 +39,7 @@ public class MainActivity extends ShellActivity {
                         }
                     }
                 });
-                setVisualState(MainPageVisualState.LOADED);
+                setVisualState(VisualState.LOADED);
             }
         });
     }
@@ -70,30 +54,6 @@ public class MainActivity extends ShellActivity {
             params.put("resultCode", resultCode);
             params.put("data", data);
             eventHandlers.get(i).execute(params);
-        }
-    }
-
-    private void render(JSONObject data){
-        if(data == null){
-            setVisualState(MainPageVisualState.ERROR);
-            return;
-        }
-    }
-
-    private void setVisualState(MainPageVisualState visualState){
-        mErrorText.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.GONE);
-        mContentView.setVisibility(View.GONE);
-        switch(visualState){
-            case LOADING:
-                mProgressBar.setVisibility(View.VISIBLE);
-                break;
-            case LOADED:
-                mContentView.setVisibility(View.VISIBLE);
-                break;
-            default:
-                mErrorText.setVisibility(View.VISIBLE);
-                break;
         }
     }
 }
