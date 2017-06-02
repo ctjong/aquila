@@ -45,9 +45,10 @@ public class ApiPostTask extends AsyncTask<Void, Void, String> {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
             writer.write(getPostDataString(mData));
@@ -80,20 +81,8 @@ public class ApiPostTask extends AsyncTask<Void, Void, String> {
         }
     }
 
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
+    private String getPostDataString(HashMap<String, String> params) throws JSONException {
+        JSONObject json = new JSONObject(params);
+        return json.toString(0);
     }
 }

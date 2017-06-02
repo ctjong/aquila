@@ -64,13 +64,14 @@ public class AuthHandler {
                     if(params == null){
                         LoginManager.getInstance().logOut();
                         callbackParams.put("status", "tokenConversionError");
+                        mNextCallback.execute(null);
+                    }else {
+                        String token = (String) params.get("token");
+                        AppContext.current.setAccessToken(token);
+                        mParentActivity.setLocalSetting("token", token);
+                        callbackParams.put("status", "success");
                         mNextCallback.execute(callbackParams);
                     }
-                    String token = (String)params.get("token");
-                    AppContext.current.setAccessToken(token);
-                    mParentActivity.setLocalSetting("token", token);
-                    callbackParams.put("status", "success");
-                    mNextCallback.execute(null);
                 }
             });
         }
