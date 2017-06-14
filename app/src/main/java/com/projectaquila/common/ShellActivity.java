@@ -16,7 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.projectaquila.R;
@@ -30,26 +30,39 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Base class for all activities in this project
+ */
 public abstract class ShellActivity extends AppCompatActivity {
-
     private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private FrameLayout mContentFrame;
     private View mCurentView;
-    private ProgressBar mProgressBar;
-    private TextView mErrorText;
+    private View mLoadingView;
+    private View mErrorView;
     private HashMap<String, List<Callback>> mEventHandlers;
 
     protected enum VisualState {LOADING, LOADED, ERROR};
 
     protected final ShellActivity _this = this;
 
+    /**
+     * Get layout ID
+     * @return ID of the layout to use for the current activity
+     */
     protected abstract int getLayoutId();
 
+    /**
+     * Initialize the view for the current activity
+     */
     protected abstract void initializeView();
 
+    /**
+     * Invoked when the activity is created
+     * @param savedInstanceState saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // init app context if it hasn't been initialized
@@ -74,8 +87,8 @@ public abstract class ShellActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
         // get error and loading UIs
-        mErrorText = (TextView) findViewById(R.id.shell_error);
-        mProgressBar = (ProgressBar) findViewById(R.id.shell_loading);
+        mErrorView = findViewById(R.id.shell_error);
+        mLoadingView = findViewById(R.id.shell_loading);
 
         // init content frame
         mContentFrame = (FrameLayout) findViewById(R.id.shell_content);
@@ -94,6 +107,11 @@ public abstract class ShellActivity extends AppCompatActivity {
         initializeView();
     }
 
+    /**
+     * Find view with the specified id
+     * @param id view ID
+     * @return view object
+     */
     @Override
     public View findViewById(int id){
         if(mCurentView == null){
@@ -102,6 +120,11 @@ public abstract class ShellActivity extends AppCompatActivity {
         return mCurentView.findViewById(id);
     }
 
+    /**
+     * Invoked when menu items are created
+     * @param menu menu object
+     * @return true on success, false otherwise
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -109,7 +132,11 @@ public abstract class ShellActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    /* Called whenever we call invalidateOptionsMenu() */
+    /**
+     * Called whenever we call invalidateOptionsMenu()
+     * @param menu menu object
+     * @return true on success, false otherwise
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
@@ -119,11 +146,21 @@ public abstract class ShellActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /**
+     * Called when a menu item is selected
+     * @param item selected menu item
+     * @return true on success
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Get event handlers for the event with the specified name
+     * @param eventName event name
+     * @return a list of event handlers
+     */
     public List<Callback> getEventHandlers(String eventName){
         List<Callback> list;
         if(!mEventHandlers.containsKey(eventName)){
@@ -135,15 +172,30 @@ public abstract class ShellActivity extends AppCompatActivity {
         return list;
     }
 
+    /**
+     * Get page parameter with the given key
+     * @param key parameter key
+     * @return parameter value
+     */
     public String getPageParameter(String key){
         return getIntent().getStringExtra(key);
     }
 
+    /**
+     * Get local setting with the given key
+     * @param key local setting key
+     * @return local settng value
+     */
     public String getLocalSetting(String key){
         SharedPreferences settings = getPreferences(0);
         return settings.getString(key, null);
     }
 
+    /**
+     * Set a key value pair to local setting
+     * @param key local setting key
+     * @param value local setting value
+     */
     public void setLocalSetting(String key, String value){
         SharedPreferences settings = getPreferences(0);
         SharedPreferences.Editor settingsEditor = settings.edit();
@@ -151,6 +203,11 @@ public abstract class ShellActivity extends AppCompatActivity {
         settingsEditor.commit();
     }
 
+    /**
+     * Navigate to the specified activity
+     * @param newActivity activity to navigate to
+     * @param parameters navigation parameters
+     */
     protected void navigate(Class newActivity, Map<String, String> parameters){
         Intent intent = new Intent(this, newActivity);
         if(parameters != null){
@@ -170,25 +227,32 @@ public abstract class ShellActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Set UI state to the given visual state
+     * @param visualState new visual state
+     */
     protected void setVisualState(VisualState visualState){
-        mErrorText.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.GONE);
+        mLoadingView.setVisibility(View.GONE);
         mContentFrame.setVisibility(View.GONE);
         System.out.println("setVisualState " + visualState.name());
         switch(visualState){
             case LOADING:
-                mProgressBar.setVisibility(View.VISIBLE);
+                mLoadingView.setVisibility(View.VISIBLE);
                 break;
             case LOADED:
                 mContentFrame.setVisibility(View.VISIBLE);
                 break;
             case ERROR:
             default:
-                mErrorText.setVisibility(View.VISIBLE);
+                mErrorView.setVisibility(View.VISIBLE);
                 break;
         }
     }
 
+    /**
+     * Listener for drawer item click event
+     */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -200,6 +264,9 @@ public abstract class ShellActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Custom drawer toggle
+     */
     private class CustomDrawerToggle extends ActionBarDrawerToggle{
         public CustomDrawerToggle() {
             super(ShellActivity.this, mDrawerLayout, mToolBar, R.string.drawer_open, R.string.drawer_close);

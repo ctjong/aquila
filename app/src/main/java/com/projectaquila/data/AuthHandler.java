@@ -16,7 +16,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Handler for all auth related operations
+ */
 public class AuthHandler {
+    private CallbackManager mFbCallbackManager;
+
+    /**
+     * Instantiate new auth handler
+     */
+    public AuthHandler(){
+        mFbCallbackManager = CallbackManager.Factory.create();
+    }
+
+    /**
+     * Check login status
+     * @param callback callback function to execute, with a key-value pair params passed in to it.
+     */
     public void checkLoginStatus(Callback callback){
         //TODO
         HashMap<String, Object> params = new HashMap<>();
@@ -24,8 +40,11 @@ public class AuthHandler {
         callback.execute(params);
     }
 
-    public void setupFacebookLogin(ShellActivity parentActivity, LoginButton fbLoginButton, Callback nextCallback){
-        final CallbackManager callbackManager = CallbackManager.Factory.create();
+    /**
+     * Setup the ActivityResult event handler on the given activity for Facebook auth
+     * @param parentActivity activity where the event will fire from
+     */
+    public void setupFbActivityResultEvent(ShellActivity parentActivity){
         List<Callback> activityResultEventHandlers = parentActivity.getEventHandlers("activityResult");
         activityResultEventHandlers.add(new Callback() {
             @Override
@@ -33,57 +52,73 @@ public class AuthHandler {
                 int requestCode = (int)params.get("requestCode");
                 int resultCode = (int)params.get("resultCode");
                 Intent data = (Intent)params.get("data");
-                callbackManager.onActivityResult(requestCode, resultCode, data);
+                mFbCallbackManager.onActivityResult(requestCode, resultCode, data);
             }
         });
-        fbLoginButton.setReadPermissions(Arrays.asList("email"));
-        fbLoginButton.registerCallback(callbackManager, new FacebookLoginCallback<LoginResult>(parentActivity, nextCallback));
     }
 
-    private class FacebookLoginCallback<T> implements FacebookCallback<T> {
-        private ShellActivity mParentActivity;
-        private Callback mNextCallback;
+    /**
+     * Setup the given Facebook login button
+     * @param parentActivity activity where the login button is in
+     * @param fbLoginButton facebook login button
+     * @param callback callback to execute when the login completes, with a key-value pair params passed in to it.
+     */
+    public void setupFbLoginButton(ShellActivity parentActivity, LoginButton fbLoginButton, final Callback callback){
+        fbLoginButton.setReadPermissions(Arrays.asList("email"));
+        fbLoginButton.registerCallback(mFbCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                String fbToken = loginResult.getAccessToken().getToken();
+                HashMap<String, Object> callbackParams = new HashMap<>();
+                callbackParams.put("status", "success");
+                callbackParams.put("fbToken", fbToken);
+                callback.execute(callbackParams);
+            }
 
-        public FacebookLoginCallback(ShellActivity parentActivity, Callback nextCallback){
-            mParentActivity = parentActivity;
-            mNextCallback = nextCallback;
-        }
+            @Override
+            public void onCancel() {
+                LoginManager.getInstance().logOut();
+                System.err.println("FB token request error");
+                HashMap<String, Object> callbackParams = new HashMap<>();
+                callbackParams.put("status", "error");
+                callback.execute(callbackParams);
+            }
 
-        @Override
-        public void onSuccess(T loginResultObj) {
-            if(!(loginResultObj instanceof LoginResult)) return;
-            LoginResult loginResult = (LoginResult) loginResultObj;
-            String fbToken = loginResult.getAccessToken().getToken();
-            String apiUrl = AppContext.current.getApiBase() + "/auth/token/fb";
-            HashMap<String, String> apiParams = new HashMap<>();
-            apiParams.put("fbtoken", fbToken);
-            ApiPostTask.execute(apiUrl, apiParams, new Callback() {
-                @Override
-                public void execute(HashMap<String, Object> params) {
-                    HashMap<String, Object> callbackParams = new HashMap<>();
-                    if(params == null){
-                        LoginManager.getInstance().logOut();
-                        callbackParams.put("status", "tokenConversionError");
-                        mNextCallback.execute(null);
-                    }else {
-                        String token = (String) params.get("token");
-                        AppContext.current.setAccessToken(token);
-                        mParentActivity.setLocalSetting("token", token);
-                        callbackParams.put("status", "success");
-                        mNextCallback.execute(callbackParams);
-                    }
+            @Override
+            public void onError(FacebookException error) {
+                LoginManager.getInstance().logOut();
+                System.err.println("FB token request error");
+                HashMap<String, Object> callbackParams = new HashMap<>();
+                callbackParams.put("status", "error");
+                callback.execute(callbackParams);
+            }
+        });
+    }
+
+    /**
+     * Convert the given Facebook token to Orion token
+     * @param fbToken Facebook token to convert
+     * @param callback callback function to execute, with a key-value pair params passed in to it.
+     */
+    public void convertFbToken(String fbToken, final Callback callback){
+        String apiUrl = AppContext.current.getApiBase() + "/auth/token/fb";
+        HashMap<String, String> apiParams = new HashMap<>();
+        apiParams.put("fbtoken", fbToken);
+        ApiPostTask.execute(apiUrl, apiParams, new Callback() {
+            @Override
+            public void execute(HashMap<String, Object> params) {
+                HashMap<String, Object> callbackParams = new HashMap<>();
+                if(params == null){
+                    LoginManager.getInstance().logOut();
+                    callbackParams.put("status", "error");
+                }else {
+                    String token = (String) params.get("token");
+                    AppContext.current.setAccessToken(token);
+                    callbackParams.put("status", "success");
+                    callbackParams.put("token", "token");
                 }
-            });
-        }
-
-        @Override
-        public void onCancel() {
-            System.err.println("FB login cancelled");
-        }
-
-        @Override
-        public void onError(FacebookException exception) {
-            System.err.println("FB login error");
-        }
+                callback.execute(callbackParams);
+            }
+        });
     }
 }
