@@ -4,8 +4,8 @@ import android.os.AsyncTask;
 
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.Helper;
+import com.projectaquila.context.AppContext;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ApiGetTask extends AsyncTask<Void, Void, String> {
+public class ApiGetTask extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> {
     private String mSourceUrl;
     private Callback mCallback;
 
@@ -26,35 +26,48 @@ public class ApiGetTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... urls) {
+    protected AsyncTaskResult<JSONObject> doInBackground(Void... params) {
         try {
+            System.out.println("ApiGetTask.doInBackground requesting " + mSourceUrl);
             URL url = new URL(mSourceUrl);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                int responseCode = conn.getResponseCode();
+                if(responseCode != 200) {
+                    throw new Exception("ApiGetTask.doInBackground status code = " + responseCode);
+                }
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder stringBuilder = new StringBuilder();
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
                     stringBuilder.append(line).append("\n");
                 }
                 bufferedReader.close();
-                return stringBuilder.toString();
+                String result = stringBuilder.toString();
+                return new AsyncTaskResult<>((JSONObject) new JSONTokener(result).nextValue());
             }
             finally{
-                urlConnection.disconnect();
+                conn.disconnect();
             }
         }
         catch(Exception e) {
-            return null;
+            System.err.println("ApiGetTask.doInBackground exception");
+            e.printStackTrace();
+            return new AsyncTaskResult<>(e);
         }
     }
 
     @Override
-    protected void onPostExecute(String result) {
-        try{
-            JSONObject object = (JSONObject) new JSONTokener(result).nextValue();
-            mCallback.execute(Helper.ConvertJson(object));
-        }catch(JSONException e){
+    protected void onPostExecute(AsyncTaskResult<JSONObject> result) {
+        if(result.getError() != null) {
+            mCallback.execute(null);
+            return;
+        }
+        try {
+            mCallback.execute(Helper.ConvertJson(result.getResult()));
+        } catch(Exception e) {
+            System.err.println("ApiGetTask.onPostExecute exception");
+            e.printStackTrace();
             mCallback.execute(null);
         }
     }

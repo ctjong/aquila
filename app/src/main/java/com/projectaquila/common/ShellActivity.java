@@ -66,7 +66,9 @@ public abstract class ShellActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // init app context if it hasn't been initialized
-        AppContext.initialize(this.getApplicationContext());
+        if(AppContext.current == null){
+            AppContext.initialize(this.getApplicationContext());
+        }
 
         // init layout
         super.onCreate(savedInstanceState);
@@ -235,7 +237,7 @@ public abstract class ShellActivity extends AppCompatActivity {
         mErrorView.setVisibility(View.GONE);
         mLoadingView.setVisibility(View.GONE);
         mContentFrame.setVisibility(View.GONE);
-        System.out.println("setVisualState " + visualState.name());
+        System.out.println(this.getLocalClassName() + " | setVisualState " + visualState.name());
         switch(visualState){
             case LOADING:
                 mLoadingView.setVisibility(View.VISIBLE);

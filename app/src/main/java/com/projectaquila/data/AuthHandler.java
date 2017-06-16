@@ -104,7 +104,7 @@ public class AuthHandler {
         String apiUrl = AppContext.current.getApiBase() + "/auth/token/fb";
         HashMap<String, String> apiParams = new HashMap<>();
         apiParams.put("fbtoken", fbToken);
-        ApiPostTask.execute(apiUrl, apiParams, new Callback() {
+        ApiTask.execute(ApiTaskMethod.POST, apiUrl, apiParams, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params) {
                 HashMap<String, Object> callbackParams = new HashMap<>();
@@ -115,7 +115,7 @@ public class AuthHandler {
                     String token = (String) params.get("token");
                     AppContext.current.setAccessToken(token);
                     callbackParams.put("status", "success");
-                    callbackParams.put("token", "token");
+                    callbackParams.put("token", token);
                 }
                 callback.execute(callbackParams);
             }
