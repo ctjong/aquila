@@ -7,7 +7,6 @@ import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.ShellActivity;
 import com.projectaquila.context.AppContext;
-import com.projectaquila.data.ApiGetTask;
 import com.projectaquila.data.ApiTask;
 import com.projectaquila.data.ApiTaskMethod;
 
