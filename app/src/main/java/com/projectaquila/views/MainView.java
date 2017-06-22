@@ -1,29 +1,26 @@
-package com.projectaquila.activities;
+package com.projectaquila.views;
 
 import android.content.Intent;
 
 import com.facebook.login.widget.LoginButton;
 import com.projectaquila.R;
-import com.projectaquila.common.ShellActivity;
-import com.projectaquila.context.AppContext;
-import com.projectaquila.common.Callback;
-import com.projectaquila.data.AuthHandler;
+import com.projectaquila.AppContext;
+import com.projectaquila.Callback;
+import com.projectaquila.services.AuthService;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Main activity
  */
-public class MainActivity extends ShellActivity {
-
+public class MainView extends ViewBase {
     /**
      * Get layout ID
      * @return ID of the layout to use for the current activity
      */
     @Override
     protected int getLayoutId() {
-        return R.layout.page_main;
+        return R.layout.view_main;
     }
 
     /**
@@ -31,68 +28,57 @@ public class MainActivity extends ShellActivity {
      */
     @Override
     protected void initializeView(){
-        AppContext.current.getAuthHandler().checkLoginStatus(new Callback() {
+        final AuthService authService = AppContext.current.getAuthService();
+        AppContext.current.getShell().addActivityResultHandler(new Callback() {
+            @Override
+            public void execute(HashMap<String, Object> params) {
+                int requestCode = (int)params.get("requestCode");
+                int resultCode = (int)params.get("resultCode");
+                Intent data = (Intent)params.get("data");
+                authService.onFbActivityResult(requestCode, resultCode, data);
+            }
+        });
+        AppContext.current.getAuthService().checkLoginStatus(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params) {
                 boolean isLoggedIn = (boolean)params.get("isLoggedIn");
                 if(isLoggedIn){
-                    navigate(TasksActivity.class, null);
+                    AppContext.current.getNavigationService().navigate(new TasksView(), null);
                     return;
                 }
                 LoginButton fbLoginButton = (LoginButton) findViewById(R.id.page_main_loginbutton);
-                final AuthHandler authHandler = AppContext.current.getAuthHandler();
-                authHandler.setupFbActivityResultEvent(_this);
-                authHandler.setupFbLoginButton(_this, fbLoginButton, new Callback(){
+                authService.setupFbLoginButton(fbLoginButton, new Callback(){
                     @Override
                     public void execute(HashMap<String, Object> params) {
                         // check fb token retrieval response
                         String fbToken = (String)params.get("fbToken");
                         if(params.get("status") == "error" || fbToken == null || AppContext.current.getAccessToken() != null) {
-                            setVisualState(VisualState.LOADED);
+                            AppContext.current.getShell().showContentScreen();
                             //TODO display login error
                             return;
                         }
 
                         // set state to loading and try to convert fb token
                         // navigate to tasks view on success
-                        setVisualState(VisualState.LOADING);
-                        authHandler.convertFbToken(fbToken, new Callback() {
+                        AppContext.current.getShell().showLoadingScreen();
+                        authService.convertFbToken(fbToken, new Callback() {
                             @Override
                             public void execute(HashMap<String, Object> params) {
                                 String token = (String)params.get("token");
                                 if(params.get("status") == "error" || token == null) {
                                     //TODO display login error
-                                    setVisualState(VisualState.LOADED);
+                                    AppContext.current.getShell().showContentScreen();
                                     return;
                                 }
 
                                 setLocalSetting("token", token);
-                                navigate(TasksActivity.class, null);
+                                AppContext.current.getNavigationService().navigate(new TasksView(), null);
                             }
                         });
                     }
                 });
-                setVisualState(VisualState.LOADED);
+                AppContext.current.getShell().showContentScreen();
             }
         });
-    }
-
-    /**
-     * Invoked on activity result event
-     * @param requestCode request code
-     * @param resultCode result code
-     * @param data event data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        List<Callback> eventHandlers = getEventHandlers("activityResult");
-        for(int i=0; i<eventHandlers.size(); i++){
-            HashMap<String, Object> params = new HashMap<>();
-            params.put("requestCode", requestCode);
-            params.put("resultCode", resultCode);
-            params.put("data", data);
-            eventHandlers.get(i).execute(params);
-        }
     }
 }

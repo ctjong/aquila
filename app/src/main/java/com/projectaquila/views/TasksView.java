@@ -1,18 +1,16 @@
-package com.projectaquila.activities;
+package com.projectaquila.views;
 
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.projectaquila.R;
-import com.projectaquila.common.Callback;
-import com.projectaquila.common.ShellActivity;
-import com.projectaquila.context.AppContext;
-import com.projectaquila.data.ApiTask;
-import com.projectaquila.data.ApiTaskMethod;
+import com.projectaquila.Callback;
+import com.projectaquila.AppContext;
+import com.projectaquila.ApiTaskMethod;
 
 import java.util.HashMap;
 
-public class TasksActivity extends ShellActivity {
+public class TasksView extends ViewBase {
     private static final int ITEM_PER_PAGE = 10;
 
     private LinearLayout mTasksUI;
@@ -20,7 +18,7 @@ public class TasksActivity extends ShellActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.page_tasks;
+        return R.layout.view_tasks;
     }
 
     @Override
@@ -31,15 +29,15 @@ public class TasksActivity extends ShellActivity {
     }
 
     private void loadTasks(int pageNum){
-        setVisualState(VisualState.LOADING);
+        AppContext.current.getShell().showLoadingScreen();
         int skip = ITEM_PER_PAGE * pageNum;
         String dataUrl = "/data/task/private/findall/taskdate/" + skip + "/" + ITEM_PER_PAGE;
-        ApiTask.execute(ApiTaskMethod.GET, AppContext.current.getApiBase() + dataUrl, null, new Callback() {
+        AppContext.current.getDataService().request(ApiTaskMethod.GET, AppContext.current.getApiBase() + dataUrl, null, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params) {
                 mTasksUI.setVisibility(View.GONE);
                 mNullResultUI.setVisibility(View.VISIBLE);
-                setVisualState(VisualState.LOADED);
+                AppContext.current.getShell().showContentScreen();
             }
         });
     }

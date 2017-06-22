@@ -1,4 +1,4 @@
-package com.projectaquila.data;
+package com.projectaquila;
 
 public enum ApiTaskMethod {
     GET,

@@ -1,4 +1,4 @@
-package com.projectaquila.data;
+package com.projectaquila.services;
 
 import android.content.Intent;
 
@@ -8,24 +8,23 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.projectaquila.common.Callback;
-import com.projectaquila.common.ShellActivity;
-import com.projectaquila.context.AppContext;
+import com.projectaquila.Callback;
+import com.projectaquila.AppContext;
+import com.projectaquila.ApiTaskMethod;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Handler for all auth related operations
  */
-public class AuthHandler {
+public class AuthService {
     private CallbackManager mFbCallbackManager;
 
     /**
      * Instantiate new auth handler
      */
-    public AuthHandler(){
+    public AuthService(){
         mFbCallbackManager = CallbackManager.Factory.create();
     }
 
@@ -40,31 +39,17 @@ public class AuthHandler {
         callback.execute(params);
     }
 
-    /**
-     * Setup the ActivityResult event handler on the given activity for Facebook auth
-     * @param parentActivity activity where the event will fire from
-     */
-    public void setupFbActivityResultEvent(ShellActivity parentActivity){
-        List<Callback> activityResultEventHandlers = parentActivity.getEventHandlers("activityResult");
-        activityResultEventHandlers.add(new Callback() {
-            @Override
-            public void execute(HashMap<String, Object> params) {
-                int requestCode = (int)params.get("requestCode");
-                int resultCode = (int)params.get("resultCode");
-                Intent data = (Intent)params.get("data");
-                mFbCallbackManager.onActivityResult(requestCode, resultCode, data);
-            }
-        });
+    public void onFbActivityResult(int requestCode, int resultCode, Intent data){
+        mFbCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
      * Setup the given Facebook login button
-     * @param parentActivity activity where the login button is in
      * @param fbLoginButton facebook login button
      * @param callback callback to execute when the login completes, with a key-value pair params passed in to it.
      */
-    public void setupFbLoginButton(ShellActivity parentActivity, LoginButton fbLoginButton, final Callback callback){
-        fbLoginButton.setReadPermissions(Arrays.asList("email"));
+    public void setupFbLoginButton(LoginButton fbLoginButton, final Callback callback){
+        fbLoginButton.setReadPermissions(Collections.singletonList("email"));
         fbLoginButton.registerCallback(mFbCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -104,7 +89,7 @@ public class AuthHandler {
         String apiUrl = AppContext.current.getApiBase() + "/auth/token/fb";
         HashMap<String, String> apiParams = new HashMap<>();
         apiParams.put("fbtoken", fbToken);
-        ApiTask.execute(ApiTaskMethod.POST, apiUrl, apiParams, new Callback() {
+        AppContext.current.getDataService().request(ApiTaskMethod.POST, apiUrl, apiParams, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params) {
                 HashMap<String, Object> callbackParams = new HashMap<>();

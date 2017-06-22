@@ -1,8 +1,10 @@
-package com.projectaquila.context;
+package com.projectaquila;
 
 import android.content.Context;
 
-import com.projectaquila.data.AuthHandler;
+import com.projectaquila.services.AuthService;
+import com.projectaquila.services.DataService;
+import com.projectaquila.services.NavigationService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -44,7 +46,12 @@ public class AppContext {
     private Document mDebugConfig;
     private String mApiBase;
     private String mAccessToken;
-    private AuthHandler mAuthHandler;
+    private ShellActivity mShell;
+
+    // services
+    private AuthService mAuthService;
+    private DataService mDataService;
+    private NavigationService mNavigationService;
 
     /*----------------------------------
         Constructor
@@ -54,16 +61,16 @@ public class AppContext {
         mCore = coreContext;
         initDebugConfig(DEBUG_CONFIG_FILENAME);
         mAccessToken = null;
-        mAuthHandler = new AuthHandler();
+
+        // services
+        mAuthService = new AuthService();
+        mDataService = new DataService();
+        mNavigationService = new NavigationService();
     }
 
     /*----------------------------------
         Member property getters
     ----------------------------------*/
-
-    public Context getCore () {
-        return mCore;
-    }
 
     public String getApiBase () {
         if(mApiBase == null) {
@@ -75,12 +82,16 @@ public class AppContext {
         return mApiBase;
     }
 
+    public Context getCore(){
+        return mCore;
+    }
+
     public String getAccessToken(){
         return mAccessToken;
     }
 
-    public AuthHandler getAuthHandler(){
-        return mAuthHandler;
+    public ShellActivity getShell() {
+        return mShell;
     }
 
     /*----------------------------------
@@ -89,6 +100,26 @@ public class AppContext {
 
     public void setAccessToken(String accessToken){
         mAccessToken = accessToken;
+    }
+
+    public void setShell(ShellActivity shell){
+        mShell = shell;
+    }
+
+    /*----------------------------------
+        Service getters
+    ----------------------------------*/
+
+    public AuthService getAuthService(){
+        return mAuthService;
+    }
+
+    public DataService getDataService(){
+        return mDataService;
+    }
+
+    public NavigationService getNavigationService(){
+        return mNavigationService;
     }
 
     /*----------------------------------

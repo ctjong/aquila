@@ -1,4 +1,4 @@
-package com.projectaquila.common;
+package com.projectaquila;
 
 import java.util.HashMap;
 

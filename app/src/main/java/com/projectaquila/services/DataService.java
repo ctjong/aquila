@@ -1,11 +1,13 @@
-package com.projectaquila.data;
+package com.projectaquila.services;
 
 import android.os.AsyncTask;
 
-import com.projectaquila.common.Callback;
-import com.projectaquila.common.Helper;
-import com.projectaquila.context.AppContext;
+import com.projectaquila.Callback;
+import com.projectaquila.AppContext;
+import com.projectaquila.ApiTaskMethod;
+import com.projectaquila.AsyncTaskResult;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -19,14 +21,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-public class ApiTask extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> {
+public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> {
     private ApiTaskMethod mMethod;
     private String mSourceUrl;
     private HashMap<String,String> mData;
     private Callback mCallback;
 
-    public static void execute(ApiTaskMethod method, String sourceUrl, HashMap<String,String> data, Callback callback){
-        ApiTask task = new ApiTask();
+    public void request(ApiTaskMethod method, String sourceUrl, HashMap<String,String> data, Callback callback){
+        DataService task = new DataService();
         task.mMethod = method;
         task.mSourceUrl = sourceUrl;
         task.mData = data;
@@ -37,7 +39,7 @@ public class ApiTask extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> 
     @Override
     protected AsyncTaskResult<JSONObject> doInBackground(Void... params) {
         try {
-            System.out.println("ApiTask.doInBackground | " + mMethod.name() + " " + mSourceUrl);
+            System.out.println("DataService.doInBackground | " + mMethod.name() + " " + mSourceUrl);
             URL url = new URL(mSourceUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             if(AppContext.current.getAccessToken() != null) {
@@ -59,7 +61,7 @@ public class ApiTask extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> 
             }
             int responseCode = conn.getResponseCode();
             if(responseCode != 200) {
-                throw new Exception("ApiTask.doInBackground status code = " + responseCode);
+                throw new Exception("DataService.doInBackground status code = " + responseCode);
             }
             String line;
             String responseStr = "";
@@ -76,7 +78,7 @@ public class ApiTask extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> 
                 return new AsyncTaskResult<>(response);
             }
         } catch (Exception e) {
-            System.err.println("ApiTask.doInBackground exception");
+            System.err.println("DataService.doInBackground exception");
             e.printStackTrace();
             return new AsyncTaskResult<>(e);
         }
@@ -89,9 +91,9 @@ public class ApiTask extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> 
             return;
         }
         try {
-            mCallback.execute(Helper.ConvertJson(result.getResult()));
+            mCallback.execute(convertJson(result.getResult()));
         } catch(Exception e) {
-            System.err.println("ApiTask.onPostExecute exception");
+            System.err.println("DataService.onPostExecute exception");
             e.printStackTrace();
             mCallback.execute(null);
         }
@@ -100,5 +102,23 @@ public class ApiTask extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> 
     private String getPostDataString(HashMap<String, String> params) throws JSONException {
         JSONObject json = new JSONObject(params);
         return json.toString(0);
+    }
+
+    private HashMap<String, Object> convertJson(JSONObject json){
+        JSONArray names = json.names();
+        HashMap<String, Object> map = new HashMap<>();
+        for(int i=0; i<names.length(); i++){
+            try {
+                String name = (String)names.get(i);
+                Object value = json.get(name);
+                if(value instanceof JSONObject){
+                    value = convertJson((JSONObject)value);
+                }
+                map.put(name, value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
     }
 }
