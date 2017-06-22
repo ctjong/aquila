@@ -8,9 +8,9 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.projectaquila.Callback;
+import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
-import com.projectaquila.ApiTaskMethod;
+import com.projectaquila.models.ApiTaskMethod;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class AuthService {
             @Override
             public void onCancel() {
                 LoginManager.getInstance().logOut();
-                System.err.println("FB token request error");
+                System.err.println("[AuthService.setupFbLoginButton] FB token request error");
                 HashMap<String, Object> callbackParams = new HashMap<>();
                 callbackParams.put("status", "error");
                 callback.execute(callbackParams);
@@ -72,7 +72,7 @@ public class AuthService {
             @Override
             public void onError(FacebookException error) {
                 LoginManager.getInstance().logOut();
-                System.err.println("FB token request error");
+                System.err.println("[AuthService.setupFbLoginButton] FB token request error");
                 HashMap<String, Object> callbackParams = new HashMap<>();
                 callbackParams.put("status", "error");
                 callback.execute(callbackParams);

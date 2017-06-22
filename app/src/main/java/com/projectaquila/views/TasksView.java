@@ -4,9 +4,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.projectaquila.R;
-import com.projectaquila.Callback;
+import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
-import com.projectaquila.ApiTaskMethod;
+import com.projectaquila.models.ApiTaskMethod;
 
 import java.util.HashMap;
 

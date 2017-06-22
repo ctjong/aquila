@@ -16,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.projectaquila.models.Callback;
+import com.projectaquila.models.Event;
 import com.projectaquila.views.MainView;
 import com.projectaquila.views.TestView;
 
@@ -82,7 +84,7 @@ public class ShellActivity extends AppCompatActivity {
      * @param layoutId layout ID
      */
     public void load(int layoutId){
-        System.out.println("ShellActivity.load(" + layoutId + ")");
+        System.out.println("[ShellActivity.load] " + layoutId + "");
         mDrawerLayout.closeDrawers();
         mActivityResultEvent.removeAllHandlers();
         LayoutInflater factory = getLayoutInflater();
@@ -144,7 +146,7 @@ public class ShellActivity extends AppCompatActivity {
      * Show the content screen
      */
     public void showContentScreen(){
-        System.out.println("ShellActivity.showContentScreen()");
+        System.out.println("[ShellActivity.showContentScreen]");
         mErrorScreen.setVisibility(View.GONE);
         mLoadingScreen.setVisibility(View.GONE);
         mContentScreen.setVisibility(View.VISIBLE);
@@ -154,7 +156,7 @@ public class ShellActivity extends AppCompatActivity {
      * Show the loading screen
      */
     public void showLoadingScreen(){
-        System.out.println("ShellActivity.showLoadingScreen()");
+        System.out.println("[ShellActivity.showLoadingScreen]");
         mErrorScreen.setVisibility(View.GONE);
         mLoadingScreen.setVisibility(View.VISIBLE);
         mContentScreen.setVisibility(View.GONE);
@@ -164,7 +166,7 @@ public class ShellActivity extends AppCompatActivity {
      * Show the error screen
      */
     public void showErrorScreen(){
-        System.out.println("ShellActivity.showErrorScreen()");
+        System.out.println("[ShellActivity.showErrorScreen]");
         mErrorScreen.setVisibility(View.VISIBLE);
         mLoadingScreen.setVisibility(View.GONE);
         mContentScreen.setVisibility(View.GONE);

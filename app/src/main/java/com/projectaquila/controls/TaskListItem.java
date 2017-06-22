@@ -8,10 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.projectaquila.AppContext;
-import com.projectaquila.Event;
+import com.projectaquila.models.Event;
 import com.projectaquila.R;
-import com.projectaquila.Callback;
-import com.projectaquila.views.ViewBase;
+import com.projectaquila.models.Callback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,14 +63,14 @@ public class TaskListItem {
     }
 
     private void deleteTask(){
-        System.out.println("deleting task " + mId);
+        System.out.println("[TaskListItem.deleteTask] deleting task " + mId);
         HashMap params = new HashMap();
         params.put("item", mView);
         mDeleteEvent.invoke(params);
     }
 
     private void openTask(){
-        System.out.println("opening task " + mId);
+        System.out.println("[TaskListItem.openTask] opening task " + mId);
     }
 
     private float getNewSliderX(float pointerX){

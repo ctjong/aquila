@@ -1,4 +1,4 @@
-package com.projectaquila;
+package com.projectaquila.models;
 
 import java.util.HashMap;
 

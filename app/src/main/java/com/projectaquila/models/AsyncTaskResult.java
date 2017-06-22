@@ -1,4 +1,4 @@
-package com.projectaquila;
+package com.projectaquila.models;
 
 public class AsyncTaskResult<T> {
     private T result;

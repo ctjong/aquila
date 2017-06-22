@@ -2,10 +2,10 @@ package com.projectaquila.services;
 
 import android.os.AsyncTask;
 
-import com.projectaquila.Callback;
+import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
-import com.projectaquila.ApiTaskMethod;
-import com.projectaquila.AsyncTaskResult;
+import com.projectaquila.models.ApiTaskMethod;
+import com.projectaquila.models.AsyncTaskResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,7 +39,7 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
     @Override
     protected AsyncTaskResult<JSONObject> doInBackground(Void... params) {
         try {
-            System.out.println("DataService.doInBackground | " + mMethod.name() + " " + mSourceUrl);
+            System.out.println("[DataService.doInBackground] " + mMethod.name() + " " + mSourceUrl);
             URL url = new URL(mSourceUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             if(AppContext.current.getAccessToken() != null) {
@@ -78,7 +78,7 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
                 return new AsyncTaskResult<>(response);
             }
         } catch (Exception e) {
-            System.err.println("DataService.doInBackground exception");
+            System.err.println("[DataService.doInBackground] exception");
             e.printStackTrace();
             return new AsyncTaskResult<>(e);
         }
@@ -93,7 +93,7 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
         try {
             mCallback.execute(convertJson(result.getResult()));
         } catch(Exception e) {
-            System.err.println("DataService.onPostExecute exception");
+            System.err.println("[DataService.onPostExecute] exception");
             e.printStackTrace();
             mCallback.execute(null);
         }

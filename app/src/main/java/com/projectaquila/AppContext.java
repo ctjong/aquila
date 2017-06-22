@@ -14,7 +14,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,8 +43,7 @@ public class AppContext {
     ----------------------------------*/
 
     private Context mCore;
-    private Document mDebugConfig;
-    private String mApiBase;
+    private HashMap<String, String> mDebugConfig;
     private String mAccessToken;
     private ShellActivity mShell;
 
@@ -57,7 +56,7 @@ public class AppContext {
         Constructor
     ----------------------------------*/
 
-    public AppContext(Context coreContext) {
+    private AppContext(Context coreContext) {
         mCore = coreContext;
         initDebugConfig(DEBUG_CONFIG_FILENAME);
         mAccessToken = null;
@@ -73,17 +72,10 @@ public class AppContext {
     ----------------------------------*/
 
     public String getApiBase () {
-        if(mApiBase == null) {
-            NodeList apiBaseNodes = mDebugConfig.getElementsByTagName("apiBase");
-            if(apiBaseNodes.getLength() == 0) mApiBase = DEFAULT_API_BASE;
-            Node apiBaseNode = apiBaseNodes.item(0);
-            mApiBase = apiBaseNode.getTextContent();
+        if(mDebugConfig.containsKey("apiBase")) {
+            return mDebugConfig.get("apiBase");
         }
-        return mApiBase;
-    }
-
-    public Context getCore(){
-        return mCore;
+        return DEFAULT_API_BASE;
     }
 
     public String getAccessToken(){
@@ -128,21 +120,35 @@ public class AppContext {
 
     private void initDebugConfig(String debugConfigFilename) {
         try {
+            mDebugConfig = new HashMap<>();
             File file = mCore.getFileStreamPath(debugConfigFilename);
             if(!file.exists()) {
-                System.out.println(debugConfigFilename + " not found");
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(mCore.openFileOutput(debugConfigFilename, Context.MODE_PRIVATE));
-                outputStreamWriter.write("");
-                outputStreamWriter.close();
+                System.out.println("[AppContext.initDebugConfig] " + debugConfigFilename + " not found");
                 mDebugConfig = null;
-            } else {
-                System.out.println(debugConfigFilename + " found");
-                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                dbf.setNamespaceAware(false);
-                dbf.setValidating(false);
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                FileInputStream fos = mCore.openFileInput(debugConfigFilename);
-                mDebugConfig = db.parse(fos);
+                return;
+            }
+            System.out.println("[AppContext.initDebugConfig] " + debugConfigFilename + " found");
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(false);
+            dbf.setValidating(false);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            FileInputStream fos = mCore.openFileInput(debugConfigFilename);
+
+            Document configXml = db.parse(fos);
+            NodeList nodes = configXml.getChildNodes();
+            if(nodes.getLength() < 1) {
+                System.out.println("[AppContext.initDebugConfig] root node cannot be found");
+                return;
+            }
+
+            Node root = nodes.item(0);
+            nodes = root.getChildNodes();
+            for(int i=0; i<nodes.getLength(); i++){
+                Node node = nodes.item(i);
+                String key = node.getNodeName();
+                String value = node.getTextContent();
+                System.out.println("[AppContext.initDebugConfig] key=" + key + ", value=" + value);
+                mDebugConfig.put(key, value);
             }
         } catch (IOException | ParserConfigurationException | SAXException e) {
             e.printStackTrace();

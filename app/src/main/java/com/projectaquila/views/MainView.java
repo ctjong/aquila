@@ -5,7 +5,7 @@ import android.content.Intent;
 import com.facebook.login.widget.LoginButton;
 import com.projectaquila.R;
 import com.projectaquila.AppContext;
-import com.projectaquila.Callback;
+import com.projectaquila.models.Callback;
 import com.projectaquila.services.AuthService;
 
 import java.util.HashMap;

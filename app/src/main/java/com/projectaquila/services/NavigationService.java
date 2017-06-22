@@ -15,6 +15,7 @@ public class NavigationService {
      * @param parameters navigation parameters
      */
     public void navigate(ViewBase newView, Map<String, String> parameters){
+        System.out.println("[NavigationService.navigate] " + newView.getClass().getName());
         Bundle bundle = new Bundle();
         if(parameters != null){
             Iterator it = parameters.entrySet().iterator();
