@@ -39,18 +39,6 @@ public abstract class ViewBase {
     }
 
     /**
-     * Set a key value pair to local setting
-     * @param key local setting key
-     * @param value local setting value
-     */
-    public void setLocalSetting(String key, String value){
-        SharedPreferences settings = AppContext.current.getShell().getPreferences(0);
-        SharedPreferences.Editor settingsEditor = settings.edit();
-        settingsEditor.putString(key, value);
-        settingsEditor.apply();
-    }
-
-    /**
      * Find an element in this view with the given id
      * @param viewId view id
      * @return matched view object

@@ -44,7 +44,6 @@ public class AppContext {
 
     private Context mCore;
     private HashMap<String, String> mDebugConfig;
-    private String mAccessToken;
     private ShellActivity mShell;
 
     // services
@@ -59,7 +58,6 @@ public class AppContext {
     private AppContext(Context coreContext) {
         mCore = coreContext;
         initDebugConfig(DEBUG_CONFIG_FILENAME);
-        mAccessToken = null;
 
         // services
         mAuthService = new AuthService();
@@ -78,10 +76,6 @@ public class AppContext {
         return DEFAULT_API_BASE;
     }
 
-    public String getAccessToken(){
-        return mAccessToken;
-    }
-
     public ShellActivity getShell() {
         return mShell;
     }
@@ -89,10 +83,6 @@ public class AppContext {
     /*----------------------------------
         Member property setters
     ----------------------------------*/
-
-    public void setAccessToken(String accessToken){
-        mAccessToken = accessToken;
-    }
 
     public void setShell(ShellActivity shell){
         mShell = shell;

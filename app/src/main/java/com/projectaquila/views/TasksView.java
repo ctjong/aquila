@@ -35,6 +35,10 @@ public class TasksView extends ViewBase {
         AppContext.current.getDataService().request(ApiTaskMethod.GET, AppContext.current.getApiBase() + dataUrl, null, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params) {
+                if((int)params.get("statusCode") == 401){
+                    AppContext.current.getNavigationService().navigate(new MainView(), null);
+                    return;
+                }
                 mTasksUI.setVisibility(View.GONE);
                 mNullResultUI.setVisibility(View.VISIBLE);
                 AppContext.current.getShell().showContentScreen();

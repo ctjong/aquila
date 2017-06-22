@@ -29,6 +29,8 @@ public class MainView extends ViewBase {
     @Override
     protected void initializeView(){
         final AuthService authService = AppContext.current.getAuthService();
+
+        // setup activity result event handler
         AppContext.current.getShell().addActivityResultHandler(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params) {
@@ -38,47 +40,47 @@ public class MainView extends ViewBase {
                 authService.onFbActivityResult(requestCode, resultCode, data);
             }
         });
-        AppContext.current.getAuthService().checkLoginStatus(new Callback() {
+
+        // check if logged in on launch
+        if(authService.isUserLoggedIn()){
+            AppContext.current.getNavigationService().navigate(new TasksView(), null);
+            return;
+        }
+
+        // clear any existing login session and setup login button
+        AppContext.current.getAuthService().logOut();
+        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.page_main_loginbutton);
+        authService.setupFbLoginButton(fbLoginButton, new Callback(){
             @Override
             public void execute(HashMap<String, Object> params) {
-                boolean isLoggedIn = (boolean)params.get("isLoggedIn");
-                if(isLoggedIn){
-                    AppContext.current.getNavigationService().navigate(new TasksView(), null);
+                // check fb token retrieval response
+                String fbToken = (String)params.get("fbToken");
+                if(params.get("status") == "error" || fbToken == null) {
+                    AppContext.current.getShell().showContentScreen();
+                    //TODO display login error
                     return;
                 }
-                LoginButton fbLoginButton = (LoginButton) findViewById(R.id.page_main_loginbutton);
-                authService.setupFbLoginButton(fbLoginButton, new Callback(){
+
+                // show loading screen
+                AppContext.current.getShell().showLoadingScreen();
+
+                // convert fb token to long term token
+                authService.convertFbToken(fbToken, new Callback() {
                     @Override
                     public void execute(HashMap<String, Object> params) {
-                        // check fb token retrieval response
-                        String fbToken = (String)params.get("fbToken");
-                        if(params.get("status") == "error" || fbToken == null || AppContext.current.getAccessToken() != null) {
-                            AppContext.current.getShell().showContentScreen();
+                        String token = (String)params.get("token");
+                        if(params.get("status") == "error" || token == null) {
                             //TODO display login error
+                            AppContext.current.getShell().showContentScreen();
                             return;
                         }
-
-                        // set state to loading and try to convert fb token
-                        // navigate to tasks view on success
-                        AppContext.current.getShell().showLoadingScreen();
-                        authService.convertFbToken(fbToken, new Callback() {
-                            @Override
-                            public void execute(HashMap<String, Object> params) {
-                                String token = (String)params.get("token");
-                                if(params.get("status") == "error" || token == null) {
-                                    //TODO display login error
-                                    AppContext.current.getShell().showContentScreen();
-                                    return;
-                                }
-
-                                setLocalSetting("token", token);
-                                AppContext.current.getNavigationService().navigate(new TasksView(), null);
-                            }
-                        });
+                        AppContext.current.getNavigationService().navigate(new TasksView(), null);
                     }
                 });
-                AppContext.current.getShell().showContentScreen();
             }
         });
+
+        // show content
+        AppContext.current.getShell().showContentScreen();
     }
 }

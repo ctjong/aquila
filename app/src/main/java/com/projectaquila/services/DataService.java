@@ -42,9 +42,14 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
             System.out.println("[DataService.doInBackground] " + mMethod.name() + " " + mSourceUrl);
             URL url = new URL(mSourceUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            if(AppContext.current.getAccessToken() != null) {
-                conn.addRequestProperty("Authorization", "Bearer " + AppContext.current.getAccessToken());
+
+            // set token header
+            String token = AppContext.current.getAuthService().getAccessToken();
+            if(token != null) {
+                conn.addRequestProperty("Authorization", "Bearer " + token);
             }
+
+            // bind POST data
             if(mMethod == ApiTaskMethod.POST) {
                 conn.setReadTimeout(15000);
                 conn.setConnectTimeout(15000);
@@ -59,6 +64,8 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
                 writer.close();
                 os.close();
             }
+
+            // get the incoming response
             int responseCode = conn.getResponseCode();
             if(responseCode != 200) {
                 throw new Exception("DataService.doInBackground status code = " + responseCode);
@@ -69,14 +76,13 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
             while ((line=br.readLine()) != null) {
                 responseStr += line;
             }
+
+            // prepare outgoing response
+            JSONObject response = new JSONObject();
+            response.put("statusCode", responseCode);
             Object responseObj = new JSONTokener(responseStr).nextValue();
-            if(responseObj instanceof JSONObject) {
-                return new AsyncTaskResult<>((JSONObject)responseObj);
-            }else{
-                JSONObject response = new JSONObject();
-                response.put("value", responseObj);
-                return new AsyncTaskResult<>(response);
-            }
+            response.put("value", responseObj);
+            return new AsyncTaskResult<>(response);
         } catch (Exception e) {
             System.err.println("[DataService.doInBackground] exception");
             e.printStackTrace();

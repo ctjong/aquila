@@ -1,6 +1,7 @@
 package com.projectaquila.services;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -30,15 +31,19 @@ public class AuthService {
 
     /**
      * Check login status
-     * @param callback callback function to execute, with a key-value pair params passed in to it.
+     * @return true if logged in, false otherwise
      */
-    public void checkLoginStatus(Callback callback){
-        //TODO
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("isLoggedIn", false);
-        callback.execute(params);
+    public boolean isUserLoggedIn(){
+        String token = getAccessToken();
+        return token != null;
     }
 
+    /**
+     * Invoked on FB activity result event
+     * @param requestCode request code
+     * @param resultCode result code
+     * @param data intent data
+     */
     public void onFbActivityResult(int requestCode, int resultCode, Intent data){
         mFbCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
@@ -53,6 +58,7 @@ public class AuthService {
         fbLoginButton.registerCallback(mFbCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                setAccessToken(null);
                 String fbToken = loginResult.getAccessToken().getToken();
                 HashMap<String, Object> callbackParams = new HashMap<>();
                 callbackParams.put("status", "success");
@@ -62,7 +68,7 @@ public class AuthService {
 
             @Override
             public void onCancel() {
-                LoginManager.getInstance().logOut();
+                logOut();
                 System.err.println("[AuthService.setupFbLoginButton] FB token request error");
                 HashMap<String, Object> callbackParams = new HashMap<>();
                 callbackParams.put("status", "error");
@@ -71,7 +77,7 @@ public class AuthService {
 
             @Override
             public void onError(FacebookException error) {
-                LoginManager.getInstance().logOut();
+                logOut();
                 System.err.println("[AuthService.setupFbLoginButton] FB token request error");
                 HashMap<String, Object> callbackParams = new HashMap<>();
                 callbackParams.put("status", "error");
@@ -93,17 +99,43 @@ public class AuthService {
             @Override
             public void execute(HashMap<String, Object> params) {
                 HashMap<String, Object> callbackParams = new HashMap<>();
-                if(params == null){
-                    LoginManager.getInstance().logOut();
+                if(params == null || params.get("token") == null){
+                    logOut();
                     callbackParams.put("status", "error");
                 }else {
-                    String token = (String) params.get("token");
-                    AppContext.current.setAccessToken(token);
+                    setAccessToken((String) params.get("token"));
                     callbackParams.put("status", "success");
-                    callbackParams.put("token", token);
                 }
                 callback.execute(callbackParams);
             }
         });
+    }
+
+    /**
+     * Log out Facebook and Orion
+     */
+    public void logOut(){
+        LoginManager.getInstance().logOut();
+        setAccessToken(null);
+    }
+
+    /**
+     * Get the current access token
+     * @return access token, or null if no token is stored
+     */
+    public String getAccessToken(){
+        SharedPreferences settings = AppContext.current.getShell().getPreferences(0);
+        return settings.getString("token", null);
+}
+
+    /**
+     * Set current access token in the local setting
+     * @param token access token
+     */
+    private void setAccessToken(String token){
+        SharedPreferences settings = AppContext.current.getShell().getPreferences(0);
+        SharedPreferences.Editor settingsEditor = settings.edit();
+        settingsEditor.putString("token", token);
+        settingsEditor.apply();
     }
 }
