@@ -61,21 +61,19 @@ public class MainView extends ViewBase {
                 setAuthErrorText("");
 
                 // check fb token retrieval response
-                String fbToken = (String)params.get("fbToken");
-                if(s != S.OK || fbToken == null) {
-                    setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.invalid_login));
+                if(s != S.OK) {
+                    setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.error_login_failed));
                     return;
                 }
 
                 // convert fb token to long term token
                 AppContext.getCurrent().getShell().showLoadingScreen();
+                String fbToken = (String)params.get("fbToken");
                 authService.convertFbToken(fbToken, new Callback() {
                     @Override
                     public void execute(HashMap<String, Object> params, S s) {
-                        String token = (String)params.get("token");
-                        if(s != S.OK || token == null) {
-                            setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.invalid_login));
-                            AppContext.getCurrent().getAuthService().logOut();
+                        if(s != S.OK ) {
+                            setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.error_invalid_login));
                             AppContext.getCurrent().getShell().showContentScreen();
                         }else{
                             AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);

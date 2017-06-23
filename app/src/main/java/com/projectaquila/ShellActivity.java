@@ -11,23 +11,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.projectaquila.controls.DrawerItemClickListener;
+import com.projectaquila.controls.DrawerToggle;
 import com.projectaquila.models.Callback;
+import com.projectaquila.models.DrawerItem;
 import com.projectaquila.models.Event;
+import com.projectaquila.models.S;
 import com.projectaquila.views.MainView;
-import com.projectaquila.views.TestView;
+import com.projectaquila.views.TasksView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Base class for all activities in this project
  */
 public class ShellActivity extends AppCompatActivity {
-    private Toolbar mToolBar;
     private DrawerLayout mDrawerLayout;
     private ListView mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -35,7 +39,7 @@ public class ShellActivity extends AppCompatActivity {
     private View mCurrentView;
     private View mLoadingScreen;
     private View mErrorScreen;
-
+    private ArrayAdapter<String> mDrawerAdapter;
     private Event mActivityResultEvent;
 
     /**
@@ -53,18 +57,23 @@ public class ShellActivity extends AppCompatActivity {
         setContentView(R.layout.shell);
 
         // init toolbar
-        mToolBar = (Toolbar) findViewById(R.id.shell_toolbar);
-        if(mToolBar == null) return;
-        setSupportActionBar(mToolBar);
-        mToolBar.setNavigationIcon(R.drawable.ic_drawer);
+        Toolbar toolBar = (Toolbar) findViewById(R.id.shell_toolbar);
+        if(toolBar == null) return;
+        setSupportActionBar(toolBar);
+        toolBar.setNavigationIcon(R.drawable.ic_drawer);
 
         // init drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.shell);
         mDrawer = (ListView) findViewById(R.id.shell_drawer);
-        mDrawer.setAdapter(new ArrayAdapter<>(this, R.layout.control_draweritem, new String[] {"main view", "test view"}));
-        mDrawer.setOnItemClickListener(new DrawerItemClickListener());
-        mDrawerToggle = new CustomDrawerToggle();
+        mDrawerToggle = new DrawerToggle(mDrawerLayout, toolBar);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        setupDrawer();
+        AppContext.getCurrent().getAuthService().addAuthStateChangeHandler(new Callback() {
+            @Override
+            public void execute(HashMap<String, Object> params, S s) {
+                setupDrawer();
+            }
+        });
 
         // init other member variables
         mErrorScreen = findViewById(R.id.shell_error);
@@ -202,33 +211,28 @@ public class ShellActivity extends AppCompatActivity {
     }
 
     /**
-     * Listener for drawer item click event
+     * Setup the menu items on the drawer
      */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if(position == 0){
-                AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
-            }else{
-                AppContext.getCurrent().getNavigationService().navigate(TestView.class, null);
-            }
+    private void setupDrawer() {
+        List<DrawerItem> drawerItems = new ArrayList<>();
+        if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
+            drawerItems.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false));
+            drawerItems.add(new DrawerItem(getString(R.string.menu_logout), MainView.class, true));
+        }else{
+            drawerItems.add(new DrawerItem(getString(R.string.menu_login), MainView.class, false));
         }
-    }
-
-    /**
-     * Custom drawer toggle
-     */
-    private class CustomDrawerToggle extends ActionBarDrawerToggle{
-        public CustomDrawerToggle() {
-            super(ShellActivity.this, mDrawerLayout, mToolBar, R.string.drawer_open, R.string.drawer_close);
+        if(mDrawerAdapter == null){
+            mDrawerAdapter = new ArrayAdapter<>(this, R.layout.control_draweritem);
+            mDrawer.setAdapter(mDrawerAdapter);
         }
-
-        public void onDrawerClosed(View view) {
-            invalidateOptionsMenu();
+        mDrawerAdapter.clear();
+        List<Callback> handlers = new ArrayList<>();
+        for(int i=0; i<drawerItems.size(); i++){
+            DrawerItem item = drawerItems.get(i);
+            mDrawerAdapter.add(item.getTitle());
+            handlers.add(item.getHandler());
         }
-
-        public void onDrawerOpened(View drawerView) {
-            invalidateOptionsMenu();
-        }
+        mDrawerAdapter.notifyDataSetChanged();
+        mDrawer.setOnItemClickListener(new DrawerItemClickListener(handlers));
     }
 }

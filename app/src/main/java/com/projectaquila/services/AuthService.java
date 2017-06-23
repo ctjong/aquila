@@ -12,6 +12,7 @@ import com.facebook.login.widget.LoginButton;
 import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
+import com.projectaquila.models.Event;
 import com.projectaquila.models.S;
 
 import java.util.Collections;
@@ -22,12 +23,14 @@ import java.util.HashMap;
  */
 public class AuthService {
     private CallbackManager mFbCallbackManager;
+    private Event mAuthStateChange;
 
     /**
      * Instantiate new auth handler
      */
     public AuthService(){
         mFbCallbackManager = CallbackManager.Factory.create();
+        mAuthStateChange = new Event();
     }
 
     /**
@@ -114,13 +117,21 @@ public class AuthService {
     }
 
     /**
+     * Add new handler to the auth state change event
+     * @param handler event handler
+     */
+    public void addAuthStateChangeHandler(Callback handler){
+        mAuthStateChange.addHandler(handler);
+    }
+
+    /**
      * Get the current access token
      * @return access token, or null if no token is stored
      */
     public String getAccessToken(){
         SharedPreferences settings = AppContext.getCurrent().getShell().getPreferences(0);
         return settings.getString("token", null);
-}
+    }
 
     /**
      * Set current access token in the local setting
@@ -131,5 +142,6 @@ public class AuthService {
         SharedPreferences.Editor settingsEditor = settings.edit();
         settingsEditor.putString("token", token);
         settingsEditor.apply();
+        mAuthStateChange.invoke(null);
     }
 }

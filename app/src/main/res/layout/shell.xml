@@ -72,7 +72,6 @@
         android:choiceMode="singleChoice"
         android:divider="#eee"
         android:dividerHeight="1dp"
-        android:listSelector="#eee"
         android:background="#ffffff"/>
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,14 +1,19 @@
 <resources>
     <string name="app_name">Project Aquila</string>
-    <string name="drawer_open">Open left nav</string>
-    <string name="drawer_close">Close left nav</string>
+
+    <string name="shell_drawer_open">Open left nav</string>
+    <string name="shell_drawer_close">Close left nav</string>
     <string name="shell_loading">Please wait</string>
     <string name="shell_error">Something went wrong :(</string>
+
+    <string name="menu_tasks">Tasks</string>
+    <string name="menu_login">Login</string>
+    <string name="menu_logout">Logout</string>
 
     <string name="facebook_app_id">1323560431073064</string>
     <string name="facebook_login_text">Log in with Facebook</string>
 
-    <string name="tasks_null">No task found. Click the add button to add new task to your list.</string>
-
-    <string name="invalid_login">Invalid login</string>
+    <string name="error_tasks_null">No task found. Click the add button to add new task to your list.</string>
+    <string name="error_login_failed">Login failed</string>
+    <string name="error_invalid_login">Invalid login</string>
 </resources>
