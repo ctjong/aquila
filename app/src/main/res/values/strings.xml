@@ -10,8 +10,9 @@
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
 
-    <string name="facebook_app_id">1323560431073064</string>
-    <string name="facebook_login_text">Log in with Facebook</string>
+    <string name="main_intro_text">Welcome! Please login to continue.</string>
+    <string name="main_facebook_app_id">1323560431073064</string>
+    <string name="main_facebook_login_text">Log in with Facebook</string>
 
     <string name="error_tasks_null">No task found. Click the add button to add new task to your list.</string>
     <string name="error_login_failed">Login failed</string>
