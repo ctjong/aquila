@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 
 import com.projectaquila.R;
 import com.projectaquila.models.Callback;
+import com.projectaquila.models.S;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
 
@@ -23,25 +24,25 @@ public class TasksView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        mTasksUI = (LinearLayout) findViewById(R.id.page_tasks_nullresult);
-        mNullResultUI = (LinearLayout) findViewById(R.id.page_tasks_nullresult);
+        mTasksUI = (LinearLayout) findViewById(R.id.view_tasks_nullresult);
+        mNullResultUI = (LinearLayout) findViewById(R.id.view_tasks_nullresult);
         loadTasks(0);
     }
 
     private void loadTasks(int pageNum){
-        AppContext.current.getShell().showLoadingScreen();
+        AppContext.getCurrent().getShell().showLoadingScreen();
         int skip = ITEM_PER_PAGE * pageNum;
         String dataUrl = "/data/task/private/findall/taskdate/" + skip + "/" + ITEM_PER_PAGE;
-        AppContext.current.getDataService().request(ApiTaskMethod.GET, AppContext.current.getApiBase() + dataUrl, null, new Callback() {
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, AppContext.getCurrent().getApiBase() + dataUrl, null, new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params) {
-                if((int)params.get("statusCode") == 401){
-                    AppContext.current.getNavigationService().navigate(new MainView(), null);
+            public void execute(HashMap<String, Object> params, S s) {
+                if(s == S.Unauthorized){
+                    AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
                     return;
                 }
                 mTasksUI.setVisibility(View.GONE);
                 mNullResultUI.setVisibility(View.VISIBLE);
-                AppContext.current.getShell().showContentScreen();
+                AppContext.getCurrent().getShell().showContentScreen();
             }
         });
     }

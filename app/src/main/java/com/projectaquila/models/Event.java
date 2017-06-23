@@ -21,7 +21,7 @@ public class Event{
 
     public void invoke(HashMap<String, Object> params){
         for(int i=0; i<handlers.size(); i++){
-            handlers.get(i).execute(params);
+            handlers.get(i).execute(params, S.OK);
         }
     }
 }

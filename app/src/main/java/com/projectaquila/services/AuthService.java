@@ -12,6 +12,7 @@ import com.facebook.login.widget.LoginButton;
 import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
+import com.projectaquila.models.S;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,27 +62,22 @@ public class AuthService {
                 setAccessToken(null);
                 String fbToken = loginResult.getAccessToken().getToken();
                 HashMap<String, Object> callbackParams = new HashMap<>();
-                callbackParams.put("status", "success");
                 callbackParams.put("fbToken", fbToken);
-                callback.execute(callbackParams);
+                callback.execute(callbackParams, S.OK);
             }
 
             @Override
             public void onCancel() {
                 logOut();
                 System.err.println("[AuthService.setupFbLoginButton] FB token request error");
-                HashMap<String, Object> callbackParams = new HashMap<>();
-                callbackParams.put("status", "error");
-                callback.execute(callbackParams);
+                callback.execute(null, S.UnknownError);
             }
 
             @Override
             public void onError(FacebookException error) {
                 logOut();
                 System.err.println("[AuthService.setupFbLoginButton] FB token request error");
-                HashMap<String, Object> callbackParams = new HashMap<>();
-                callbackParams.put("status", "error");
-                callback.execute(callbackParams);
+                callback.execute(null, S.UnknownError);
             }
         });
     }
@@ -92,21 +88,19 @@ public class AuthService {
      * @param callback callback function to execute, with a key-value pair params passed in to it.
      */
     public void convertFbToken(String fbToken, final Callback callback){
-        String apiUrl = AppContext.current.getApiBase() + "/auth/token/fb";
+        String apiUrl = AppContext.getCurrent().getApiBase() + "/auth/token/fb";
         HashMap<String, String> apiParams = new HashMap<>();
         apiParams.put("fbtoken", fbToken);
-        AppContext.current.getDataService().request(ApiTaskMethod.POST, apiUrl, apiParams, new Callback() {
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, apiUrl, apiParams, new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params) {
-                HashMap<String, Object> callbackParams = new HashMap<>();
+            public void execute(HashMap<String, Object> params, S S) {
                 if(params == null || params.get("token") == null){
                     logOut();
-                    callbackParams.put("status", "error");
+                    callback.execute(null, S.UnknownError);
                 }else {
                     setAccessToken((String) params.get("token"));
-                    callbackParams.put("status", "success");
+                    callback.execute(null, S.OK);
                 }
-                callback.execute(callbackParams);
             }
         });
     }
@@ -124,7 +118,7 @@ public class AuthService {
      * @return access token, or null if no token is stored
      */
     public String getAccessToken(){
-        SharedPreferences settings = AppContext.current.getShell().getPreferences(0);
+        SharedPreferences settings = AppContext.getCurrent().getShell().getPreferences(0);
         return settings.getString("token", null);
 }
 
@@ -133,7 +127,7 @@ public class AuthService {
      * @param token access token
      */
     private void setAccessToken(String token){
-        SharedPreferences settings = AppContext.current.getShell().getPreferences(0);
+        SharedPreferences settings = AppContext.getCurrent().getShell().getPreferences(0);
         SharedPreferences.Editor settingsEditor = settings.edit();
         settingsEditor.putString("token", token);
         settingsEditor.apply();

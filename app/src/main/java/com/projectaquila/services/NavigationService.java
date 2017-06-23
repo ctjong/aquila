@@ -5,17 +5,43 @@ import android.os.Bundle;
 
 import com.projectaquila.views.ViewBase;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * A service that handles navigation between views
+ */
 public class NavigationService {
+    private HashMap<String, ViewBase> mViews;
+
+    /**
+     * Instantiate a new navigation service
+     */
+    public NavigationService(){
+        mViews = new HashMap<>();
+    }
+
     /**
      * Navigate to the specified activity
-     * @param newView new view to navigate to
+     * @param viewClass class of the view to navigate to
      * @param parameters navigation parameters
      */
-    public void navigate(ViewBase newView, Map<String, String> parameters){
-        System.out.println("[NavigationService.navigate] " + newView.getClass().getName());
+    public void navigate(Class viewClass, Map<String, String> parameters){
+        System.out.println("[NavigationService.navigate] " + viewClass.getName());
+        ViewBase view;
+        if(mViews.containsKey(viewClass.getName())){
+            view = mViews.get(viewClass.getName());
+        }else{
+            try {
+                view = (ViewBase)viewClass.newInstance();
+                mViews.put(viewClass.getName(), view);
+            } catch (Exception e) {
+                System.err.println("[NavigationService.navigate] failed to instantiate view");
+                e.printStackTrace();
+                return;
+            }
+        }
         Bundle bundle = new Bundle();
         if(parameters != null){
             Iterator it = parameters.entrySet().iterator();
@@ -29,6 +55,6 @@ public class NavigationService {
                 bundle.putString((String) key, (String) value);
             }
         }
-        newView.onStart(bundle);
+        view.onStart(bundle);
     }
 }

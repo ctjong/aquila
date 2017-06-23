@@ -1,11 +1,13 @@
 package com.projectaquila.views;
 
 import android.content.Intent;
+import android.widget.TextView;
 
 import com.facebook.login.widget.LoginButton;
 import com.projectaquila.R;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.Callback;
+import com.projectaquila.models.S;
 import com.projectaquila.services.AuthService;
 
 import java.util.HashMap;
@@ -14,6 +16,8 @@ import java.util.HashMap;
  * Main activity
  */
 public class MainView extends ViewBase {
+    private TextView mErrorText;
+
     /**
      * Get layout ID
      * @return ID of the layout to use for the current activity
@@ -28,12 +32,13 @@ public class MainView extends ViewBase {
      */
     @Override
     protected void initializeView(){
-        final AuthService authService = AppContext.current.getAuthService();
+        final AuthService authService = AppContext.getCurrent().getAuthService();
+        setAuthErrorText("");
 
         // setup activity result event handler
-        AppContext.current.getShell().addActivityResultHandler(new Callback() {
+        AppContext.getCurrent().getShell().addActivityResultHandler(new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params) {
+            public void execute(HashMap<String, Object> params, S s) {
                 int requestCode = (int)params.get("requestCode");
                 int resultCode = (int)params.get("resultCode");
                 Intent data = (Intent)params.get("data");
@@ -43,44 +48,55 @@ public class MainView extends ViewBase {
 
         // check if logged in on launch
         if(authService.isUserLoggedIn()){
-            AppContext.current.getNavigationService().navigate(new TasksView(), null);
+            AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);
             return;
         }
 
         // clear any existing login session and setup login button
-        AppContext.current.getAuthService().logOut();
-        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.page_main_loginbutton);
+        AppContext.getCurrent().getAuthService().logOut();
+        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.view_main_loginbutton);
         authService.setupFbLoginButton(fbLoginButton, new Callback(){
             @Override
-            public void execute(HashMap<String, Object> params) {
+            public void execute(HashMap<String, Object> params, S s) {
+                setAuthErrorText("");
+
                 // check fb token retrieval response
                 String fbToken = (String)params.get("fbToken");
-                if(params.get("status") == "error" || fbToken == null) {
-                    AppContext.current.getShell().showContentScreen();
-                    //TODO display login error
+                if(s != S.OK || fbToken == null) {
+                    setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.invalid_login));
                     return;
                 }
 
-                // show loading screen
-                AppContext.current.getShell().showLoadingScreen();
-
                 // convert fb token to long term token
+                AppContext.getCurrent().getShell().showLoadingScreen();
                 authService.convertFbToken(fbToken, new Callback() {
                     @Override
-                    public void execute(HashMap<String, Object> params) {
+                    public void execute(HashMap<String, Object> params, S s) {
                         String token = (String)params.get("token");
-                        if(params.get("status") == "error" || token == null) {
-                            //TODO display login error
-                            AppContext.current.getShell().showContentScreen();
-                            return;
+                        if(s != S.OK || token == null) {
+                            setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.invalid_login));
+                            AppContext.getCurrent().getAuthService().logOut();
+                            AppContext.getCurrent().getShell().showContentScreen();
+                        }else{
+                            AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);
                         }
-                        AppContext.current.getNavigationService().navigate(new TasksView(), null);
                     }
                 });
             }
         });
 
         // show content
-        AppContext.current.getShell().showContentScreen();
+        AppContext.getCurrent().getShell().showContentScreen();
+    }
+
+    /**
+     * Set auth error text
+     * @param errorMsg error message to show
+     */
+    private void setAuthErrorText(String errorMsg){
+        if(mErrorText == null){
+            mErrorText = (TextView) findViewById(R.id.view_main_errortext);
+        }
+        mErrorText.setText(errorMsg);
     }
 }

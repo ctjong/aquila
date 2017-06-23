@@ -49,7 +49,7 @@ public class TaskListItem {
         if(mView != null) {
             return mView;
         }
-        mView = (FrameLayout) LayoutInflater.from(AppContext.current.getShell()).inflate(R.layout.control_tasklistitem, null);
+        mView = (FrameLayout) LayoutInflater.from(AppContext.getCurrent().getShell()).inflate(R.layout.control_tasklistitem, null);
         TextView text = (TextView) mView.findViewById(R.id.control_tasklistitem_text);
         text.setText(mTitle);
         LinearLayout slider = (LinearLayout) mView.findViewById(R.id.control_tasklistitem_slider);

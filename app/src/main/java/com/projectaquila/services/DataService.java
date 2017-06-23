@@ -2,10 +2,12 @@ package com.projectaquila.services;
 
 import android.os.AsyncTask;
 
+import com.projectaquila.models.ApiResult;
 import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.AsyncTaskResult;
+import com.projectaquila.models.S;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObject>> {
+public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult>> {
     private ApiTaskMethod mMethod;
     private String mSourceUrl;
     private HashMap<String,String> mData;
@@ -37,14 +39,14 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
     }
 
     @Override
-    protected AsyncTaskResult<JSONObject> doInBackground(Void... params) {
+    protected AsyncTaskResult<ApiResult> doInBackground(Void... params) {
         try {
             System.out.println("[DataService.doInBackground] " + mMethod.name() + " " + mSourceUrl);
             URL url = new URL(mSourceUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             // set token header
-            String token = AppContext.current.getAuthService().getAccessToken();
+            String token = AppContext.getCurrent().getAuthService().getAccessToken();
             if(token != null) {
                 conn.addRequestProperty("Authorization", "Bearer " + token);
             }
@@ -78,11 +80,15 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
             }
 
             // prepare outgoing response
-            JSONObject response = new JSONObject();
-            response.put("statusCode", responseCode);
             Object responseObj = new JSONTokener(responseStr).nextValue();
-            response.put("value", responseObj);
-            return new AsyncTaskResult<>(response);
+            JSONObject res;
+            if(responseObj instanceof JSONObject){
+                res = (JSONObject)responseObj;
+            }else{
+                res = new JSONObject();
+                res.put("value", responseObj);
+            }
+            return new AsyncTaskResult<>(new ApiResult(responseCode, res));
         } catch (Exception e) {
             System.err.println("[DataService.doInBackground] exception");
             e.printStackTrace();
@@ -91,40 +97,31 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<JSONObjec
     }
 
     @Override
-    protected void onPostExecute(AsyncTaskResult<JSONObject> result) {
+    protected void onPostExecute(AsyncTaskResult<ApiResult> result) {
         if(result.getError() != null) {
-            mCallback.execute(null);
+            mCallback.execute(null, S.UnknownError);
             return;
         }
         try {
-            mCallback.execute(convertJson(result.getResult()));
+            ApiResult res = result.getResult();
+            int statusCode = res.getStatusCode();
+            HashMap<String, Object> data = res.getData();
+            if(statusCode == 200){
+                mCallback.execute(data, S.OK);
+            }else if(statusCode == 401){
+                mCallback.execute(data, S.Unauthorized);
+            }else{
+                mCallback.execute(data, S.UnknownError);
+            }
         } catch(Exception e) {
             System.err.println("[DataService.onPostExecute] exception");
             e.printStackTrace();
-            mCallback.execute(null);
+            mCallback.execute(null, S.UnknownError);
         }
     }
 
     private String getPostDataString(HashMap<String, String> params) throws JSONException {
         JSONObject json = new JSONObject(params);
         return json.toString(0);
-    }
-
-    private HashMap<String, Object> convertJson(JSONObject json){
-        JSONArray names = json.names();
-        HashMap<String, Object> map = new HashMap<>();
-        for(int i=0; i<names.length(); i++){
-            try {
-                String name = (String)names.get(i);
-                Object value = json.get(name);
-                if(value instanceof JSONObject){
-                    value = convertJson((JSONObject)value);
-                }
-                map.put(name, value);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return map;
     }
 }

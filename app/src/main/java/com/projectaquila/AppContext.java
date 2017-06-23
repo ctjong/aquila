@@ -33,9 +33,12 @@ public class AppContext {
         Singleton accessor
     ----------------------------------*/
 
-    public static AppContext current;
+    private static AppContext mCurrent;
     public static void initialize(Context coreContext) {
-        current = new AppContext(coreContext);
+        mCurrent = new AppContext(coreContext);
+    }
+    public static AppContext getCurrent(){
+        return mCurrent;
     }
 
     /*----------------------------------

@@ -44,11 +44,9 @@ public class ShellActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // init app context if it hasn't been initialized
-        if(AppContext.current == null){
-            AppContext.initialize(this.getApplicationContext());
-        }
-        AppContext.current.setShell(this);
+        // init app context
+        AppContext.initialize(this.getApplicationContext());
+        AppContext.getCurrent().setShell(this);
 
         // init layout
         super.onCreate(savedInstanceState);
@@ -76,7 +74,7 @@ public class ShellActivity extends AppCompatActivity {
 
         // navigate to main
         showLoadingScreen();
-        AppContext.current.getNavigationService().navigate(new MainView(), null);
+        AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
     }
 
     /**
@@ -210,9 +208,9 @@ public class ShellActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if(position == 0){
-                AppContext.current.getNavigationService().navigate(new MainView(), null);
+                AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
             }else{
-                AppContext.current.getNavigationService().navigate(new TestView(), null);
+                AppContext.getCurrent().getNavigationService().navigate(TestView.class, null);
             }
         }
     }

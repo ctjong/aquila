@@ -1,6 +1,5 @@
 package com.projectaquila.views;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -29,12 +28,7 @@ public abstract class ViewBase {
      */
     public void onStart(Bundle savedInstanceState) {
         mSavedState = savedInstanceState;
-
-        // init layout
-        AppContext.current.getShell().load(getLayoutId());
-
-        // init view
-        AppContext.current.getShell().showContentScreen();
+        AppContext.getCurrent().getShell().load(getLayoutId());
         initializeView();
     }
 
@@ -44,6 +38,6 @@ public abstract class ViewBase {
      * @return matched view object
      */
     public View findViewById(int viewId){
-        return AppContext.current.getShell().getCurrentView().findViewById(viewId);
+        return AppContext.getCurrent().getShell().getCurrentView().findViewById(viewId);
     }
 }
