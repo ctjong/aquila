@@ -19,7 +19,6 @@ import java.util.HashMap;
 public class TaskControl {
     private String mId;
     private String mName;
-    private String mDescription;
     private Event mDeleteEvent;
 
     public static TaskControl parse(Object object){
@@ -28,20 +27,14 @@ public class TaskControl {
         }
         JSONObject json = (JSONObject)object;
         try{
-            String id = json.getString("id");
-            String name = json.getString("taskname");
-            String description = json.getString("taskdescription");
-            return new TaskControl(id, name, description);
+            TaskControl task = new TaskControl();
+            task.mId = json.getString("id");
+            task.mName = json.getString("taskname");
+            task.mDeleteEvent = new Event();
+            return task;
         }catch(JSONException e){
             return null;
         }
-    }
-
-    private TaskControl(String id, String name, String description){
-        mId = id;
-        mName = name;
-        mDescription = description;
-        mDeleteEvent = new Event();
     }
 
     public View renderView(View view){
