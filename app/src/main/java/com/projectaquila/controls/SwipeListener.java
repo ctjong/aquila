@@ -18,30 +18,28 @@ public class SwipeListener implements View.OnTouchListener {
     private View mDraggable;
     private Integer mTouchStartX;
 
-
     public static void listen(View view, View draggable, Callback leftSwipeHandler, Callback rightSwipeHandler, Callback clickHandler){
         SwipeListener listener = new SwipeListener();
         listener.mLeftSwipeHandler = leftSwipeHandler;
         listener.mRightSwipeHandler = rightSwipeHandler;
         listener.mClickHandler = clickHandler;
         listener.mDraggable = draggable;
-
         view.setOnTouchListener(listener);
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         int action = motionEvent.getAction();
-        int pointerX = (int)motionEvent.getX();
+        int pointerX = (int)motionEvent.getRawX();
         if(action == MotionEvent.ACTION_DOWN) {
             mTouchStartX = pointerX;
         }else if(mTouchStartX == null){
             return true;
         }else if(action == MotionEvent.ACTION_MOVE) {
-            setDraggableX(pointerX - mTouchStartX);
+            mDraggable.setTranslationX(pointerX - mTouchStartX);
         }else if(action == MotionEvent.ACTION_OUTSIDE ||action == MotionEvent.ACTION_CANCEL) {
             mTouchStartX = null;
-            setDraggableX(0);
+            mDraggable.setTranslationX(0);
         }else if(action == MotionEvent.ACTION_UP){
             float delta = Math.abs(pointerX - mTouchStartX);
             if(pointerX - mTouchStartX > DragMinX && mRightSwipeHandler != null){
@@ -52,24 +50,8 @@ public class SwipeListener implements View.OnTouchListener {
                 mClickHandler.execute(null, S.OK);
             }
             mTouchStartX = null;
-            setDraggableX(0);
+            mDraggable.setTranslationX(0);
         }
         return true;
-    }
-
-    private void setDraggableX(int x){
-        mDraggable.setTranslationX(x);
-        /*int leftMargin = 0;
-        int rightMargin = 0;
-        if(x > 0){
-            leftMargin = x;
-        }else{
-            rightMargin = x * -1;
-        }
-
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mDraggable.getLayoutParams();
-        layoutParams.leftMargin = leftMargin;
-        layoutParams.rightMargin = rightMargin;
-        mDraggable.setLayoutParams(layoutParams);*/
     }
 }
