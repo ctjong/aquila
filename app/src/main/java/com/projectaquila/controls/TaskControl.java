@@ -1,61 +1,62 @@
 package com.projectaquila.controls;
 
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.projectaquila.AppContext;
-import com.projectaquila.models.Event;
 import com.projectaquila.R;
 import com.projectaquila.models.Callback;
+import com.projectaquila.models.Event;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
-public class TaskListItem {
+public class TaskControl {
     private static final int SliderDragMinX = 200;
     private static final int SliderClickMaxX = 10;
 
     private String mId;
-    private String mTitle;
-    private FrameLayout mView;
-    private float mSliderX;
-    private float mTouchStartX;
-
+    private String mName;
+    private String mDescription;
     private Event mDeleteEvent;
 
-    public TaskListItem(String id, String title){
+    private float mSliderX;
+    private float mTouchStartX;
+    private View mView;
+
+    public TaskControl(String id, String name, String description){
         mId = id;
-        mTitle = title;
+        mName = name;
+        mDescription = description;
         mDeleteEvent = new Event();
     }
 
-    public static TaskListItem create(JSONObject object){
+    public static TaskControl parse(Object object){
+        if(!(object instanceof JSONObject)){
+            return null;
+        }
+        JSONObject json = (JSONObject)object;
         try{
-            String id = object.getString("id");
-            String title = object.getString("title");
-            return new TaskListItem(id, title);
+            String id = json.getString("id");
+            String name = json.getString("taskname");
+            String description = json.getString("taskdescription");
+            return new TaskControl(id, name, description);
         }catch(JSONException e){
             return null;
         }
     }
 
-    public FrameLayout renderView(){
-        if(mView != null) {
-            return mView;
-        }
-        mView = (FrameLayout) LayoutInflater.from(AppContext.getCurrent().getShell()).inflate(R.layout.control_tasklistitem, null);
-        TextView text = (TextView) mView.findViewById(R.id.control_tasklistitem_text);
-        text.setText(mTitle);
-        LinearLayout slider = (LinearLayout) mView.findViewById(R.id.control_tasklistitem_slider);
+    public View renderView(View view){
+        TextView text = (TextView) view.findViewById(R.id.control_tasklistitem_text);
+        text.setText(mName);
+        LinearLayout slider = (LinearLayout) view.findViewById(R.id.control_tasklistitem_slider);
         slider.setOnTouchListener(new TaskListItemTouchListener());
         mSliderX = slider.getX();
-        return mView;
+        mView = view;
+        return view;
     }
 
     public void addDeleteHandler(Callback cb){
@@ -65,7 +66,7 @@ public class TaskListItem {
     private void deleteTask(){
         System.out.println("[TaskListItem.deleteTask] deleting task " + mId);
         HashMap params = new HashMap();
-        params.put("item", mView);
+        params.put("view", mView);
         mDeleteEvent.invoke(params);
     }
 

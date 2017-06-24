@@ -7,6 +7,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.projectaquila.R;
+import com.projectaquila.controls.TaskControl;
+import com.projectaquila.controls.TasksAdapter;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
 import com.projectaquila.AppContext;
@@ -28,7 +30,7 @@ public class TasksView extends ViewBase {
     private ListView mTasksList;
     private TextView mCurrentDateText;
     private TextView mCurrentMonthText;
-    private ArrayAdapter<String> mTasksAdapter;
+    private TasksAdapter mTasksAdapter;
     private Date mCurrentDate;
 
     @Override
@@ -41,7 +43,7 @@ public class TasksView extends ViewBase {
         mTasksList = (ListView)findViewById(R.id.view_tasks_list);
         mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
         mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
-        mTasksAdapter = new ArrayAdapter(AppContext.getCurrent().getCore(), R.layout.control_tasklistitem);
+        mTasksAdapter = new TasksAdapter();
         mCurrentDate = new Date();
 
         mTasksList.setAdapter(mTasksAdapter);
@@ -74,7 +76,6 @@ public class TasksView extends ViewBase {
                     AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
                     return;
                 }
-
                 JSONArray tasks = (JSONArray)params.get("value");
                 if(tasks == null) {
                     System.err.println("[TasksView.loadTasks] null tasks returned");
@@ -86,17 +87,12 @@ public class TasksView extends ViewBase {
                 for(int i=0; i<tasks.length(); i++){
                     try {
                         Object taskObj = tasks.get(i);
-                        if(!(taskObj instanceof JSONObject)){
-                            System.err.println("[TasksView.loadTasks] invalid task type. skipping.");
+                        TaskControl task = TaskControl.parse(taskObj);
+                        if(task == null){
+                            System.err.println("[TasksView.loadTasks] failed to parse task object. skipping.");
                             continue;
                         }
-                        JSONObject task = (JSONObject) taskObj;
-                        Object taskNameObj = task.get("taskname");
-                        if(!(taskNameObj instanceof String)){
-                            System.err.println("[TasksView.loadTasks] invalid task type. skipping.");
-                            continue;
-                        }
-                        mTasksAdapter.add((String)taskNameObj);
+                        mTasksAdapter.add(task);
                     } catch (JSONException e) {
                         System.err.println("[TasksView.loadTasks] an exception occured. skipping.");
                         e.printStackTrace();
