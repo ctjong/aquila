@@ -12,8 +12,10 @@ import android.view.View;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.projectaquila.controls.DrawerItemClickListener;
 import com.projectaquila.controls.DrawerToggle;
@@ -36,11 +38,11 @@ public class ShellActivity extends AppCompatActivity {
     private ListView mDrawer;
     private ActionBarDrawerToggle mDrawerToggle;
     private FrameLayout mContentScreen;
-    private View mCurrentView;
     private View mLoadingScreen;
     private View mErrorScreen;
     private ArrayAdapter<String> mDrawerAdapter;
     private Event mActivityResultEvent;
+    private View mCurrentView;
 
     /**
      * Invoked when the activity is created
@@ -81,6 +83,15 @@ public class ShellActivity extends AppCompatActivity {
         mContentScreen = (FrameLayout) findViewById(R.id.shell_content);
         mActivityResultEvent = new Event();
 
+        // init error screen
+        Button reloadBtn = (Button)findViewById(R.id.shell_error_reload_btn);
+        reloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppContext.getCurrent().getNavigationService().reload();
+            }
+        });
+
         // navigate to main
         showLoadingScreen();
         AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
@@ -101,16 +112,11 @@ public class ShellActivity extends AppCompatActivity {
     }
 
     /**
-     * Find view with the specified id
-     * @param id view ID
-     * @return view object
+     * Return the current view
+     * @return current view object
      */
-    @Override
-    public View findViewById(int id){
-        if(mCurrentView == null){
-            return super.findViewById(id);
-        }
-        return mCurrentView.findViewById(id);
+    public View getCurrentView(){
+        return mCurrentView;
     }
 
     /**
@@ -172,21 +178,14 @@ public class ShellActivity extends AppCompatActivity {
     /**
      * Show the error screen
      */
-    public void showErrorScreen(){
+    public void showErrorScreen(int stringId){
         System.out.println("[ShellActivity.showErrorScreen]");
+        TextView errorText = (TextView)findViewById(R.id.shell_error_text);
+        errorText.setText(getString(stringId));
         mErrorScreen.setVisibility(View.VISIBLE);
         mLoadingScreen.setVisibility(View.GONE);
         mContentScreen.setVisibility(View.GONE);
     }
-
-    /**
-     * Get current view
-     * @return current view object
-     */
-    public View getCurrentView(){
-        return mCurrentView;
-    }
-
     /**
      * Bind a new handler to the activity result event
      */

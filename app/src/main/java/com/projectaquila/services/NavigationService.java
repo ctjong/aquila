@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public class NavigationService {
     private HashMap<String, ViewBase> mViews;
+    private Bundle mCurrentViewParams;
+    private ViewBase mCurrentView;
 
     /**
      * Instantiate a new navigation service
@@ -55,6 +57,15 @@ public class NavigationService {
                 bundle.putString((String) key, (String) value);
             }
         }
+        mCurrentView = view;
+        mCurrentViewParams = bundle;
         view.onStart(bundle);
+    }
+
+    /**
+     * Reload current view
+     */
+    public void reload(){
+        mCurrentView.onStart(mCurrentViewParams);
     }
 }

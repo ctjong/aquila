@@ -62,7 +62,7 @@ public class MainView extends ViewBase {
 
                 // check fb token retrieval response
                 if(s != S.OK) {
-                    setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.error_login_failed));
+                    setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.main_error_login_failed));
                     return;
                 }
 
@@ -73,7 +73,7 @@ public class MainView extends ViewBase {
                     @Override
                     public void execute(HashMap<String, Object> params, S s) {
                         if(s != S.OK ) {
-                            setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.error_invalid_login));
+                            setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.main_error_invalid_login));
                             AppContext.getCurrent().getShell().showContentScreen();
                         }else{
                             AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);

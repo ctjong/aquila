@@ -4,17 +4,17 @@
     <string name="shell_drawer_open">Open left nav</string>
     <string name="shell_drawer_close">Close left nav</string>
     <string name="shell_loading">Please wait</string>
-    <string name="shell_error">Something went wrong :(</string>
+    <string name="shell_error_reload_btn_text">Reload</string>
+    <string name="shell_error_connection">Failed to connect to server. Please make sure you are connected to internet.</string>
+    <string name="shell_error_unknown">Something went wrong.</string>
 
     <string name="menu_tasks">Tasks</string>
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
+    <string name="main_error_login_failed">Login failed</string>
+    <string name="main_error_invalid_login">Invalid login</string>
 
     <string name="main_intro_text">Welcome! Please login to continue.</string>
     <string name="main_facebook_app_id">1323560431073064</string>
     <string name="main_facebook_login_text">Log in with Facebook</string>
-
-    <string name="error_tasks_null">No task found. Click the add button to add new task to your list.</string>
-    <string name="error_login_failed">Login failed</string>
-    <string name="error_invalid_login">Invalid login</string>
 </resources>

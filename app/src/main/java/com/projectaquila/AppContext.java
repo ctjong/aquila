@@ -75,6 +75,10 @@ public class AppContext {
         Member property getters
     ----------------------------------*/
 
+    public Context getCore(){
+        return mCore;
+    }
+
     public String getApiBase () {
         if(mDebugConfig.containsKey("apiBase")) {
             return mDebugConfig.get("apiBase");

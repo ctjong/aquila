@@ -2,6 +2,7 @@ package com.projectaquila.services;
 
 import android.os.AsyncTask;
 
+import com.projectaquila.R;
 import com.projectaquila.models.ApiResult;
 import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
@@ -99,7 +100,8 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
     @Override
     protected void onPostExecute(AsyncTaskResult<ApiResult> result) {
         if(result.getError() != null) {
-            mCallback.execute(null, S.UnknownError);
+            AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_connection);
+            mCallback.execute(null, S.ConnectionError);
             return;
         }
         try {
