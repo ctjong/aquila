@@ -40,10 +40,10 @@ public class TaskControl {
     public View renderView(View view){
         TextView text = (TextView) view.findViewById(R.id.control_tasklistitem_text);
         text.setText(mName);
-        LinearLayout slider = (LinearLayout) view.findViewById(R.id.control_tasklistitem_slider);
 
         Callback deleteTaskAction = getDeleteTaskAction();
         Callback openTaskAction = getOpenTaskAction();
+        View slider = view.findViewById(R.id.control_tasklistitem_slider);
         SwipeListener.listen(slider, slider, deleteTaskAction, deleteTaskAction, openTaskAction);
         return view;
     }

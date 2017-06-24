@@ -5,81 +5,74 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/view_tasks_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="date"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/view_tasks_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="month"
+            android:textSize="15dp" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/view_tasks_list"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/view_tasks_draggable">
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="70dp" />
 
-        <RelativeLayout
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/tasks_add"
+        android:elevation="20dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/view_tasks_add_text"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="80dp"
+            android:hint="@string/tasks_add_hint" />
 
-            <TextView
-                android:id="@+id/view_tasks_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="date"
-                android:textSize="25dp" />
+        <Button
+            android:id="@+id/view_tasks_add_edit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="40dp"
+            android:background="@android:drawable/ic_menu_edit" />
 
-            <TextView
-                android:id="@+id/view_tasks_month"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="month"
-                android:textSize="15dp" />
-        </RelativeLayout>
-
-        <ListView
-            android:id="@+id/view_tasks_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="50dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="70dp" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:background="@drawable/tasks_add"
-            android:elevation="20dp"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/view_tasks_add_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="80dp"
-                android:hint="@string/tasks_add_hint" />
-
-            <Button
-                android:id="@+id/view_tasks_add_edit"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="40dp"
-                android:background="@android:drawable/ic_menu_edit" />
-
-            <Button
-                android:id="@+id/view_tasks_add_save"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:background="@android:drawable/ic_menu_save" />
-        </RelativeLayout>
-
+        <Button
+            android:id="@+id/view_tasks_add_save"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:background="@android:drawable/ic_menu_save" />
     </RelativeLayout>
 
 </RelativeLayout>
