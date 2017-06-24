@@ -9,6 +9,7 @@ import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.AsyncTaskResult;
 import com.projectaquila.models.S;
+import com.projectaquila.views.MainView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -30,10 +32,10 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
     private HashMap<String,String> mData;
     private Callback mCallback;
 
-    public void request(ApiTaskMethod method, String sourceUrl, HashMap<String,String> data, Callback callback){
+    public void request(ApiTaskMethod method, String urlPath, HashMap<String,String> data, Callback callback){
         DataService task = new DataService();
         task.mMethod = method;
-        task.mSourceUrl = sourceUrl;
+        task.mSourceUrl = AppContext.getCurrent().getApiBase() + urlPath;
         task.mData = data;
         task.mCallback = callback;
         task.execute();
@@ -52,11 +54,15 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
                 conn.addRequestProperty("Authorization", "Bearer " + token);
             }
 
-            // bind POST data
-            if(mMethod == ApiTaskMethod.POST) {
+            // set request method
+            if(mMethod != ApiTaskMethod.GET){
+                conn.setRequestMethod(mMethod.name());
+            }
+
+            // bind POST/PUT data
+            if(mMethod == ApiTaskMethod.POST || mMethod == ApiTaskMethod.PUT) {
                 conn.setReadTimeout(15000);
                 conn.setConnectTimeout(15000);
-                conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
                 conn.setRequestProperty("Content-Type", "application/json");
@@ -71,7 +77,7 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
             // get the incoming response
             int responseCode = conn.getResponseCode();
             if(responseCode != 200) {
-                throw new Exception("DataService.doInBackground status code = " + responseCode);
+                return new AsyncTaskResult<>(new ApiResult(responseCode, null));
             }
             String line;
             String responseStr = "";
@@ -81,7 +87,12 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
             }
 
             // prepare outgoing response
-            Object responseObj = new JSONTokener(responseStr).nextValue();
+            Object responseObj;
+            try {
+                responseObj = new JSONTokener(responseStr).nextValue();
+            }catch(JSONException e){
+                responseObj = responseStr;
+            }
             JSONObject res;
             if(responseObj instanceof JSONObject){
                 res = (JSONObject)responseObj;
@@ -90,6 +101,8 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
                 res.put("value", responseObj);
             }
             return new AsyncTaskResult<>(new ApiResult(responseCode, res));
+        }catch(SocketException e){
+            return new AsyncTaskResult<>(new ApiResult(404, null));
         } catch (Exception e) {
             System.err.println("[DataService.doInBackground] exception");
             e.printStackTrace();
@@ -100,25 +113,25 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
     @Override
     protected void onPostExecute(AsyncTaskResult<ApiResult> result) {
         if(result.getError() != null) {
-            AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_connection);
-            mCallback.execute(null, S.ConnectionError);
-            return;
-        }
-        try {
+            AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
+            mCallback.execute(null, S.Error);
+        }else{
             ApiResult res = result.getResult();
             int statusCode = res.getStatusCode();
-            HashMap<String, Object> data = res.getData();
-            if(statusCode == 200){
-                mCallback.execute(data, S.OK);
-            }else if(statusCode == 401){
-                mCallback.execute(data, S.Unauthorized);
+            System.out.println("[DataService.onPostExecute] found statusCode " + statusCode);
+            if(statusCode == 404) {
+                AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_connection);
+                mCallback.execute(null, S.Error);
+            }else if(statusCode == 401) {
+                AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
+                mCallback.execute(null, S.Error);
+            }else if(statusCode != 200){
+                AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
+                mCallback.execute(null, S.Error);
             }else{
-                mCallback.execute(data, S.UnknownError);
+                HashMap<String, Object> data = res.getData();
+                mCallback.execute(data, S.OK);
             }
-        } catch(Exception e) {
-            System.err.println("[DataService.onPostExecute] exception");
-            e.printStackTrace();
-            mCallback.execute(null, S.UnknownError);
         }
     }
 

@@ -11,10 +11,12 @@
     <string name="menu_tasks">Tasks</string>
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
-    <string name="main_error_login_failed">Login failed</string>
-    <string name="main_error_invalid_login">Invalid login</string>
 
     <string name="main_intro_text">Welcome! Please login to continue.</string>
     <string name="main_facebook_app_id">1323560431073064</string>
     <string name="main_facebook_login_text">Log in with Facebook</string>
+    <string name="main_error_login_failed">Login failed</string>
+    <string name="main_error_invalid_login">Invalid login</string>
+
+    <string name="tasks_add_hint">Add new task</string>
 </resources>

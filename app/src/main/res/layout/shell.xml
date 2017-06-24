@@ -43,16 +43,15 @@
         </RelativeLayout>
 
         <FrameLayout
+            android:id="@+id/shell_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp"
-            android:id="@+id/shell_content"
             android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="content frame"/>
+                android:text="content frame" />
         </FrameLayout>
 
         <RelativeLayout
@@ -88,7 +87,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:background="@color/colorPrimary"
-                android:text="@string/shell_error_reload_btn_text" />
+                android:text="@string/shell_error_reload_btn_text"
+                android:textColor="@android:color/background_light" />
 
         </RelativeLayout>
 

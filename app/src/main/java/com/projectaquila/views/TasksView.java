@@ -1,7 +1,10 @@
 package com.projectaquila.views;
 
+import android.text.Editable;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,6 +49,19 @@ public class TasksView extends ViewBase {
         mTasksAdapter = new TasksAdapter();
         mCurrentDate = new Date();
 
+        findViewById(R.id.view_tasks_add_save).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAddSaveClick();
+            }
+        });
+        findViewById(R.id.view_tasks_add_edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAddEditClick();
+            }
+        });
+
         mTasksList.setAdapter(mTasksAdapter);
         refresh();
     }
@@ -65,17 +81,11 @@ public class TasksView extends ViewBase {
         if(dataUrl == null) return;
 
         // request data
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, AppContext.getCurrent().getApiBase() + dataUrl, null, new Callback() {
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, dataUrl, null, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 // check for errors
-                if(s == S.Unauthorized){
-                    AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
-                    return;
-                }else if(s != s.OK){
-                    AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
-                    return;
-                }
+                if(s == S.Error) return;
                 JSONArray tasks = (JSONArray)params.get("value");
                 if(tasks == null) {
                     System.err.println("[TasksView.loadTasks] null tasks returned");
@@ -98,10 +108,37 @@ public class TasksView extends ViewBase {
                         e.printStackTrace();
                     }
                 }
-                AppContext.getCurrent().getShell().showContentScreen();
                 mTasksAdapter.notifyDataSetChanged();
+                AppContext.getCurrent().getShell().showContentScreen();
             }
         });
+    }
+
+    /**
+     * Invoked when the add-save button is clicked
+     */
+    private void onAddSaveClick(){
+        EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
+        String taskName = taskNameCtrl.getText().toString();
+        String taskDate = getCurrentDateString("yyMMdd");
+        taskNameCtrl.setText("");
+        HashMap<String,String> data = new HashMap<>();
+        data.put("taskname", taskName);
+        data.put("taskdate", taskDate);
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", data, new Callback() {
+            @Override
+            public void execute(HashMap<String, Object> params, S s) {
+                if(s == S.Error) return;
+                refresh();
+            }
+        });
+    }
+
+    /**
+     * Invoked when the add-edit button is clicked
+     */
+    private void onAddEditClick(){
+
     }
 
     /**

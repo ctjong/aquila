@@ -73,14 +73,14 @@ public class AuthService {
             public void onCancel() {
                 logOut();
                 System.err.println("[AuthService.setupFbLoginButton] FB token request error");
-                callback.execute(null, S.UnknownError);
+                callback.execute(null, S.Error);
             }
 
             @Override
             public void onError(FacebookException error) {
                 logOut();
                 System.err.println("[AuthService.setupFbLoginButton] FB token request error");
-                callback.execute(null, S.UnknownError);
+                callback.execute(null, S.Error);
             }
         });
     }
@@ -91,15 +91,14 @@ public class AuthService {
      * @param callback callback function to execute, with a key-value pair params passed in to it.
      */
     public void convertFbToken(String fbToken, final Callback callback){
-        String apiUrl = AppContext.getCurrent().getApiBase() + "/auth/token/fb";
         HashMap<String, String> apiParams = new HashMap<>();
         apiParams.put("fbtoken", fbToken);
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, apiUrl, apiParams, new Callback() {
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/auth/token/fb", apiParams, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S S) {
                 if(params == null || params.get("token") == null){
                     logOut();
-                    callback.execute(null, S.UnknownError);
+                    callback.execute(null, S.Error);
                 }else {
                     setAccessToken((String) params.get("token"));
                     callback.execute(null, S.OK);
