@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.projectaquila.R;
+import com.projectaquila.controls.SwipeListener;
 import com.projectaquila.controls.TaskControl;
 import com.projectaquila.controls.TasksAdapter;
 import com.projectaquila.models.Callback;
@@ -19,11 +20,11 @@ import com.projectaquila.models.ApiTaskMethod;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -49,18 +50,14 @@ public class TasksView extends ViewBase {
         mTasksAdapter = new TasksAdapter();
         mCurrentDate = new Date();
 
-        findViewById(R.id.view_tasks_add_save).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onAddSaveClick();
-            }
-        });
-        findViewById(R.id.view_tasks_add_edit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onAddEditClick();
-            }
-        });
+        findViewById(R.id.view_tasks_add_save).setOnClickListener(getAddSaveClickListener());
+        findViewById(R.id.view_tasks_add_edit).setOnClickListener(getAddEditClickListener());
+
+        Callback incrementDateAction = getDateUpdateAction(1);
+        Callback decrementDateAction = getDateUpdateAction(-1);
+        View view = findViewById(R.id.view_tasks);
+        view.setOnTouchListener(new SwipeListener(view, incrementDateAction, decrementDateAction, null));
+        mTasksList.setOnTouchListener(new SwipeListener(view, incrementDateAction, decrementDateAction, null));
 
         mTasksList.setAdapter(mTasksAdapter);
         refresh();
@@ -115,30 +112,58 @@ public class TasksView extends ViewBase {
     }
 
     /**
-     * Invoked when the add-save button is clicked
+     * Get a click handler for the add-save button
      */
-    private void onAddSaveClick(){
-        EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
-        String taskName = taskNameCtrl.getText().toString();
-        String taskDate = getCurrentDateString("yyMMdd");
-        taskNameCtrl.setText("");
-        HashMap<String,String> data = new HashMap<>();
-        data.put("taskname", taskName);
-        data.put("taskdate", taskDate);
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", data, new Callback() {
+    private View.OnClickListener getAddSaveClickListener(){
+        return new View.OnClickListener(){
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
-                if(s == S.Error) return;
-                refresh();
+            public void onClick(View v) {
+                EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
+                String taskName = taskNameCtrl.getText().toString();
+                String taskDate = getCurrentDateString("yyMMdd");
+                taskNameCtrl.setText("");
+                HashMap<String,String> data = new HashMap<>();
+                data.put("taskname", taskName);
+                data.put("taskdate", taskDate);
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", data, new Callback() {
+                    @Override
+                    public void execute(HashMap<String, Object> params, S s) {
+                        if(s == S.Error) return;
+                        refresh();
+                    }
+                });
             }
-        });
+        };
     }
 
     /**
-     * Invoked when the add-edit button is clicked
+     * Get a click handler for the add-edit button
      */
-    private void onAddEditClick(){
+    private View.OnClickListener getAddEditClickListener(){
+        return new View.OnClickListener(){
 
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
+    }
+
+    /**
+     * Get an action that updates the current date by adding/substracting it with the given number of days
+     * @param numDays number of days
+     */
+    private Callback getDateUpdateAction(final int numDays) {
+        return new Callback(){
+            @Override
+            public void execute(HashMap<String, Object> params, S s) {
+                Calendar c = Calendar.getInstance();
+                c.setTime(mCurrentDate);
+                c.add(Calendar.DATE, numDays);
+                mCurrentDate = c.getTime();
+                refresh();
+            }
+        };
     }
 
     /**
