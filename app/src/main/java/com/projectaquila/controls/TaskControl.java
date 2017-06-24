@@ -44,7 +44,7 @@ public class TaskControl {
 
         Callback deleteTaskAction = getDeleteTaskAction();
         Callback openTaskAction = getOpenTaskAction();
-        slider.setOnTouchListener(new SwipeListener(slider, deleteTaskAction, deleteTaskAction, openTaskAction));
+        SwipeListener.listen(slider, slider, deleteTaskAction, deleteTaskAction, openTaskAction);
         return view;
     }
 

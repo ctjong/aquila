@@ -2,11 +2,9 @@ package com.projectaquila.views;
 
 import android.text.Editable;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.projectaquila.R;
@@ -55,9 +53,9 @@ public class TasksView extends ViewBase {
 
         Callback incrementDateAction = getDateUpdateAction(1);
         Callback decrementDateAction = getDateUpdateAction(-1);
-        View view = findViewById(R.id.view_tasks);
-        view.setOnTouchListener(new SwipeListener(view, incrementDateAction, decrementDateAction, null));
-        mTasksList.setOnTouchListener(new SwipeListener(view, incrementDateAction, decrementDateAction, null));
+        View draggableView = findViewById(R.id.view_tasks_draggable);
+        SwipeListener.listen(draggableView, draggableView, incrementDateAction, decrementDateAction, null);
+        SwipeListener.listen(mTasksList, draggableView, incrementDateAction, decrementDateAction, null);
 
         mTasksList.setAdapter(mTasksAdapter);
         refresh();
