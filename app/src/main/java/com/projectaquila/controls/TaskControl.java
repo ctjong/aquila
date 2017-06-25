@@ -14,10 +14,14 @@ import com.projectaquila.models.S;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public class TaskControl {
     private String mId;
+    private Date mDate;
     private String mName;
     private Event mDeleteEvent;
 
@@ -27,14 +31,30 @@ public class TaskControl {
         }
         JSONObject json = (JSONObject)object;
         try{
-            TaskControl task = new TaskControl();
-            task.mId = json.getString("id");
-            task.mName = json.getString("taskname");
-            task.mDeleteEvent = new Event();
-            return task;
+            String id = json.getString("id");
+            Date date = new SimpleDateFormat("yyMMdd").parse(json.getString("taskdate"));
+            String name = json.getString("taskname");
+            return new TaskControl(id, date, name);
         }catch(JSONException e){
+            System.err.println("[TaskControl.parse] received JSONException. skipping.");
+            e.printStackTrace();
+            return null;
+        } catch (ParseException e) {
+            System.err.println("[TaskControl.parse] received ParseException. skipping.");
+            e.printStackTrace();
             return null;
         }
+    }
+
+    public TaskControl(String id, Date date, String name){
+        mId = id;
+        mDate = date;
+        mName = name;
+        mDeleteEvent = new Event();
+    }
+
+    public Date getDate(){
+        return mDate;
     }
 
     public View renderView(View view){
@@ -57,12 +77,7 @@ public class TaskControl {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 System.out.println("[TaskListItem.deleteTask] deleting task " + mId);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mId, null, new Callback() {
-                    @Override
-                    public void execute(HashMap<String, Object> params, S s) {
-                        // do nothing
-                    }
-                });
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mId, null, null);
                 // update UI without waiting for delete request, for seamless UI response.
                 mDeleteEvent.invoke(null);
             }

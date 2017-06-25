@@ -7,26 +7,18 @@ import android.widget.TextView;
 
 import com.projectaquila.R;
 import com.projectaquila.controls.SwipeListener;
-import com.projectaquila.controls.TaskControl;
 import com.projectaquila.controls.TasksAdapter;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
 public class TasksView extends ViewBase {
-    private static final int ITEMS_PER_DATE = 100;
-
     private ListView mTasksList;
     private TextView mCurrentDateText;
     private TextView mCurrentMonthText;
@@ -63,48 +55,12 @@ public class TasksView extends ViewBase {
      * Refresh current view for the current date
      */
     private void refresh(){
-        AppContext.getCurrent().getShell().showLoadingScreen();
-
         // update date
         mCurrentDateText.setText(getCurrentDateString("EEE dd"));
         mCurrentMonthText.setText(getCurrentDateString("MMMM yyyy"));
 
-        // get data URL
-        String dataUrl = getDataUrlForCurrentDate();
-        if(dataUrl == null) return;
-
-        // request data
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, dataUrl, null, new Callback() {
-            @Override
-            public void execute(HashMap<String, Object> params, S s) {
-                // check for errors
-                if(s == S.Error) return;
-                JSONArray tasks = (JSONArray)params.get("value");
-                if(tasks == null) {
-                    System.err.println("[TasksView.loadTasks] null tasks returned");
-                    return;
-                }
-
-                // update tasks list
-                mTasksAdapter.clear();
-                for(int i=0; i<tasks.length(); i++){
-                    try {
-                        Object taskObj = tasks.get(i);
-                        TaskControl task = TaskControl.parse(taskObj);
-                        if(task == null){
-                            System.err.println("[TasksView.loadTasks] failed to parse task object. skipping.");
-                            continue;
-                        }
-                        mTasksAdapter.add(task);
-                    } catch (JSONException e) {
-                        System.err.println("[TasksView.loadTasks] an exception occured. skipping.");
-                        e.printStackTrace();
-                    }
-                }
-                mTasksAdapter.notifyDataSetChanged();
-                AppContext.getCurrent().getShell().showContentScreen();
-            }
-        });
+        // update tasks list
+        mTasksAdapter.loadDate(mCurrentDate, false);
     }
 
     /**
@@ -114,6 +70,7 @@ public class TasksView extends ViewBase {
         return new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                AppContext.getCurrent().getShell().showLoadingScreen();
                 EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
                 String taskName = taskNameCtrl.getText().toString();
                 String taskDate = getCurrentDateString("yyMMdd");
@@ -125,7 +82,7 @@ public class TasksView extends ViewBase {
                     @Override
                     public void execute(HashMap<String, Object> params, S s) {
                         if(s == S.Error) return;
-                        refresh();
+                        mTasksAdapter.loadDate(mCurrentDate, true);
                     }
                 });
             }
@@ -160,24 +117,6 @@ public class TasksView extends ViewBase {
                 refresh();
             }
         };
-    }
-
-    /**
-     * Get data URL for the current date
-     * @return URL string
-     */
-    private String getDataUrlForCurrentDate(){
-        try {
-            String currentDateStr = getCurrentDateString("yyMMdd");
-            String condition = URLEncoder.encode("taskdate=" + currentDateStr, "UTF-8");
-            String dataUrl = "/data/task/private/findbyconditions/id/0/" + ITEMS_PER_DATE + "/" + condition;
-            return dataUrl;
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("[TasksView.getDataUrlForCurrentDate] exception");
-            e.printStackTrace();
-            AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
-            return null;
-        }
     }
 
     /**

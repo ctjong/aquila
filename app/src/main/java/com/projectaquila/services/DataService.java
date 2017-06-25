@@ -112,26 +112,27 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
 
     @Override
     protected void onPostExecute(AsyncTaskResult<ApiResult> result) {
+        HashMap<String, Object> data = null;
+        S status = S.Error;
         if(result.getError() != null) {
             AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
-            mCallback.execute(null, S.Error);
         }else{
             ApiResult res = result.getResult();
             int statusCode = res.getStatusCode();
             System.out.println("[DataService.onPostExecute] found statusCode " + statusCode);
             if(statusCode == 404) {
                 AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_connection);
-                mCallback.execute(null, S.Error);
             }else if(statusCode == 401) {
                 AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
-                mCallback.execute(null, S.Error);
             }else if(statusCode != 200){
                 AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
-                mCallback.execute(null, S.Error);
             }else{
-                HashMap<String, Object> data = res.getData();
-                mCallback.execute(data, S.OK);
+                data = res.getData();
+                status = S.OK;
             }
+        }
+        if(mCallback != null){
+            mCallback.execute(data, status);
         }
     }
 

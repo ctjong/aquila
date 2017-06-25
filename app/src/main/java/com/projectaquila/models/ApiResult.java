@@ -24,6 +24,7 @@ public class ApiResult {
     }
 
     private HashMap<String, Object> convertJson(JSONObject json){
+        if(json == null) return null;
         JSONArray names = json.names();
         HashMap<String, Object> map = new HashMap<>();
         for(int i=0; i<names.length(); i++){
