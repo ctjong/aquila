@@ -79,7 +79,11 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 remove(taskControl);
-                mCurrentDateData.remove(taskControl);
+                if(mCurrentDateData == null){
+                    System.err.println("[TasksAdapter.getView] current date data is null");
+                }else{
+                    mCurrentDateData.remove(taskControl);
+                }
                 notifyDataSetChanged();
             }
         });
@@ -120,12 +124,13 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     /**
      * Populate data variables for the given json response from server
      * @param tasks json array of tasks
-     * @param date date object
+     * @param requestedDate date object
      */
-    private void processServerResponse(JSONArray tasks, Date date){
+    private void processServerResponse(JSONArray tasks, Date requestedDate){
         clear();
+        String requestedKey = getDateKey(requestedDate);
         for(int i=-1*CACHE_DAYS_SPAN; i<=CACHE_DAYS_SPAN; i++){
-            String key = getDateKey(date, i);
+            String key = getDateKey(requestedDate, i);
             if(!mData.containsKey(key)){
                 List<TaskControl> list = new LinkedList<>();
                 mData.put(key, list);
@@ -141,7 +146,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                 }
                 String key = getDateKey(task.getDate());
                 mData.get(key).add(task);
-                if (key.equals(getDateKey(date))) {
+                if (key.equals(requestedKey)) {
                     add(task);
                 }
             } catch (Exception e) {
@@ -149,7 +154,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                 e.printStackTrace();
             }
         }
-        mCurrentDateData = mData.get(date);
+        mCurrentDateData = mData.get(requestedKey);
     }
 
     /**
@@ -161,7 +166,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         try {
             String startDate = getDateKey(date, -1 * CACHE_DAYS_SPAN);
             String endDate = getDateKey(date, CACHE_DAYS_SPAN);
-            String condition = URLEncoder.encode("taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
+            String condition = URLEncoder.encode("iscompleted=0&taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
             return "/data/task/private/findbyconditions/id/0/" + ITEMS_PER_DATE + "/" + condition;
         } catch (UnsupportedEncodingException e) {
             System.err.println("[TasksView.getDataUrlForCurrentDate] exception");
