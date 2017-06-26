@@ -124,7 +124,6 @@ public class AppContext {
             File file = mCore.getFileStreamPath(debugConfigFilename);
             if(!file.exists()) {
                 System.out.println("[AppContext.initDebugConfig] " + debugConfigFilename + " not found");
-                mDebugConfig = null;
                 return;
             }
             System.out.println("[AppContext.initDebugConfig] " + debugConfigFilename + " found");
