@@ -1,7 +1,6 @@
 package com.projectaquila.controls;
 
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.projectaquila.AppContext;
@@ -10,61 +9,31 @@ import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.Event;
 import com.projectaquila.models.S;
+import com.projectaquila.models.Task;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 public class TaskControl {
-    private String mId;
-    private Date mDate;
-    private String mName;
+    private Task mTask;
     private Event mDeleteEvent;
 
-    public static TaskControl parse(Object object){
-        if(!(object instanceof JSONObject)){
-            return null;
-        }
-        JSONObject json = (JSONObject)object;
-        try{
-            String id = json.getString("id");
-            Date date = new SimpleDateFormat("yyMMdd").parse(json.getString("taskdate"));
-            String name = json.getString("taskname");
-            return new TaskControl(id, date, name);
-        }catch(JSONException e){
-            System.err.println("[TaskControl.parse] received JSONException. skipping.");
-            e.printStackTrace();
-            return null;
-        } catch (ParseException e) {
-            System.err.println("[TaskControl.parse] received ParseException. skipping.");
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public TaskControl(String id, Date date, String name){
-        mId = id;
-        mDate = date;
-        mName = name;
+    public TaskControl(Task task){
+        mTask = task;
         mDeleteEvent = new Event();
     }
 
-    public Date getDate(){
-        return mDate;
+    public Task getTask(){
+        return mTask;
     }
 
     public View renderView(View view){
         TextView text = (TextView) view.findViewById(R.id.control_tasklistitem_text);
-        text.setText(mName);
+        text.setText(mTask.getName());
 
-        Callback deleteTaskAction = getDeleteTaskAction();
+        Callback completeTaskAction = getCompleteTaskAction();
         Callback openTaskAction = getOpenTaskAction();
         View slider = view.findViewById(R.id.control_tasklistitem_slider);
-        SwipeListener.listen(slider, slider, deleteTaskAction, deleteTaskAction, openTaskAction);
+        SwipeListener.listen(slider, slider, completeTaskAction, completeTaskAction, openTaskAction);
         return view;
     }
 
@@ -72,13 +41,15 @@ public class TaskControl {
         mDeleteEvent.addHandler(cb);
     }
 
-    private Callback getDeleteTaskAction(){
+    private Callback getCompleteTaskAction(){
         return new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
-                System.out.println("[TaskListItem.deleteTask] deleting task " + mId);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mId, null, null);
-                // update UI without waiting for delete request, for seamless UI response.
+                System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
+                HashMap<String, String> data = new HashMap<>();
+                data.put("iscompleted", "1");
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
+                // update UI without waiting for API request, for seamless UI response.
                 mDeleteEvent.invoke(null);
             }
         };
@@ -88,7 +59,7 @@ public class TaskControl {
         return new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
-                System.out.println("[TaskListItem.openTask] opening task " + mId);
+                System.out.println("[TaskListItem.getOpenTaskAction] opening task " + mTask.getId());
                 //TODO
             }
         };

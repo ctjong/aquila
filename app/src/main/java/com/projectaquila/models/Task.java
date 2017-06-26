@@ -1,0 +1,53 @@
+package com.projectaquila.models;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Task {
+    private String mId;
+    private Date mDate;
+    private String mName;
+
+    public Task(String id, Date date, String name){
+        mId = id;
+        mDate = date;
+        mName = name;
+    }
+
+    public static Task parse(Object object){
+        if(!(object instanceof JSONObject)){
+            return null;
+        }
+        JSONObject json = (JSONObject)object;
+        try{
+            String id = json.getString("id");
+            Date date = new SimpleDateFormat("yyMMdd").parse(json.getString("taskdate"));
+            String name = json.getString("taskname");
+            return new Task(id, date, name);
+        }catch(JSONException e){
+            System.err.println("[TaskControl.parse] received JSONException. skipping.");
+            e.printStackTrace();
+            return null;
+        } catch (ParseException e) {
+            System.err.println("[TaskControl.parse] received ParseException. skipping.");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String getId(){
+        return mId;
+    }
+
+    public Date getDate(){
+        return mDate;
+    }
+
+    public String getName(){
+        return mName;
+    }
+}

@@ -10,6 +10,7 @@ import com.projectaquila.R;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
+import com.projectaquila.models.Task;
 
 import org.json.JSONArray;
 
@@ -28,15 +29,15 @@ import java.util.List;
 public class TasksAdapter extends ArrayAdapter<TaskControl>{
     private static final int ITEMS_PER_DATE = 100;
     private static final int CACHE_DAYS_SPAN = 3;
-    private HashMap<String, List<TaskControl>> mData;
-    private List<TaskControl> mCurrentDateData;
+    private HashMap<String, List<TaskControl>> mAllControls;
+    private List<TaskControl> mActiveControls;
 
     /**
      * Instantiate a new tasks adapter
      */
     public TasksAdapter(){
         super(AppContext.getCurrent().getCore(), R.layout.control_tasklistitem);
-        mData = new HashMap<>();
+        mAllControls = new HashMap<>();
     }
 
     /**
@@ -46,10 +47,10 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      */
     public void loadDate(Date date, boolean refreshCache){
         String key = getDateKey(date);
-        if(mData.containsKey(key) && !refreshCache){
+        if(mAllControls.containsKey(key) && !refreshCache){
             clear();
-            mCurrentDateData = mData.get(key);
-            addAll(mCurrentDateData);
+            mActiveControls = mAllControls.get(key);
+            addAll(mActiveControls);
             notifyDataSetChanged();
         }else{
             retrieveData(date);
@@ -79,10 +80,10 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 remove(taskControl);
-                if(mCurrentDateData == null){
+                if(mActiveControls == null){
                     System.err.println("[TasksAdapter.getView] current date data is null");
                 }else{
-                    mCurrentDateData.remove(taskControl);
+                    mActiveControls.remove(taskControl);
                 }
                 notifyDataSetChanged();
             }
@@ -124,37 +125,38 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     /**
      * Populate data variables for the given json response from server
      * @param tasks json array of tasks
-     * @param requestedDate date object
+     * @param activeDate date object
      */
-    private void processServerResponse(JSONArray tasks, Date requestedDate){
+    private void processServerResponse(JSONArray tasks, Date activeDate){
         clear();
-        String requestedKey = getDateKey(requestedDate);
+        String activeKey = getDateKey(activeDate);
         for(int i=-1*CACHE_DAYS_SPAN; i<=CACHE_DAYS_SPAN; i++){
-            String key = getDateKey(requestedDate, i);
-            if(!mData.containsKey(key)){
+            String key = getDateKey(activeDate, i);
+            if(!mAllControls.containsKey(key)){
                 List<TaskControl> list = new LinkedList<>();
-                mData.put(key, list);
+                mAllControls.put(key, list);
             }
         }
         for(int i=0; i<tasks.length(); i++){
             try {
                 Object taskObj = tasks.get(i);
-                TaskControl task = TaskControl.parse(taskObj);
+                Task task = Task.parse(taskObj);
                 if(task == null){
                     System.err.println("[TasksView.loadTasks] failed to parse task object. skipping.");
                     continue;
                 }
                 String key = getDateKey(task.getDate());
-                mData.get(key).add(task);
-                if (key.equals(requestedKey)) {
-                    add(task);
+                TaskControl taskControl = new TaskControl(task);
+                mAllControls.get(key).add(taskControl);
+                if (key.equals(activeKey)) {
+                    add(taskControl);
                 }
             } catch (Exception e) {
                 System.err.println("[TasksView.loadTasks] an exception occurred. skipping.");
                 e.printStackTrace();
             }
         }
-        mCurrentDateData = mData.get(requestedKey);
+        mActiveControls = mAllControls.get(activeKey);
     }
 
     /**
