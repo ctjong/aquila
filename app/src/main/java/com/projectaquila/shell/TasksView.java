@@ -1,4 +1,4 @@
-package com.projectaquila.views;
+package com.projectaquila.shell;
 
 import android.app.DatePickerDialog;
 import android.view.View;

@@ -9,9 +9,8 @@ import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.AsyncTaskResult;
 import com.projectaquila.models.S;
-import com.projectaquila.views.MainView;
+import com.projectaquila.shell.MainView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;

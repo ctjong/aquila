@@ -3,7 +3,7 @@ package com.projectaquila.services;
 
 import android.os.Bundle;
 
-import com.projectaquila.views.ViewBase;
+import com.projectaquila.shell.ViewBase;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package com.projectaquila.views;
+package com.projectaquila.shell;
 
 import android.os.Bundle;
 import android.view.View;

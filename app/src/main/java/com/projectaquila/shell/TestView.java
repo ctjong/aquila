@@ -1,4 +1,4 @@
-package com.projectaquila.views;
+package com.projectaquila.shell;
 
 import com.projectaquila.R;
 

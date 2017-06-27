@@ -2,6 +2,7 @@ package com.projectaquila;
 
 import android.content.Context;
 
+import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.models.Task;
 import com.projectaquila.services.AuthService;
 import com.projectaquila.services.DataService;

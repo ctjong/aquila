@@ -1,4 +1,4 @@
-package com.projectaquila;
+package com.projectaquila.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -17,22 +17,21 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.projectaquila.AppContext;
+import com.projectaquila.R;
 import com.projectaquila.controls.DrawerItemClickListener;
 import com.projectaquila.controls.DrawerToggle;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.DrawerItem;
 import com.projectaquila.models.Event;
 import com.projectaquila.models.S;
-import com.projectaquila.views.MainView;
-import com.projectaquila.views.TasksView;
+import com.projectaquila.shell.MainView;
+import com.projectaquila.shell.TasksView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Base class for all activities in this project
- */
 public class ShellActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawer;
