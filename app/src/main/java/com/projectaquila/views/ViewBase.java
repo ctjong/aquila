@@ -1,4 +1,4 @@
-package com.projectaquila.shell;
+package com.projectaquila.views;
 
 import android.os.Bundle;
 import android.view.View;
@@ -28,7 +28,7 @@ public abstract class ViewBase {
      */
     public void onStart(Bundle savedInstanceState) {
         mSavedState = savedInstanceState;
-        AppContext.getCurrent().getShell().load(getLayoutId());
+        AppContext.getCurrent().getActivity().loadView(getLayoutId());
         initializeView();
     }
 
@@ -38,6 +38,6 @@ public abstract class ViewBase {
      * @return matched view object
      */
     public View findViewById(int viewId){
-        return AppContext.getCurrent().getShell().getCurrentView().findViewById(viewId);
+        return AppContext.getCurrent().getActivity().getCurrentView().findViewById(viewId);
     }
 }

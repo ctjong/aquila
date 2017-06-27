@@ -19,15 +19,12 @@ import org.json.JSONArray;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Adapter for populating tasks on the tasks view
@@ -42,7 +39,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      * Instantiate a new tasks adapter
      */
     public TasksAdapter(){
-        super(AppContext.getCurrent().getCore(), R.layout.control_tasklistitem);
+        super(AppContext.getCurrent().getActivity(), R.layout.control_taskcontrol);
         mControlsMap = new HashMap<>();
     }
 
@@ -74,15 +71,15 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     @NonNull
     @Override
     public View getView (int position, View convertView, @NonNull ViewGroup parent){
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.control_tasklistitem, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.control_taskcontrol, null);
         if(view == null){
             System.err.println("[TasksAdapter.getView] failed to get view for task at index" + position);
-            return new TextView(AppContext.getCurrent().getShell());
+            return new TextView(AppContext.getCurrent().getActivity());
         }
         final TaskControl taskControl = getItem(position);
         if(taskControl == null){
             System.err.println("[TasksAdapter.getView] failed to get task data at position " + position);
-            return new TextView(AppContext.getCurrent().getShell());
+            return new TextView(AppContext.getCurrent().getActivity());
         }
         taskControl.addChangedHandler(new Callback() {
             @Override
@@ -97,7 +94,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      * Retrieve data for the active date from API
      */
     private void retrieveFromServer(){
-        AppContext.getCurrent().getShell().showLoadingScreen();
+        AppContext.getCurrent().getActivity().showLoadingScreen();
 
         // get data URL
         String dataUrl = getDataUrlForActiveDate();
@@ -119,7 +116,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                 addToTasksModel(tasks);
                 initNearbyDateKeys();
                 updateControlsMap();
-                AppContext.getCurrent().getShell().showContentScreen();
+                AppContext.getCurrent().getActivity().showContentScreen();
             }
         });
     }
@@ -192,7 +189,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         } catch (UnsupportedEncodingException e) {
             System.err.println("[TasksView.getDataUrlForCurrentDate] exception");
             e.printStackTrace();
-            AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
+            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
             return null;
         }
     }

@@ -1,4 +1,4 @@
-package com.projectaquila.shell;
+package com.projectaquila.views;
 
 import android.content.Intent;
 import android.widget.TextView;
@@ -36,7 +36,7 @@ public class MainView extends ViewBase {
         setAuthErrorText("");
 
         // setup activity result event handler
-        AppContext.getCurrent().getShell().addActivityResultHandler(new Callback() {
+        AppContext.getCurrent().getActivity().addActivityResultHandler(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 int requestCode = (int)params.get("requestCode");
@@ -62,19 +62,19 @@ public class MainView extends ViewBase {
 
                 // check fb token retrieval response
                 if(s != S.OK) {
-                    setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.main_error_login_failed));
+                    setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.main_error_login_failed));
                     return;
                 }
 
                 // convert fb token to long term token
-                AppContext.getCurrent().getShell().showLoadingScreen();
+                AppContext.getCurrent().getActivity().showLoadingScreen();
                 String fbToken = (String)params.get("fbToken");
                 authService.convertFbToken(fbToken, new Callback() {
                     @Override
                     public void execute(HashMap<String, Object> params, S s) {
                         if(s != S.OK ) {
-                            setAuthErrorText(AppContext.getCurrent().getShell().getString(R.string.main_error_invalid_login));
-                            AppContext.getCurrent().getShell().showContentScreen();
+                            setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.main_error_invalid_login));
+                            AppContext.getCurrent().getActivity().showContentScreen();
                         }else{
                             AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);
                         }
@@ -84,7 +84,7 @@ public class MainView extends ViewBase {
         });
 
         // show content
-        AppContext.getCurrent().getShell().showContentScreen();
+        AppContext.getCurrent().getActivity().showContentScreen();
     }
 
     /**

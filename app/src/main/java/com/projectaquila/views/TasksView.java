@@ -1,4 +1,4 @@
-package com.projectaquila.shell;
+package com.projectaquila.views;
 
 import android.app.DatePickerDialog;
 import android.view.View;
@@ -75,7 +75,7 @@ public class TasksView extends ViewBase {
         return new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().getShell().showLoadingScreen();
+                AppContext.getCurrent().getActivity().showLoadingScreen();
                 EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
                 String taskName = taskNameCtrl.getText().toString();
                 String taskDate = HelperService.getDateString("yyMMdd", mCurrentDate);
@@ -133,7 +133,7 @@ public class TasksView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(AppContext.getCurrent().getShell(), new DatePickerDialog.OnDateSetListener() {
+                new DatePickerDialog(AppContext.getCurrent().getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         c.set(Calendar.YEAR, year);

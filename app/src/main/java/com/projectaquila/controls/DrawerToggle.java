@@ -13,14 +13,14 @@ import com.projectaquila.R;
  */
 public class DrawerToggle extends ActionBarDrawerToggle {
     public DrawerToggle(DrawerLayout drawerLayout, Toolbar toolbar) {
-        super(AppContext.getCurrent().getShell(), drawerLayout, toolbar, R.string.shell_drawer_open, R.string.shell_drawer_close);
+        super(AppContext.getCurrent().getActivity(), drawerLayout, toolbar, R.string.shell_drawer_open, R.string.shell_drawer_close);
     }
 
     public void onDrawerClosed(View view) {
-        AppContext.getCurrent().getShell().invalidateOptionsMenu();
+        AppContext.getCurrent().getActivity().invalidateOptionsMenu();
     }
 
     public void onDrawerOpened(View drawerView) {
-        AppContext.getCurrent().getShell().invalidateOptionsMenu();
+        AppContext.getCurrent().getActivity().invalidateOptionsMenu();
     }
 }

@@ -11,6 +11,7 @@ import com.projectaquila.models.Event;
 import com.projectaquila.models.S;
 import com.projectaquila.models.Task;
 import com.projectaquila.services.HelperService;
+import com.projectaquila.views.TaskDetailView;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -29,13 +30,13 @@ public class TaskControl {
     }
 
     public View renderView(View view){
-        TextView text = (TextView) view.findViewById(R.id.control_tasklistitem_text);
+        TextView text = (TextView) view.findViewById(R.id.taskcontrol_text);
         text.setText(mTask.getName());
 
         Callback completeTaskAction = getCompleteTaskAction();
         Callback postponeTaskAction = getPostponeTaskAction();
         Callback openTaskAction = getOpenTaskAction();
-        View slider = view.findViewById(R.id.control_tasklistitem_slider);
+        View slider = view.findViewById(R.id.taskcontrol_slider);
         SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
         return view;
     }
@@ -80,7 +81,7 @@ public class TaskControl {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 System.out.println("[TaskListItem.getOpenTaskAction] opening task " + mTask.getId());
-                //TODO
+                AppContext.getCurrent().getNavigationService().navigateChild(TaskDetailView.class, null);
             }
         };
     }

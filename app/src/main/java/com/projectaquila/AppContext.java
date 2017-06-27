@@ -2,6 +2,8 @@ package com.projectaquila;
 
 import android.content.Context;
 
+import com.projectaquila.activities.ChildActivity;
+import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.models.Task;
 import com.projectaquila.services.AuthService;
@@ -49,7 +51,8 @@ public class AppContext {
 
     private Context mCore;
     private HashMap<String, String> mDebugConfig;
-    private ShellActivity mShell;
+    private MainActivity mMainActivity;
+    private ChildActivity mChildActivity;
     private HashMap<String, Task> mTasks;
 
     // services
@@ -76,10 +79,6 @@ public class AppContext {
         Member property getters
     ----------------------------------*/
 
-    public Context getCore(){
-        return mCore;
-    }
-
     public String getApiBase () {
         if(mDebugConfig.containsKey("apiBase")) {
             return mDebugConfig.get("apiBase");
@@ -87,8 +86,8 @@ public class AppContext {
         return DEFAULT_API_BASE;
     }
 
-    public ShellActivity getShell() {
-        return mShell;
+    public ShellActivity getActivity() {
+        return mChildActivity != null ? mChildActivity : mMainActivity;
     }
 
     public HashMap<String, Task> getTasks(){
@@ -99,8 +98,12 @@ public class AppContext {
         Member property setters
     ----------------------------------*/
 
-    public void setShell(ShellActivity shell){
-        mShell = shell;
+    public void setMainActivity(MainActivity shell){
+        mMainActivity = shell;
+    }
+
+    public void setChildActivity(ChildActivity child){
+        mChildActivity = child;
     }
 
     /*----------------------------------

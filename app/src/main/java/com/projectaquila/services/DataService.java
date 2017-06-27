@@ -9,7 +9,7 @@ import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.AsyncTaskResult;
 import com.projectaquila.models.S;
-import com.projectaquila.shell.MainView;
+import com.projectaquila.views.MainView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,18 +114,18 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
         HashMap<String, Object> data = null;
         S status = S.Error;
         if(result.getError() != null) {
-            AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
+            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
         }else{
             ApiResult res = result.getResult();
             int statusCode = res.getStatusCode();
             System.out.println("[DataService.onPostExecute] found statusCode " + statusCode);
             if(statusCode == 404) {
-                AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_connection);
+                AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_connection);
             }else if(statusCode == 401) {
                 AppContext.getCurrent().getAuthService().logOut();
                 AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
             }else if(statusCode != 200){
-                AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
+                AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
             }else{
                 data = res.getData();
                 status = S.OK;

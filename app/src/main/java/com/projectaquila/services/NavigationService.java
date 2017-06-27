@@ -1,9 +1,12 @@
 package com.projectaquila.services;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import com.projectaquila.shell.ViewBase;
+import com.projectaquila.AppContext;
+import com.projectaquila.activities.ChildActivity;
+import com.projectaquila.views.ViewBase;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,12 +28,40 @@ public class NavigationService {
     }
 
     /**
-     * Navigate to the specified activity
+     * Navigate to the specified view
      * @param viewClass class of the view to navigate to
      * @param parameters navigation parameters
      */
     public void navigate(Class viewClass, Map<String, String> parameters){
-        System.out.println("[NavigationService.navigate] " + viewClass.getName());
+        updateCurrentView(viewClass, parameters);
+        mCurrentView.onStart(mCurrentViewParams);
+    }
+
+    /**
+     * Navigate to the specified view in a child activity
+     * @param viewClass class of the view to navigate to
+     * @param parameters navigation parameters
+     */
+    public void navigateChild(Class viewClass, Map<String, String> parameters){
+        updateCurrentView(viewClass, parameters);
+        Intent intent = new Intent(AppContext.getCurrent().getActivity(), ChildActivity.class);
+        AppContext.getCurrent().getActivity().startActivity(intent);
+    }
+
+    /**
+     * Reload current view
+     */
+    public void reloadView(){
+        mCurrentView.onStart(mCurrentViewParams);
+    }
+
+    /**
+     * Update current view based on the given navigation details
+     * @param viewClass class of the view to navigate to
+     * @param parameters navigation parameters
+     */
+    private void updateCurrentView(Class viewClass, Map<String, String> parameters){
+        System.out.println("[NavigationService.updateCurrentView] " + viewClass.getName());
         ViewBase view;
         if(mViews.containsKey(viewClass.getName())){
             view = mViews.get(viewClass.getName());
@@ -39,7 +70,7 @@ public class NavigationService {
                 view = (ViewBase)viewClass.newInstance();
                 mViews.put(viewClass.getName(), view);
             } catch (Exception e) {
-                System.err.println("[NavigationService.navigate] failed to instantiate view");
+                System.err.println("[NavigationService.updateCurrentView] failed to instantiate view");
                 e.printStackTrace();
                 return;
             }
@@ -59,13 +90,5 @@ public class NavigationService {
         }
         mCurrentView = view;
         mCurrentViewParams = bundle;
-        view.onStart(bundle);
-    }
-
-    /**
-     * Reload current view
-     */
-    public void reload(){
-        mCurrentView.onStart(mCurrentViewParams);
     }
 }
