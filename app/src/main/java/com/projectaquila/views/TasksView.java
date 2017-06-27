@@ -12,8 +12,8 @@ import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
+import com.projectaquila.services.HelperService;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,8 +56,8 @@ public class TasksView extends ViewBase {
      */
     private void refresh(){
         // update date
-        mCurrentDateText.setText(getCurrentDateString("EEE dd"));
-        mCurrentMonthText.setText(getCurrentDateString("MMMM yyyy"));
+        mCurrentDateText.setText(HelperService.getDateString("EEE dd", mCurrentDate));
+        mCurrentMonthText.setText(HelperService.getDateString("MMMM yyyy", mCurrentDate));
 
         // update tasks list
         mTasksAdapter.loadDate(mCurrentDate, false);
@@ -73,7 +73,7 @@ public class TasksView extends ViewBase {
                 AppContext.getCurrent().getShell().showLoadingScreen();
                 EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
                 String taskName = taskNameCtrl.getText().toString();
-                String taskDate = getCurrentDateString("yyMMdd");
+                String taskDate = HelperService.getDateString("yyMMdd", mCurrentDate);
                 taskNameCtrl.setText("");
                 HashMap<String,String> data = new HashMap<>();
                 data.put("taskname", taskName);
@@ -117,14 +117,5 @@ public class TasksView extends ViewBase {
                 refresh();
             }
         };
-    }
-
-    /**
-     * Get string representation of the current date
-     * @param format format string
-     * @return current date string
-     */
-    private String getCurrentDateString(String format){
-        return new SimpleDateFormat(format).format(mCurrentDate);
     }
 }

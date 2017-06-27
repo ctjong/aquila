@@ -8,7 +8,7 @@
     <string name="shell_error_connection">Failed to connect to server. Please make sure you are connected to internet.</string>
     <string name="shell_error_unknown">Something went wrong.</string>
 
-    <string name="menu_tasks">Tasks</string>
+    <string name="menu_tasks">Today</string>
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
 

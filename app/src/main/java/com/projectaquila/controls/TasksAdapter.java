@@ -11,6 +11,7 @@ import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
 import com.projectaquila.models.Task;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONArray;
 
@@ -20,8 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Adapter for populating tasks on the tasks view
@@ -29,15 +32,17 @@ import java.util.List;
 public class TasksAdapter extends ArrayAdapter<TaskControl>{
     private static final int ITEMS_PER_DATE = 100;
     private static final int CACHE_DAYS_SPAN = 3;
-    private HashMap<String, List<TaskControl>> mAllControls;
+    private HashMap<String, List<TaskControl>> mControlsMap;
+    private List<TaskControl> mAllControls;
     private List<TaskControl> mActiveControls;
+    private Date mActiveDate;
 
     /**
      * Instantiate a new tasks adapter
      */
     public TasksAdapter(){
         super(AppContext.getCurrent().getCore(), R.layout.control_tasklistitem);
-        mAllControls = new HashMap<>();
+        mControlsMap = new HashMap<>();
     }
 
     /**
@@ -46,14 +51,15 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      * @param refreshCache true to refresh in-memory cache
      */
     public void loadDate(Date date, boolean refreshCache){
-        String key = getDateKey(date);
-        if(mAllControls.containsKey(key) && !refreshCache){
+        mActiveDate = date;
+        String key = HelperService.getDateKey(date);
+        if(mControlsMap.containsKey(key) && !refreshCache){
             clear();
-            mActiveControls = mAllControls.get(key);
+            mActiveControls = mControlsMap.get(key);
             addAll(mActiveControls);
             notifyDataSetChanged();
         }else{
-            retrieveData(date);
+            retrieveFromServer();
         }
     }
 
@@ -76,30 +82,32 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             System.err.println("[TasksAdapter.getView] failed to get task data at position " + position);
             return null;
         }
-        taskControl.addDeleteHandler(new Callback() {
+        taskControl.addCompleteHandler(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 remove(taskControl);
-                if(mActiveControls == null){
-                    System.err.println("[TasksAdapter.getView] current date data is null");
-                }else{
-                    mActiveControls.remove(taskControl);
-                }
-                notifyDataSetChanged();
+                mActiveControls.remove(taskControl);
+            }
+        });
+        taskControl.addPostponeHandler(new Callback() {
+            @Override
+            public void execute(HashMap<String, Object> params, S s) {
+                remove(taskControl);
+                mActiveControls.remove(taskControl);
+                updateControlsMap();
             }
         });
         return taskControl.renderView(view);
     }
 
     /**
-     * Retrieve data for the given date from API
-     * @param date date of the data to retrieve
+     * Retrieve data for the active date from API
      */
-    private void retrieveData(final Date date){
+    private void retrieveFromServer(){
         AppContext.getCurrent().getShell().showLoadingScreen();
 
         // get data URL
-        String dataUrl = getDataUrlForDate(date);
+        String dataUrl = getDataUrlForActiveDate();
         if(dataUrl == null) return;
 
         // request data
@@ -115,28 +123,20 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                 }
 
                 // update tasks list
-                processServerResponse(tasks, date);
-                notifyDataSetChanged();
+                updateAllControlsList(tasks);
+                initNearbyDateKeys();
+                updateControlsMap();
                 AppContext.getCurrent().getShell().showContentScreen();
             }
         });
     }
 
     /**
-     * Populate data variables for the given json response from server
+     * Update the all controls list based on the given data from API
      * @param tasks json array of tasks
-     * @param activeDate date object
      */
-    private void processServerResponse(JSONArray tasks, Date activeDate){
-        clear();
-        String activeKey = getDateKey(activeDate);
-        for(int i=-1*CACHE_DAYS_SPAN; i<=CACHE_DAYS_SPAN; i++){
-            String key = getDateKey(activeDate, i);
-            if(!mAllControls.containsKey(key)){
-                List<TaskControl> list = new LinkedList<>();
-                mAllControls.put(key, list);
-            }
-        }
+    private void updateAllControlsList(JSONArray tasks){
+        mAllControls = new LinkedList<>();
         for(int i=0; i<tasks.length(); i++){
             try {
                 Object taskObj = tasks.get(i);
@@ -145,29 +145,54 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                     System.err.println("[TasksView.loadTasks] failed to parse task object. skipping.");
                     continue;
                 }
-                String key = getDateKey(task.getDate());
                 TaskControl taskControl = new TaskControl(task);
-                mAllControls.get(key).add(taskControl);
-                if (key.equals(activeKey)) {
-                    add(taskControl);
-                }
+                mAllControls.add(taskControl);
             } catch (Exception e) {
                 System.err.println("[TasksView.loadTasks] an exception occurred. skipping.");
                 e.printStackTrace();
             }
         }
-        mActiveControls = mAllControls.get(activeKey);
     }
 
     /**
-     * Get data URL for the given date. This will retrieve data for date +/- CACHE_DAYS_SPAN days.
-     * @param date date object
+     * Initialize keys for dates that are near the active date in the controls map
+     */
+    private void initNearbyDateKeys(){
+        for(int i=-1*CACHE_DAYS_SPAN; i<=CACHE_DAYS_SPAN; i++){
+            String key = HelperService.getDateKey(mActiveDate, i);
+            mControlsMap.put(key, null);
+        }
+    }
+
+    /**
+     * Update the controls map based on the active date
+     */
+    private void updateControlsMap(){
+        clear();
+        Iterator it = mControlsMap.keySet().iterator();
+        while(it.hasNext()){
+            mControlsMap.put((String)it.next(), new LinkedList<TaskControl>());
+        }
+        String activeKey = HelperService.getDateKey(mActiveDate);
+        for(int i=0; i<mAllControls.size(); i++){
+            TaskControl control = mAllControls.get(i);
+            String key = HelperService.getDateKey(control.getTask().getDate());
+            if(!mControlsMap.containsKey(key)) continue;
+            mControlsMap.get(key).add(control);
+            if(key.equals(activeKey)) add(control);
+        }
+        mActiveControls = mControlsMap.get(activeKey);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Get data URL for the active date. This will retrieve data for date +/- CACHE_DAYS_SPAN days.
      * @return URL string
      */
-    private String getDataUrlForDate(Date date){
+    private String getDataUrlForActiveDate(){
         try {
-            String startDate = getDateKey(date, -1 * CACHE_DAYS_SPAN);
-            String endDate = getDateKey(date, CACHE_DAYS_SPAN);
+            String startDate = HelperService.getDateKey(mActiveDate, -1 * CACHE_DAYS_SPAN);
+            String endDate = HelperService.getDateKey(mActiveDate, CACHE_DAYS_SPAN);
             String condition = URLEncoder.encode("iscompleted=0&taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
             return "/data/task/private/findbyconditions/id/0/" + ITEMS_PER_DATE + "/" + condition;
         } catch (UnsupportedEncodingException e) {
@@ -176,27 +201,5 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             AppContext.getCurrent().getShell().showErrorScreen(R.string.shell_error_unknown);
             return null;
         }
-    }
-
-    /**
-     * Get a string representation of a date
-     * @param date date object
-     * @return string representation
-     */
-    private String getDateKey(Date date){
-        return new SimpleDateFormat("yyMMdd").format(date);
-    }
-
-    /**
-     * Get a string representation of a date that is n days away from the given date
-     * @param date original date
-     * @param numDays number of days to add/substract
-     * @return string representation of the modified date
-     */
-    private String getDateKey(Date date, int numDays){
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.DATE, numDays);
-        return new SimpleDateFormat("yyMMdd").format(c.getTime());
     }
 }

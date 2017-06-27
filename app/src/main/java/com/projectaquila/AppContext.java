@@ -2,7 +2,6 @@ package com.projectaquila;
 
 import android.content.Context;
 
-import com.projectaquila.models.DrawerItem;
 import com.projectaquila.services.AuthService;
 import com.projectaquila.services.DataService;
 import com.projectaquila.services.NavigationService;
@@ -15,9 +14,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

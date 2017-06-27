@@ -21,7 +21,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@android:drawable/checkbox_on_background" />
+                android:src="@android:drawable/ic_menu_set_as" />
 
             <ImageView
                 android:layout_width="20dp"

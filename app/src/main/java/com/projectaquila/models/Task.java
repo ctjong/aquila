@@ -50,4 +50,8 @@ public class Task {
     public String getName(){
         return mName;
     }
+
+    public void setDate(Date date){
+        mDate = date;
+    }
 }
