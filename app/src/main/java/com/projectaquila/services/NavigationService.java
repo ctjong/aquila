@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.projectaquila.AppContext;
+import com.projectaquila.R;
 import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.views.ViewBase;
 
@@ -46,6 +47,7 @@ public class NavigationService {
         updateCurrentView(viewClass, parameters);
         Intent intent = new Intent(AppContext.getCurrent().getActivity(), ChildActivity.class);
         AppContext.getCurrent().getActivity().startActivity(intent);
+        AppContext.getCurrent().getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_stay);
     }
 
     /**
@@ -81,7 +83,7 @@ public class NavigationService {
             while (it.hasNext()) {
                 Object pairRaw = it.next();
                 if(!(pairRaw instanceof Map.Entry)) continue;
-                Map.Entry pair = (Map.Entry) it.next();
+                Map.Entry pair = (Map.Entry) pairRaw;
                 Object key = pair.getKey();
                 Object value = pair.getValue();
                 if(!(key instanceof String) || !(value instanceof String)) continue;

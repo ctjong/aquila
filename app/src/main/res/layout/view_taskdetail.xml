@@ -5,9 +5,15 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/taskdetail_taskname"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Task detail view" />
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/taskdetail_taskdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/taskdetail_taskname"/>
 
 </RelativeLayout>
 

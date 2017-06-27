@@ -20,11 +20,10 @@ public class ChildActivity extends ShellActivity {
      */
     @Override
     protected void onAfterCreate() {
-        Toolbar toolBar = (Toolbar) findViewById(R.id.shell_toolbar);
-        if(toolBar == null) return;
-        setSupportActionBar(toolBar);
-        toolBar.setNavigationIcon(android.R.drawable.ic_menu_close_clear_cancel);
-        toolBar.setNavigationOnClickListener(new View.OnClickListener() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.shell_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -41,11 +40,12 @@ public class ChildActivity extends ShellActivity {
     }
 
     /**
-     * Called when the activity is destroyed
+     * Called when the back button is invoked
      */
     @Override
-    public void onDestroy(){
-        super.onDestroy();
+    public void onBackPressed(){
+        super.onBackPressed();
         AppContext.getCurrent().setChildActivity(null);
+        overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_left);
     }
 }

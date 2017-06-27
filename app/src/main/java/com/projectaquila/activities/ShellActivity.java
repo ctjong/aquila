@@ -1,6 +1,7 @@
 package com.projectaquila.activities;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -140,6 +141,17 @@ public abstract class ShellActivity extends AppCompatActivity {
      */
     public void addActivityResultHandler(Callback cb){
         mActivityResultEvent.addHandler(cb);
+    }
+
+    /**
+     * Set the text shown on the toolbar
+     * @param stringId string id of the text to set
+     */
+    public void setToolbarText(int stringId){
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setTitle(getString(stringId));
+        }
     }
 
     /**

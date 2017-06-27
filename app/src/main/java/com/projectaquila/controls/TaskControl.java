@@ -81,7 +81,9 @@ public class TaskControl {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 System.out.println("[TaskListItem.getOpenTaskAction] opening task " + mTask.getId());
-                AppContext.getCurrent().getNavigationService().navigateChild(TaskDetailView.class, null);
+                HashMap<String, String> navParams = new HashMap<>();
+                navParams.put("id", mTask.getId());
+                AppContext.getCurrent().getNavigationService().navigateChild(TaskDetailView.class, navParams);
             }
         };
     }

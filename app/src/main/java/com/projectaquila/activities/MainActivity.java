@@ -42,16 +42,14 @@ public class MainActivity extends ShellActivity {
      */
     @Override
     protected void onAfterCreate() {
-        // init toolbar
-        Toolbar toolBar = (Toolbar) findViewById(R.id.shell_toolbar);
-        if(toolBar == null) return;
-        setSupportActionBar(toolBar);
-        toolBar.setNavigationIcon(R.drawable.ic_drawer);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.shell_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_drawer);
 
         // init drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.shell);
         mDrawer = (ListView) findViewById(R.id.shell_drawer);
-        mDrawerToggle = new DrawerToggle(mDrawerLayout, toolBar);
+        mDrawerToggle = new DrawerToggle(mDrawerLayout, toolbar);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         setupDrawer();
         AppContext.getCurrent().getAuthService().addAuthStateChangeHandler(new Callback() {

@@ -9,7 +9,7 @@ import com.projectaquila.AppContext;
  * Base class for all views in this project
  */
 public abstract class ViewBase {
-    protected Bundle mSavedState;
+    protected Bundle mNavArgs;
 
     /**
      * Get layout ID
@@ -24,10 +24,10 @@ public abstract class ViewBase {
 
     /**
      * Invoked when this view is started
-     * @param savedInstanceState saved state
+     * @param navArgs navigation arguments
      */
-    public void onStart(Bundle savedInstanceState) {
-        mSavedState = savedInstanceState;
+    public void onStart(Bundle navArgs) {
+        mNavArgs = navArgs;
         AppContext.getCurrent().getActivity().loadView(getLayoutId());
         initializeView();
     }
@@ -39,5 +39,17 @@ public abstract class ViewBase {
      */
     public View findViewById(int viewId){
         return AppContext.getCurrent().getActivity().getCurrentView().findViewById(viewId);
+    }
+
+    /**
+     * Get navigation argument with the given key
+     * @param key navigation argument key
+     * @return navigation argument value, or null if not found
+     */
+    protected String getNavArg(String key){
+        if(mNavArgs != null && mNavArgs.containsKey(key)){
+            return mNavArgs.getString(key);
+        }
+        return null;
     }
 }

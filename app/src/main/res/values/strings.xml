@@ -19,4 +19,6 @@
     <string name="main_error_invalid_login">Invalid login</string>
 
     <string name="tasks_add_hint">Add new task</string>
+
+    <string name="taskdetail_title">Task detail</string>
 </resources>
