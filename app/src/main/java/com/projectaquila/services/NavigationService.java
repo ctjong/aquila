@@ -79,14 +79,10 @@ public class NavigationService {
         }
         Bundle bundle = new Bundle();
         if(parameters != null){
-            Iterator it = parameters.entrySet().iterator();
-            while (it.hasNext()) {
-                Object pairRaw = it.next();
-                if(!(pairRaw instanceof Map.Entry)) continue;
-                Map.Entry pair = (Map.Entry) pairRaw;
+            for (Map.Entry pair : parameters.entrySet()) {
                 Object key = pair.getKey();
                 Object value = pair.getValue();
-                if(!(key instanceof String) || !(value instanceof String)) continue;
+                if (!(key instanceof String) || !(value instanceof String)) continue;
                 bundle.putString((String) key, (String) value);
             }
         }

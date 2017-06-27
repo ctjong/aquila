@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -157,14 +156,11 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      */
     private void updateControlsMap(){
         clear();
-        Iterator it = mControlsMap.keySet().iterator();
-        while(it.hasNext()){
-            mControlsMap.put((String)it.next(), new LinkedList<TaskControl>());
+        for (String key : mControlsMap.keySet()) {
+            mControlsMap.put(key, new LinkedList<TaskControl>());
         }
         String activeKey = HelperService.getDateKey(mActiveDate);
-        it = AppContext.getCurrent().getTasks().entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry<String,Task> entry = (Map.Entry<String,Task>)it.next();
+        for(Map.Entry<String,Task> entry : AppContext.getCurrent().getTasks().entrySet()){
             Task task = entry.getValue();
             if(task.isCompleted()) continue;
             TaskControl control = new TaskControl(task);
