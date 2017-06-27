@@ -92,8 +92,6 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         taskControl.addPostponeHandler(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
-                remove(taskControl);
-                mActiveControls.remove(taskControl);
                 updateControlsMap();
             }
         });
