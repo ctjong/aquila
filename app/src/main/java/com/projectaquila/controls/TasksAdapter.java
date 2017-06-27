@@ -1,9 +1,11 @@
 package com.projectaquila.controls;
 
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -33,8 +36,6 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     private static final int ITEMS_PER_DATE = 100;
     private static final int CACHE_DAYS_SPAN = 3;
     private HashMap<String, List<TaskControl>> mControlsMap;
-    private List<TaskControl> mAllControls;
-    private List<TaskControl> mActiveControls;
     private Date mActiveDate;
 
     /**
@@ -55,8 +56,8 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         String key = HelperService.getDateKey(date);
         if(mControlsMap.containsKey(key) && !refreshCache){
             clear();
-            mActiveControls = mControlsMap.get(key);
-            addAll(mActiveControls);
+            List<TaskControl> activeControls = mControlsMap.get(key);
+            addAll(activeControls);
             notifyDataSetChanged();
         }else{
             retrieveFromServer();
@@ -70,26 +71,20 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      * @param parent parent view
      * @return view object
      */
+    @NonNull
     @Override
-    public View getView (int position, View convertView, ViewGroup parent){
+    public View getView (int position, View convertView, @NonNull ViewGroup parent){
         View view = LayoutInflater.from(getContext()).inflate(R.layout.control_tasklistitem, null);
         if(view == null){
             System.err.println("[TasksAdapter.getView] failed to get view for task at index" + position);
-            return null;
+            return new TextView(AppContext.getCurrent().getShell());
         }
         final TaskControl taskControl = getItem(position);
         if(taskControl == null){
             System.err.println("[TasksAdapter.getView] failed to get task data at position " + position);
-            return null;
+            return new TextView(AppContext.getCurrent().getShell());
         }
-        taskControl.addCompleteHandler(new Callback() {
-            @Override
-            public void execute(HashMap<String, Object> params, S s) {
-                remove(taskControl);
-                mActiveControls.remove(taskControl);
-            }
-        });
-        taskControl.addPostponeHandler(new Callback() {
+        taskControl.addChangedHandler(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 updateControlsMap();
@@ -121,7 +116,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                 }
 
                 // update tasks list
-                updateAllControlsList(tasks);
+                addToTasksModel(tasks);
                 initNearbyDateKeys();
                 updateControlsMap();
                 AppContext.getCurrent().getShell().showContentScreen();
@@ -130,23 +125,21 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     }
 
     /**
-     * Update the all controls list based on the given data from API
-     * @param tasks json array of tasks
+     * Add the specified tasks to the tasks model in app context
+     * @param tasks new tasks
      */
-    private void updateAllControlsList(JSONArray tasks){
-        mAllControls = new LinkedList<>();
+    private void addToTasksModel(JSONArray tasks){
         for(int i=0; i<tasks.length(); i++){
             try {
                 Object taskObj = tasks.get(i);
                 Task task = Task.parse(taskObj);
                 if(task == null){
-                    System.err.println("[TasksView.loadTasks] failed to parse task object. skipping.");
+                    System.err.println("[TasksView.addToTasksModel] failed to parse task object. skipping.");
                     continue;
                 }
-                TaskControl taskControl = new TaskControl(task);
-                mAllControls.add(taskControl);
+                AppContext.getCurrent().getTasks().put(task.getId(), task);
             } catch (Exception e) {
-                System.err.println("[TasksView.loadTasks] an exception occurred. skipping.");
+                System.err.println("[TasksView.addToTasksModel] an exception occurred. skipping.");
                 e.printStackTrace();
             }
         }
@@ -163,7 +156,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     }
 
     /**
-     * Update the controls map based on the active date
+     * Update the controls map based on the tasks model
      */
     private void updateControlsMap(){
         clear();
@@ -172,14 +165,17 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             mControlsMap.put((String)it.next(), new LinkedList<TaskControl>());
         }
         String activeKey = HelperService.getDateKey(mActiveDate);
-        for(int i=0; i<mAllControls.size(); i++){
-            TaskControl control = mAllControls.get(i);
-            String key = HelperService.getDateKey(control.getTask().getDate());
+        it = AppContext.getCurrent().getTasks().entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<String,Task> entry = (Map.Entry<String,Task>)it.next();
+            Task task = entry.getValue();
+            if(task.isCompleted()) continue;
+            TaskControl control = new TaskControl(task);
+            String key = HelperService.getDateKey(task.getDate());
             if(!mControlsMap.containsKey(key)) continue;
             mControlsMap.get(key).add(control);
             if(key.equals(activeKey)) add(control);
         }
-        mActiveControls = mControlsMap.get(activeKey);
         notifyDataSetChanged();
     }
 
@@ -191,7 +187,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         try {
             String startDate = HelperService.getDateKey(mActiveDate, -1 * CACHE_DAYS_SPAN);
             String endDate = HelperService.getDateKey(mActiveDate, CACHE_DAYS_SPAN);
-            String condition = URLEncoder.encode("iscompleted=0&taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
+            String condition = URLEncoder.encode("taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
             return "/data/task/private/findbyconditions/id/0/" + ITEMS_PER_DATE + "/" + condition;
         } catch (UnsupportedEncodingException e) {
             System.err.println("[TasksView.getDataUrlForCurrentDate] exception");

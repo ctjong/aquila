@@ -11,11 +11,13 @@ public class Task {
     private String mId;
     private Date mDate;
     private String mName;
+    private boolean mIsCompleted;
 
-    public Task(String id, Date date, String name){
+    public Task(String id, Date date, String name, boolean isCompleted){
         mId = id;
         mDate = date;
         mName = name;
+        mIsCompleted = isCompleted;
     }
 
     public static Task parse(Object object){
@@ -27,7 +29,8 @@ public class Task {
             String id = json.getString("id");
             Date date = new SimpleDateFormat("yyMMdd").parse(json.getString("taskdate"));
             String name = json.getString("taskname");
-            return new Task(id, date, name);
+            boolean isCompleted = json.getBoolean("iscompleted");
+            return new Task(id, date, name, isCompleted);
         }catch(JSONException e){
             System.err.println("[TaskControl.parse] received JSONException. skipping.");
             e.printStackTrace();
@@ -51,7 +54,15 @@ public class Task {
         return mName;
     }
 
+    public boolean isCompleted(){
+        return mIsCompleted;
+    }
+
     public void setDate(Date date){
         mDate = date;
+    }
+
+    public void setCompletedState(boolean isCompleted){
+        mIsCompleted = isCompleted;
     }
 }

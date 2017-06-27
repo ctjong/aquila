@@ -17,13 +17,11 @@ import java.util.HashMap;
 
 public class TaskControl {
     private Task mTask;
-    private Event mCompleteEvent;
-    private Event mPostponeEvent;
+    private Event mChangedEvent;
 
     public TaskControl(Task task){
         mTask = task;
-        mCompleteEvent = new Event();
-        mPostponeEvent = new Event();
+        mChangedEvent = new Event();
     }
 
     public Task getTask(){
@@ -42,12 +40,8 @@ public class TaskControl {
         return view;
     }
 
-    public void addCompleteHandler(Callback cb){
-        mCompleteEvent.addHandler(cb);
-    }
-
-    public void addPostponeHandler(Callback cb){
-        mPostponeEvent.addHandler(cb);
+    public void addChangedHandler(Callback cb){
+        mChangedEvent.addHandler(cb);
     }
 
     private Callback getPostponeTaskAction(){
@@ -61,7 +55,7 @@ public class TaskControl {
                 data.put("taskdate", HelperService.getDateKey(postponedDate));
                 AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
                 // update UI without waiting for API request, for seamless UI response.
-                mPostponeEvent.invoke(null);
+                mChangedEvent.invoke(null);
             }
         };
     }
@@ -71,11 +65,12 @@ public class TaskControl {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
+                mTask.setCompletedState(true);
                 HashMap<String, String> data = new HashMap<>();
                 data.put("iscompleted", "1");
                 AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
                 // update UI without waiting for API request, for seamless UI response.
-                mCompleteEvent.invoke(null);
+                mChangedEvent.invoke(null);
             }
         };
     }

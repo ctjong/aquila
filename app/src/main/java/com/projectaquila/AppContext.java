@@ -2,6 +2,7 @@ package com.projectaquila;
 
 import android.content.Context;
 
+import com.projectaquila.models.Task;
 import com.projectaquila.services.AuthService;
 import com.projectaquila.services.DataService;
 import com.projectaquila.services.NavigationService;
@@ -48,6 +49,7 @@ public class AppContext {
     private Context mCore;
     private HashMap<String, String> mDebugConfig;
     private ShellActivity mShell;
+    private HashMap<String, Task> mTasks;
 
     // services
     private AuthService mAuthService;
@@ -61,6 +63,7 @@ public class AppContext {
     private AppContext(Context coreContext) {
         mCore = coreContext;
         initDebugConfig(DEBUG_CONFIG_FILENAME);
+        mTasks = new HashMap<>();
 
         // services
         mAuthService = new AuthService();
@@ -85,6 +88,10 @@ public class AppContext {
 
     public ShellActivity getShell() {
         return mShell;
+    }
+
+    public HashMap<String, Task> getTasks(){
+        return mTasks;
     }
 
     /*----------------------------------
