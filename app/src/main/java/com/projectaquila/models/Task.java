@@ -1,5 +1,7 @@
 package com.projectaquila.models;
 
+import com.projectaquila.services.HelperService;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,16 +31,12 @@ public class Task {
         JSONObject json = (JSONObject)object;
         try{
             String id = json.getString("id");
-            Date date = new SimpleDateFormat("yyMMdd").parse(json.getString("taskdate"));
+            Date date = HelperService.parseDateKey(json.getString("taskdate"));
             String name = json.getString("taskname");
             boolean isCompleted = json.getBoolean("iscompleted");
             return new Task(id, date, name, isCompleted);
         }catch(JSONException e){
             System.err.println("[TaskControl.parse] received JSONException. skipping.");
-            e.printStackTrace();
-            return null;
-        } catch (ParseException e) {
-            System.err.println("[TaskControl.parse] received ParseException. skipping.");
             e.printStackTrace();
             return null;
         }

@@ -13,10 +13,12 @@ import com.projectaquila.models.S;
 import com.projectaquila.models.Task;
 import com.projectaquila.services.HelperService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-public class TaskUpdateView extends ViewBase {
+public class TaskCreateView extends ViewBase {
     private Date mTaskDate;
     private TextView mTaskDateText;
 
@@ -27,19 +29,17 @@ public class TaskUpdateView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        String taskId = getNavArg("id");
-        System.out.println("[TaskUpdateView.initializeView] task id = " + taskId);
-        if(taskId == null || !AppContext.getCurrent().getTasks().containsKey(taskId)) {
-            System.err.println("[TaskUpdateView.initializeView] invalid task id found in nav params");
+        String taskName = getNavArg("taskname");
+        mTaskDate = HelperService.parseDateKey(getNavArg("taskdate"));
+        if(taskName == null || mTaskDate == null) {
+            System.err.println("[TaskCreateView.initializeView] missing task name/date");
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
             return;
         }
 
-        final Task task = AppContext.getCurrent().getTasks().get(taskId);
         final EditText taskNameText = ((EditText)findViewById(R.id.taskupdate_taskname));
-        taskNameText.setText(task.getName());
+        taskNameText.setText(taskName);
 
-        mTaskDate = task.getDate();
         mTaskDateText = ((TextView)findViewById(R.id.taskupdate_taskdate));
         mTaskDateText.setPaintFlags(mTaskDateText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         mTaskDateText.setKeyListener(null);
@@ -53,14 +53,14 @@ public class TaskUpdateView extends ViewBase {
         findViewById(R.id.taskupdate_save_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[TaskUpdateView.initializeView] saving");
+                System.out.println("[TaskCreateView.initializeView] saving");
                 AppContext.getCurrent().getActivity().showLoadingScreen();
                 String updatedName = taskNameText.getText().toString();
                 final String updatedDate = HelperService.getDateKey(mTaskDate);
                 HashMap<String, String> data = new HashMap<>();
                 data.put("taskname", updatedName);
                 data.put("taskdate", updatedDate);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + task.getId(), data, new Callback() {
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", data, new Callback() {
                     @Override
                     public void execute(HashMap<String, Object> params, S s) {
                         HashMap<String, String> navParams = new HashMap<>();
@@ -73,13 +73,13 @@ public class TaskUpdateView extends ViewBase {
         findViewById(R.id.taskupdate_cancel_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[TaskUpdateView.initializeView] cancelling");
+                System.out.println("[TaskCreateView.initializeView] cancelling");
                 AppContext.getCurrent().getActivity().onBackPressed();
             }
         });
 
         updateView();
-        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskupdate_title);
+        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskcreate_title);
         AppContext.getCurrent().getActivity().showContentScreen();
     }
 

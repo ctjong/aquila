@@ -24,6 +24,7 @@
     <string name="taskdetail_title">Task detail</string>
     <string name="taskdetail_edit_btn_text">Edit</string>
 
+    <string name="taskcreate_title">Create task</string>
     <string name="taskupdate_title">Update task</string>
     <string name="taskupdate_taskname_hint">Task name</string>
     <string name="taskupdate_taskdate_hint">Task date</string>

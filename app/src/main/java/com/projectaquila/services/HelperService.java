@@ -8,6 +8,7 @@ import com.projectaquila.AppContext;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,6 +42,22 @@ public class HelperService {
      */
     public static String getDateString(String format, Date date){
         return new SimpleDateFormat(format).format(date);
+    }
+
+    /**
+     * Parse the given date key string (yyMMdd) into a date objecy
+     * @param dateKey yyMMdd date key string
+     * @return date object, or null on failure
+     */
+    public static Date parseDateKey(String dateKey){
+        if(dateKey == null) return null;
+        try {
+            return new SimpleDateFormat("yyMMdd").parse(dateKey);
+        } catch (ParseException e) {
+            System.err.println("[HelperService.parseDateKey] exception");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

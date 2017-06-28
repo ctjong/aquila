@@ -34,7 +34,13 @@ public class TasksView extends ViewBase {
         mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
         mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
         mTasksAdapter = new TasksAdapter();
-        mCurrentDate = new Date();
+
+        String dateArg = getNavArg("date");
+        if(dateArg != null){
+            mCurrentDate = HelperService.parseDateKey(dateArg);
+        }else{
+            mCurrentDate = new Date();
+        }
 
         View.OnClickListener datePickerClickHandler = HelperService.getDatePickerClickHandler(mCurrentDate, new Callback() {
             @Override
@@ -102,10 +108,15 @@ public class TasksView extends ViewBase {
      */
     private View.OnClickListener getAddEditClickListener(){
         return new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
-
+                EditText taskNameText = (EditText) findViewById(R.id.view_tasks_add_text);
+                String taskName = taskNameText.getText().toString();
+                taskNameText.setText("");
+                HashMap<String, String> navParams = new HashMap<>();
+                navParams.put("taskname", taskName);
+                navParams.put("taskdate", HelperService.getDateKey(mCurrentDate));
+                AppContext.getCurrent().getNavigationService().navigateChild(TaskCreateView.class, navParams);
             }
         };
     }
