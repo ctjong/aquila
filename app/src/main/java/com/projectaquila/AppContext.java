@@ -90,6 +90,10 @@ public class AppContext {
         return mChildActivity != null ? mChildActivity : mMainActivity;
     }
 
+    public ShellActivity getMainActivity() {
+        return mMainActivity;
+    }
+
     public HashMap<String, Task> getTasks(){
         return mTasks;
     }
