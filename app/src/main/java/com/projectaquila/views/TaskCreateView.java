@@ -10,16 +10,14 @@ import com.projectaquila.R;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
-import com.projectaquila.models.Task;
 import com.projectaquila.services.HelperService;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
 public class TaskCreateView extends ViewBase {
     private Date mTaskDate;
+    private EditText mTaskNameText;
     private TextView mTaskDateText;
 
     @Override
@@ -37,26 +35,38 @@ public class TaskCreateView extends ViewBase {
             return;
         }
 
-        final EditText taskNameText = ((EditText)findViewById(R.id.taskupdate_taskname));
-        taskNameText.setText(taskName);
-
+        mTaskNameText = ((EditText)findViewById(R.id.taskupdate_taskname));
+        mTaskNameText.setText(taskName);
         mTaskDateText = ((TextView)findViewById(R.id.taskupdate_taskdate));
         mTaskDateText.setPaintFlags(mTaskDateText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         mTaskDateText.setKeyListener(null);
-        mTaskDateText.setOnClickListener(HelperService.getDatePickerClickHandler(mTaskDate, new Callback() {
+        mTaskDateText.setOnClickListener(getDateTextClickHandler());
+        findViewById(R.id.taskupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
+        findViewById(R.id.taskupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
+
+        updateView();
+        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskcreate_title);
+        AppContext.getCurrent().getActivity().showContentScreen();
+    }
+
+    private View.OnClickListener getDateTextClickHandler(){
+        return HelperService.getDatePickerClickHandler(mTaskDate, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 mTaskDate = (Date)params.get("retval");
                 updateView();
             }
-        }));
-        findViewById(R.id.taskupdate_save_btn).setOnClickListener(new View.OnClickListener() {
+        });
+    }
+
+    private View.OnClickListener getSaveButtonClickHandler(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[TaskCreateView.initializeView] saving");
+                System.out.println("[TaskCreateView.getSaveButtonClickHandler] saving");
                 AppContext.getCurrent().getActivity().onBackPressed();
                 AppContext.getCurrent().getActivity().showLoadingScreen();
-                String updatedName = taskNameText.getText().toString();
+                String updatedName = mTaskNameText.getText().toString();
                 final String updatedDate = HelperService.getDateKey(mTaskDate);
                 HashMap<String, String> data = new HashMap<>();
                 data.put("taskname", updatedName);
@@ -70,18 +80,17 @@ public class TaskCreateView extends ViewBase {
                     }
                 });
             }
-        });
-        findViewById(R.id.taskupdate_cancel_btn).setOnClickListener(new View.OnClickListener() {
+        };
+    }
+
+    private View.OnClickListener getCancelButtonClickHandler(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[TaskCreateView.initializeView] cancelling");
+                System.out.println("[TaskCreateView.getCancelButtonClickHandler] cancelling");
                 AppContext.getCurrent().getActivity().onBackPressed();
             }
-        });
-
-        updateView();
-        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskcreate_title);
-        AppContext.getCurrent().getActivity().showContentScreen();
+        };
     }
 
     private void updateView(){

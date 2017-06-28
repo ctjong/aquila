@@ -48,4 +48,14 @@ public class ChildActivity extends ShellActivity {
         AppContext.getCurrent().setChildActivity(null);
         overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_left);
     }
+
+    /**
+     * Show the error screen
+     * @param stringId id of the error msg string
+     */
+    @Override
+    public void showErrorScreen(int stringId){
+        onBackPressed();
+        AppContext.getCurrent().getActivity().showErrorScreen(stringId);
+    }
 }

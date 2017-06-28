@@ -129,6 +129,7 @@ public abstract class ShellActivity extends AppCompatActivity {
 
     /**
      * Show the error screen
+     * @param stringId id of the error msg string
      */
     public void showErrorScreen(int stringId){
         System.out.println("[ShellActivity.showErrorScreen]");

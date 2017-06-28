@@ -5,8 +5,6 @@ import com.projectaquila.services.HelperService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Task {
@@ -31,12 +29,17 @@ public class Task {
         JSONObject json = (JSONObject)object;
         try{
             String id = json.getString("id");
-            Date date = HelperService.parseDateKey(json.getString("taskdate"));
+            String dateString = json.getString("taskdate");
+            Date date = HelperService.parseDateKey(dateString);
+            if(date == null){
+                System.err.println("[Task.parse] failed to parse date: " + dateString);
+                return null;
+            }
             String name = json.getString("taskname");
             boolean isCompleted = json.getBoolean("iscompleted");
             return new Task(id, date, name, isCompleted);
         }catch(JSONException e){
-            System.err.println("[TaskControl.parse] received JSONException. skipping.");
+            System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }

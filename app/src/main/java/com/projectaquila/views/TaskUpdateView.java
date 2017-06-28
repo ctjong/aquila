@@ -17,7 +17,9 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class TaskUpdateView extends ViewBase {
+    private Task mTask;
     private Date mTaskDate;
+    private EditText mTaskNameText;
     private TextView mTaskDateText;
 
     @Override
@@ -35,33 +37,45 @@ public class TaskUpdateView extends ViewBase {
             return;
         }
 
-        final Task task = AppContext.getCurrent().getTasks().get(taskId);
-        final EditText taskNameText = ((EditText)findViewById(R.id.taskupdate_taskname));
-        taskNameText.setText(task.getName());
-
-        mTaskDate = task.getDate();
+        mTask = AppContext.getCurrent().getTasks().get(taskId);
+        mTaskNameText = ((EditText)findViewById(R.id.taskupdate_taskname));
+        mTaskNameText.setText(mTask.getName());
+        mTaskDate = mTask.getDate();
         mTaskDateText = ((TextView)findViewById(R.id.taskupdate_taskdate));
         mTaskDateText.setPaintFlags(mTaskDateText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         mTaskDateText.setKeyListener(null);
-        mTaskDateText.setOnClickListener(HelperService.getDatePickerClickHandler(mTaskDate, new Callback() {
+        mTaskDateText.setOnClickListener(getDateTextClickHandler());
+        findViewById(R.id.taskupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
+        findViewById(R.id.taskupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
+
+        updateView();
+        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskupdate_title);
+        AppContext.getCurrent().getActivity().showContentScreen();
+    }
+
+    private View.OnClickListener getDateTextClickHandler(){
+        return HelperService.getDatePickerClickHandler(mTaskDate, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 mTaskDate = (Date)params.get("retval");
                 updateView();
             }
-        }));
-        findViewById(R.id.taskupdate_save_btn).setOnClickListener(new View.OnClickListener() {
+        });
+    }
+
+    private View.OnClickListener getSaveButtonClickHandler(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[TaskUpdateView.initializeView] saving");
+                System.out.println("[TaskUpdateView.getSaveButtonClickHandler] saving");
                 AppContext.getCurrent().getActivity().onBackPressed();
                 AppContext.getCurrent().getActivity().showLoadingScreen();
-                String updatedName = taskNameText.getText().toString();
+                String updatedName = mTaskNameText.getText().toString();
                 final String updatedDate = HelperService.getDateKey(mTaskDate);
                 HashMap<String, String> data = new HashMap<>();
                 data.put("taskname", updatedName);
                 data.put("taskdate", updatedDate);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + task.getId(), data, new Callback() {
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, new Callback() {
                     @Override
                     public void execute(HashMap<String, Object> params, S s) {
                         HashMap<String, String> navParams = new HashMap<>();
@@ -70,18 +84,17 @@ public class TaskUpdateView extends ViewBase {
                     }
                 });
             }
-        });
-        findViewById(R.id.taskupdate_cancel_btn).setOnClickListener(new View.OnClickListener() {
+        };
+    }
+
+    private View.OnClickListener getCancelButtonClickHandler(){
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[TaskUpdateView.initializeView] cancelling");
+                System.out.println("[TaskUpdateView.getCancelButtonClickHandler] cancelling");
                 AppContext.getCurrent().getActivity().onBackPressed();
             }
-        });
-
-        updateView();
-        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskupdate_title);
-        AppContext.getCurrent().getActivity().showContentScreen();
+        };
     }
 
     private void updateView(){
