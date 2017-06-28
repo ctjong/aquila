@@ -1,6 +1,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_taskdetail"
+    android:id="@+id/view_taskupdate"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -18,12 +18,13 @@
             android:layout_gravity="center_vertical"
             android:src="@android:drawable/ic_menu_info_details" />
 
-        <TextView
-            android:id="@+id/taskdetail_taskname"
+        <EditText
+            android:id="@+id/taskupdate_taskname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="10dp"
+            android:hint="@string/taskupdate_taskname_hint"/>
     </LinearLayout>
 
     <LinearLayout
@@ -40,22 +41,34 @@
             android:src="@android:drawable/ic_menu_my_calendar" />
 
         <TextView
-            android:id="@+id/taskdetail_taskdate"
+            android:id="@+id/taskupdate_taskdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/taskdetail_edit_btn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/cardview_light_background"
-        android:text="@string/taskdetail_edit_btn_text"/>
+        android:layout_marginTop="20dp">
+        <Button
+            android:id="@+id/taskupdate_save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/cardview_light_background"
+            android:text="@string/taskupdate_save_btn_text"/>
+        <Button
+            android:id="@+id/taskupdate_cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/cardview_light_background"
+            android:text="@string/taskupdate_cancel_btn_text"/>
+    </LinearLayout>
 
 </LinearLayout>
 

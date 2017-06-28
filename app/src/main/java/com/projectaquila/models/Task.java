@@ -12,12 +12,14 @@ public class Task {
     private Date mDate;
     private String mName;
     private boolean mIsCompleted;
+    private Event mChangedEvent;
 
     public Task(String id, Date date, String name, boolean isCompleted){
         mId = id;
         mDate = date;
         mName = name;
         mIsCompleted = isCompleted;
+        mChangedEvent = new Event();
     }
 
     public static Task parse(Object object){
@@ -42,6 +44,10 @@ public class Task {
         }
     }
 
+    public void addChangedHandler(Callback handler){
+        mChangedEvent.addHandler(handler);
+    }
+
     public String getId(){
         return mId;
     }
@@ -62,7 +68,15 @@ public class Task {
         mDate = date;
     }
 
+    public void setName(String name){
+        mName = name;
+    }
+
     public void setCompletedState(boolean isCompleted){
         mIsCompleted = isCompleted;
+    }
+
+    public void notifyListeners(){
+        mChangedEvent.invoke(null);
     }
 }

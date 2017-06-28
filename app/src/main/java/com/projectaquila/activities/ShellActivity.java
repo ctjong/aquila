@@ -16,6 +16,7 @@ import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.Event;
+import com.projectaquila.views.MainView;
 
 import java.util.HashMap;
 
@@ -64,7 +65,8 @@ public abstract class ShellActivity extends AppCompatActivity {
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().getNavigationService().reloadView();
+                AppContext.getCurrent().setChildActivity(null);
+                AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
             }
         });
 

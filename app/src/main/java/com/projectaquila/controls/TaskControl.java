@@ -7,7 +7,6 @@ import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.Event;
 import com.projectaquila.models.S;
 import com.projectaquila.models.Task;
 import com.projectaquila.services.HelperService;
@@ -18,11 +17,9 @@ import java.util.HashMap;
 
 public class TaskControl {
     private Task mTask;
-    private Event mChangedEvent;
 
     public TaskControl(Task task){
         mTask = task;
-        mChangedEvent = new Event();
     }
 
     public Task getTask(){
@@ -41,10 +38,6 @@ public class TaskControl {
         return view;
     }
 
-    public void addChangedHandler(Callback cb){
-        mChangedEvent.addHandler(cb);
-    }
-
     private Callback getPostponeTaskAction(){
         return new Callback() {
             @Override
@@ -55,8 +48,7 @@ public class TaskControl {
                 HashMap<String, String> data = new HashMap<>();
                 data.put("taskdate", HelperService.getDateKey(postponedDate));
                 AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
-                // update UI without waiting for API request, for seamless UI response.
-                mChangedEvent.invoke(null);
+                mTask.notifyListeners();
             }
         };
     }
@@ -70,8 +62,7 @@ public class TaskControl {
                 HashMap<String, String> data = new HashMap<>();
                 data.put("iscompleted", "1");
                 AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
-                // update UI without waiting for API request, for seamless UI response.
-                mChangedEvent.invoke(null);
+                mTask.notifyListeners();
             }
         };
     }

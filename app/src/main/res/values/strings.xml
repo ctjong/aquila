@@ -7,6 +7,7 @@
     <string name="shell_error_reload_btn_text">Reload</string>
     <string name="shell_error_connection">Failed to connect to server. Please make sure you are connected to internet.</string>
     <string name="shell_error_unknown">Something went wrong.</string>
+    <string name="shell_error_unauthorized">You don\'t have permission to do the requested operation</string>
 
     <string name="menu_tasks">Today</string>
     <string name="menu_login">Login</string>
@@ -21,4 +22,11 @@
     <string name="tasks_add_hint">Add new task</string>
 
     <string name="taskdetail_title">Task detail</string>
+    <string name="taskdetail_edit_btn_text">Edit</string>
+
+    <string name="taskupdate_title">Update task</string>
+    <string name="taskupdate_taskname_hint">Task name</string>
+    <string name="taskupdate_taskdate_hint">Task date</string>
+    <string name="taskupdate_save_btn_text">Save</string>
+    <string name="taskupdate_cancel_btn_text">Cancel</string>
 </resources>

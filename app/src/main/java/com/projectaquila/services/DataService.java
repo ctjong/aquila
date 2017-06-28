@@ -122,8 +122,12 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
             if(statusCode == 404) {
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_connection);
             }else if(statusCode == 401) {
-                AppContext.getCurrent().getAuthService().logOut();
-                AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
+                if(mMethod == ApiTaskMethod.GET) {
+                    AppContext.getCurrent().getAuthService().logOut();
+                    AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
+                }else{
+                    AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unauthorized);
+                }
             }else if(statusCode != 200){
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
             }else{

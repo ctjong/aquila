@@ -80,7 +80,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             System.err.println("[TasksAdapter.getView] failed to get task data at position " + position);
             return new TextView(AppContext.getCurrent().getActivity());
         }
-        taskControl.addChangedHandler(new Callback() {
+        taskControl.getTask().addChangedHandler(new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 updateControlsMap();
