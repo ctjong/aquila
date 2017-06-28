@@ -54,6 +54,7 @@ public class TaskCreateView extends ViewBase {
             @Override
             public void onClick(View v) {
                 System.out.println("[TaskCreateView.initializeView] saving");
+                AppContext.getCurrent().getActivity().onBackPressed();
                 AppContext.getCurrent().getActivity().showLoadingScreen();
                 String updatedName = taskNameText.getText().toString();
                 final String updatedDate = HelperService.getDateKey(mTaskDate);
