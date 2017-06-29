@@ -181,7 +181,8 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         try {
             String startDate = mActiveDate.getModifiedKey(-1 * CACHE_DAYS_SPAN);
             String endDate = mActiveDate.getModifiedKey(CACHE_DAYS_SPAN);
-            String condition = URLEncoder.encode("taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
+            //String condition = URLEncoder.encode("taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
+            String condition = URLEncoder.encode("recmode<>null", "UTF-8");
             return "/data/task/private/findbyconditions/id/0/" + ITEMS_PER_DATE + "/" + condition;
         } catch (UnsupportedEncodingException e) {
             System.err.println("[TasksView.getDataUrlForCurrentDate] exception");
