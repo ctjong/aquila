@@ -1,7 +1,6 @@
 package com.projectaquila.controls;
 
 import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -69,15 +68,17 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     @NonNull
     @Override
     public View getView (int position, View convertView, @NonNull ViewGroup parent){
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.control_taskcontrol, null);
-        if(view == null){
-            System.err.println("[TasksAdapter.getView] failed to get view for task at index" + position);
-            return new TextView(AppContext.getCurrent().getActivity());
+        if(convertView == null || convertView instanceof TextView) {
+            convertView = View.inflate(getContext(), R.layout.control_taskcontrol, null);
+            if (convertView == null) {
+                System.err.println("[TasksAdapter.getView] failed to get view for task at index" + position);
+                return new TextView(getContext());
+            }
         }
         final TaskControl taskControl = getItem(position);
         if(taskControl == null){
             System.err.println("[TasksAdapter.getView] failed to get task data at position " + position);
-            return new TextView(AppContext.getCurrent().getActivity());
+            return new TextView(getContext());
         }
         taskControl.getTask().addChangedHandler(new Callback() {
             @Override
@@ -85,7 +86,8 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                 updateControlsMap();
             }
         });
-        return taskControl.renderView(view);
+        taskControl.renderView(convertView);
+        return convertView;
     }
 
     /**

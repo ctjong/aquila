@@ -25,7 +25,7 @@ public class TaskControl {
         return mTask;
     }
 
-    public View renderView(View view){
+    public void renderView(View view){
         TextView text = (TextView) view.findViewById(R.id.taskcontrol_text);
         text.setText(mTask.getName());
 
@@ -34,7 +34,6 @@ public class TaskControl {
         Callback openTaskAction = getOpenTaskAction();
         View slider = view.findViewById(R.id.taskcontrol_slider);
         SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
-        return view;
     }
 
     private Callback getPostponeTaskAction(){
