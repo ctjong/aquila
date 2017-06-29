@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult>> {
     private ApiTaskMethod mMethod;
@@ -60,6 +61,9 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
 
             // bind POST/PUT data
             if(mMethod == ApiTaskMethod.POST || mMethod == ApiTaskMethod.PUT) {
+                for(Map.Entry entry : mData.entrySet()){
+                    System.out.println("[DataService.doInBackground] param['" + entry.getKey() + "'] = '" + entry.getValue() + "'");
+                }
                 conn.setReadTimeout(15000);
                 conn.setConnectTimeout(15000);
                 conn.setDoInput(true);

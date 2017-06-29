@@ -89,7 +89,12 @@ public class Task {
     }
 
     public void setDate(TaskDate date){
-        mDate = date;
+        if(date != null && !mDate.toDateKey().equals(date.toDateKey())) {
+            mDate = date;
+            if (mRecurrence != null) {
+                mRecurrence.getActiveBlocks().clear();
+            }
+        }
     }
 
     public void setName(String name){
@@ -101,7 +106,11 @@ public class Task {
     }
 
     public void setRecurrence(TaskRecurrence recurrence){
-        mRecurrence = recurrence;
+        if(mRecurrence != null && recurrence != null) {
+            mRecurrence.set(recurrence);
+        }else{
+            mRecurrence = recurrence;
+        }
     }
 
     public void notifyListeners(){
@@ -118,11 +127,13 @@ public class Task {
             data.put("recdays", null);
             data.put("recinterval", null);
             data.put("recactive", null);
+            data.put("recend", null);
         }else{
             data.put("recmode", mRecurrence.getMode().getValue() + "");
             data.put("recdays", mRecurrence.getDaysString());
             data.put("recinterval", mRecurrence.getInterval() + "");
             data.put("recactive", mRecurrence.getActiveString());
+            data.put("recend", mRecurrence.getEnd() == null ? null : mRecurrence.getEnd().toDateKey());
         }
         return data;
     }

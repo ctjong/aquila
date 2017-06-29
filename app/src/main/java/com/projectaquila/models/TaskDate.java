@@ -77,7 +77,7 @@ public class TaskDate extends java.util.Date {
         try {
             return new TaskDate(new SimpleDateFormat("yyMMdd").parse(dateKey));
         } catch (ParseException e) {
-            System.err.println("[HelperService.parseDateKey] exception");
+            System.err.println("[TaskDate.parseDateKey] exception");
             e.printStackTrace();
             return null;
         }

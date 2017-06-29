@@ -10,26 +10,31 @@ import android.widget.TextView;
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.controls.DateEditText;
+import com.projectaquila.controls.DaysPicker;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.RecurrenceMode;
 import com.projectaquila.models.S;
 import com.projectaquila.models.Task;
 import com.projectaquila.models.TaskDate;
+import com.projectaquila.models.TaskRecurrence;
+import com.projectaquila.services.HelperService;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TaskUpdateView extends ViewBase {
     private Task mTask;
     private EditText mTaskNameText;
     private DateEditText mTaskDateText;
 
-    // recurrence controls
     private Spinner mRecModeSpinner;
     private ArrayAdapter<RecurrenceMode> mRecModeSpinnerAdapter;
+    private DaysPicker mRecDaysPicker;
+    private EditText mRecIntervalText;
     private Spinner mRecEndSpinner;
-    private ArrayAdapter<String> mRecEndSpinnerAdapter;
-    private DateEditText mRecEndDate;
+    private DateEditText mRecEndText;
 
     /**
      * Get layout id
@@ -95,7 +100,8 @@ public class TaskUpdateView extends ViewBase {
      * Initialize the controls that set task recurrence
      */
     private void initializeRecControls(){
-        mRecModeSpinner = (Spinner)findViewById(R.id.taskupdate_recspinner);
+        // recurrence mode controls
+        mRecModeSpinner = (Spinner) findViewById(R.id.taskupdate_recspinner);
         mRecModeSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_recspinneritem);
         mRecModeSpinner.setAdapter(mRecModeSpinnerAdapter);
         mRecModeSpinnerAdapter.add(RecurrenceMode.None);
@@ -106,13 +112,24 @@ public class TaskUpdateView extends ViewBase {
         mRecModeSpinnerAdapter.add(RecurrenceMode.Yearly);
         mRecModeSpinner.setOnItemSelectedListener(getRecModeSpinnerSelectionHandler());
 
-        mRecEndSpinner = (Spinner)findViewById(R.id.taskupdate_recend_spinner);
-        mRecEndSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_recspinneritem);
-        mRecEndSpinner.setAdapter(mRecEndSpinnerAdapter);
-        mRecEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskupdate_recend_spinner_forever));
-        mRecEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskupdate_recend_spinner_date));
+        // recurrence end controls
+        mRecEndSpinner = (Spinner) findViewById(R.id.taskupdate_recend_spinner);
+        ArrayAdapter<String> recEndSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_recspinneritem);
+        mRecEndSpinner.setAdapter(recEndSpinnerAdapter);
+        recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskupdate_recend_spinner_forever));
+        recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskupdate_recend_spinner_date));
         mRecEndSpinner.setOnItemSelectedListener(getRecEndSpinnerSelectionHandler());
-        mRecEndDate = (DateEditText)findViewById(R.id.taskupdate_recend_date);
+        mRecEndText = (DateEditText)findViewById(R.id.taskupdate_recend_date);
+
+        // recurrence days interval
+        mRecDaysPicker = (DaysPicker)findViewById(R.id.taskupdate_recdays_picker);
+        mRecIntervalText = (EditText)findViewById(R.id.taskupdate_recinterval_text);
+
+        // init control values
+        TaskRecurrence rec = mTask.getRecurrence();
+        if(rec != null){
+            mRecModeSpinner.setSelection(mRecModeSpinnerAdapter.getPosition(rec.getMode()));
+        }
     }
 
     /**
@@ -128,6 +145,17 @@ public class TaskUpdateView extends ViewBase {
                 // get the changes
                 mTask.setDate(mTaskDateText.getValue());
                 mTask.setName(mTaskNameText.getText().toString());
+                int selectedRecModePos = mRecModeSpinner.getSelectedItemPosition();
+                if(selectedRecModePos == 0){
+                    mTask.setRecurrence(null);
+                }else{
+                    RecurrenceMode recMode = mRecModeSpinnerAdapter.getItem(selectedRecModePos);
+                    HashSet<Integer> recDays = mRecDaysPicker.getValue();
+                    int recInterval = Integer.parseInt(mRecIntervalText.getText().toString());
+                    TaskDate recEnd = mRecEndSpinner.getSelectedItemPosition() == 0 ? null : mRecEndText.getValue();
+                    TaskRecurrence rec = new TaskRecurrence(recMode, recDays, recInterval, recEnd);
+                    mTask.setRecurrence(rec);
+                }
 
                 // go back to main activity and reload
                 AppContext.getCurrent().getActivity().onBackPressed();
@@ -171,18 +199,21 @@ public class TaskUpdateView extends ViewBase {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 RecurrenceMode mode = mRecModeSpinnerAdapter.getItem(position);
                 System.out.println("[TaskUpdateView.getRecSpinnerSelectionHandler] new mode = " + mode);
-
-                // set visibility
                 View recBox = findViewById(R.id.taskupdate_recurrence_box);
                 View recDaysRow = findViewById(R.id.taskupdate_recdays_row);
+
+                // fast return for null recurrence
                 if(mode == RecurrenceMode.None) {
                     recBox.setVisibility(View.GONE);
                     recDaysRow.setVisibility(View.GONE);
-                }else if(mode == RecurrenceMode.Weekly){
-                    recBox.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                // set visibility
+                recBox.setVisibility(View.VISIBLE);
+                if(mode == RecurrenceMode.Weekly){
                     recDaysRow.setVisibility(View.VISIBLE);
                 }else{
-                    recBox.setVisibility(View.VISIBLE);
                     recDaysRow.setVisibility(View.GONE);
                 }
 
@@ -198,6 +229,25 @@ public class TaskUpdateView extends ViewBase {
                     recIntervalSuffix.setText(R.string.taskupdate_recinterval_suffix_years);
                 }else{
                     recIntervalSuffix.setText("");
+                }
+
+                // reset control values
+                TaskRecurrence rec = mTask.getRecurrence();
+                if(rec == null) {
+                    // set to default values
+                    ((Spinner) findViewById(R.id.taskupdate_recend_spinner)).setSelection(0);
+                    ((TextView) findViewById(R.id.taskupdate_recinterval_text)).setText("1");
+                    ((DateEditText) findViewById(R.id.taskupdate_recend_date)).setValue(new TaskDate());
+                    HashSet<Integer> defaultDays = new HashSet<>();
+                    defaultDays.add(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+                    ((DaysPicker) findViewById(R.id.taskupdate_recdays_picker)).setValue(defaultDays);
+                }else{
+                    // set to task values
+                    TaskDate recEnd = rec.getEnd();
+                    ((Spinner) findViewById(R.id.taskupdate_recend_spinner)).setSelection(recEnd != null ? 1 : 0);
+                    ((TextView) findViewById(R.id.taskupdate_recinterval_text)).setText(HelperService.toString(mTask.getRecurrence().getInterval()));
+                    ((DateEditText) findViewById(R.id.taskupdate_recend_date)).setValue(recEnd != null ? recEnd : new TaskDate());
+                    ((DaysPicker) findViewById(R.id.taskupdate_recdays_picker)).setValue(mTask.getRecurrence().getDays());
                 }
             }
 
@@ -217,10 +267,10 @@ public class TaskUpdateView extends ViewBase {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position == 0){
                     // until forever
-                    mRecEndDate.setVisibility(View.GONE);
+                    mRecEndText.setVisibility(View.GONE);
                 }else {
                     // until date
-                    mRecEndDate.setVisibility(View.VISIBLE);
+                    mRecEndText.setVisibility(View.VISIBLE);
                 }
             }
 

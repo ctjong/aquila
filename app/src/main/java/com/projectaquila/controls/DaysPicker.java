@@ -1,9 +1,6 @@
 package com.projectaquila.controls;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -13,14 +10,14 @@ import android.widget.TextView;
 
 import com.projectaquila.R;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 public class DaysPicker extends LinearLayout {
-    private TextView mTextSun;
-    private TextView mTextMon;
-    private TextView mTextTue;
-    private TextView mTextWed;
-    private TextView mTextThu;
-    private TextView mTextFri;
-    private TextView mTextSat;
+    private HashMap<Integer, Integer> mControlToCalendarDaysMap;
+    private HashMap<Integer, Boolean> mControlValues;
 
     /**
      * Create a new days picker
@@ -31,21 +28,20 @@ public class DaysPicker extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.control_dayspicker, this);
 
-        mTextSun = (TextView)findViewById(R.id.dayspicker_sun);
-        mTextMon = (TextView)findViewById(R.id.dayspicker_mon);
-        mTextTue = (TextView)findViewById(R.id.dayspicker_tue);
-        mTextWed = (TextView)findViewById(R.id.dayspicker_wed);
-        mTextThu = (TextView)findViewById(R.id.dayspicker_thu);
-        mTextFri = (TextView)findViewById(R.id.dayspicker_fri);
-        mTextSat = (TextView)findViewById(R.id.dayspicker_sat);
+        mControlToCalendarDaysMap = new HashMap<>();
+        mControlToCalendarDaysMap.put(R.id.dayspicker_sun, Calendar.SUNDAY);
+        mControlToCalendarDaysMap.put(R.id.dayspicker_mon, Calendar.MONDAY);
+        mControlToCalendarDaysMap.put(R.id.dayspicker_tue, Calendar.TUESDAY);
+        mControlToCalendarDaysMap.put(R.id.dayspicker_wed, Calendar.WEDNESDAY);
+        mControlToCalendarDaysMap.put(R.id.dayspicker_thu, Calendar.THURSDAY);
+        mControlToCalendarDaysMap.put(R.id.dayspicker_fri, Calendar.FRIDAY);
+        mControlToCalendarDaysMap.put(R.id.dayspicker_sat, Calendar.SATURDAY);
 
-        mTextSun.setOnClickListener(getDayTextClickHandler());
-        mTextMon.setOnClickListener(getDayTextClickHandler());
-        mTextTue.setOnClickListener(getDayTextClickHandler());
-        mTextWed.setOnClickListener(getDayTextClickHandler());
-        mTextThu.setOnClickListener(getDayTextClickHandler());
-        mTextFri.setOnClickListener(getDayTextClickHandler());
-        mTextSat.setOnClickListener(getDayTextClickHandler());
+        mControlValues = new HashMap<>();
+        for(Map.Entry<Integer, Integer> entry : mControlToCalendarDaysMap.entrySet()){
+            mControlValues.put(entry.getKey(), false);
+            findViewById(entry.getKey()).setOnClickListener(getDayTextClickHandler());
+        }
     }
 
     /**
@@ -56,16 +52,50 @@ public class DaysPicker extends LinearLayout {
         return new OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView tv = (TextView)v;
-                if(tv.getBackground() == null){
-                    tv.setBackgroundResource(R.drawable.dayspicker_activebg);
-                }else{
-                    tv.setBackgroundResource(0);
-                }
+                int controlId = v.getId();
+                mControlValues.put(controlId, !mControlValues.get(controlId));
+                updateView();
             }
         };
     }
 
+    /**
+     * Return the value of this control
+     * @return value set
+     */
+    public HashSet<Integer> getValue(){
+        HashSet<Integer> set = new HashSet<>();
+        for(Map.Entry<Integer, Boolean> entry : mControlValues.entrySet()){
+            if(entry.getValue()){
+                set.add(mControlToCalendarDaysMap.get(entry.getKey()));
+            }
+        }
+        return set;
+    }
 
+    /**
+     * Set the value of this control
+     * @param newValue value set
+     */
+    public void setValue(HashSet<Integer> newValue){
+        for(Map.Entry<Integer, Integer> entry : mControlToCalendarDaysMap.entrySet()){
+            mControlValues.put(entry.getKey(), newValue.contains(entry.getValue()));
+        }
+        updateView();
+    }
+
+    /**
+     * Update view based on the control values set
+     */
+    private void updateView(){
+        for(Map.Entry<Integer, Boolean> entry : mControlValues.entrySet()) {
+            TextView tv = (TextView)findViewById(entry.getKey());
+            if(entry.getValue()){
+                tv.setBackgroundResource(R.drawable.dayspicker_activebg);
+            }else{
+                tv.setBackgroundResource(0);
+            }
+        }
+    }
 
 }
