@@ -1,0 +1,55 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/dayspicker_sun"
+        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:textAlignment="center"
+        android:text="S"/>
+
+    <TextView
+        android:id="@+id/dayspicker_mon"
+        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:textAlignment="center"
+        android:text="M"/>
+
+    <TextView
+        android:id="@+id/dayspicker_tue"
+        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:textAlignment="center"
+        android:text="T"/>
+
+    <TextView
+        android:id="@+id/dayspicker_wed"
+        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:textAlignment="center"
+        android:text="W"/>
+
+    <TextView
+        android:id="@+id/dayspicker_thu"
+        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:textAlignment="center"
+        android:text="T"/>
+
+    <TextView
+        android:id="@+id/dayspicker_fri"
+        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:textAlignment="center"
+        android:text="F"/>
+
+    <TextView
+        android:id="@+id/dayspicker_sat"
+        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:textAlignment="center"
+        android:text="S"/>
+
+</LinearLayout>

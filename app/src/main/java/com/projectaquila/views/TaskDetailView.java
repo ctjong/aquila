@@ -1,13 +1,12 @@
 package com.projectaquila.views;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.models.Task;
-import com.projectaquila.services.HelperService;
+import com.projectaquila.models.TaskDate;
 
 import java.util.HashMap;
 
@@ -28,7 +27,7 @@ public class TaskDetailView extends ViewBase {
 
         final Task task = AppContext.getCurrent().getTasks().get(taskId);
         ((TextView)findViewById(R.id.taskdetail_taskname)).setText(task.getName());
-        ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(HelperService.getDateString("MM/dd/yyyy", task.getDate()));
+        ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(TaskDate.format("MM/dd/yyyy", task.getDate()));
         findViewById(R.id.taskdetail_edit_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

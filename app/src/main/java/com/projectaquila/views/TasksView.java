@@ -12,17 +12,19 @@ import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
+import com.projectaquila.models.Task;
+import com.projectaquila.models.TaskDate;
 import com.projectaquila.services.HelperService;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 public class TasksView extends ViewBase {
+    private Task mNewTask;
     private TextView mCurrentDateText;
     private TextView mCurrentMonthText;
     private TasksAdapter mTasksAdapter;
-    private Date mCurrentDate;
+    private TaskDate mCurrentDate;
 
     @Override
     protected int getLayoutId() {
@@ -31,21 +33,22 @@ public class TasksView extends ViewBase {
 
     @Override
     protected void initializeView(){
+        mNewTask = new Task(null, new TaskDate(), "", false, null);
         mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
         mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
         mTasksAdapter = new TasksAdapter();
 
         String dateArg = getNavArg("date");
         if(dateArg != null){
-            mCurrentDate = HelperService.parseDateKey(dateArg);
+            mCurrentDate = TaskDate.parseDateKey(dateArg);
         }else{
-            mCurrentDate = new Date();
+            mCurrentDate = new TaskDate();
         }
 
         View.OnClickListener datePickerClickHandler = HelperService.getDatePickerClickHandler(mCurrentDate, new Callback() {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
-                mCurrentDate = (Date)params.get("retval");
+                mCurrentDate = (TaskDate)params.get("retval");
                 refresh();
             }
         });
@@ -70,8 +73,8 @@ public class TasksView extends ViewBase {
      */
     private void refresh(){
         // update date
-        mCurrentDateText.setText(HelperService.getDateString("EEE dd", mCurrentDate));
-        mCurrentMonthText.setText(HelperService.getDateString("MMMM yyyy", mCurrentDate));
+        mCurrentDateText.setText(TaskDate.format("EEE dd", mCurrentDate));
+        mCurrentMonthText.setText(TaskDate.format("MMMM yyyy", mCurrentDate));
 
         // update tasks list
         mTasksAdapter.loadDate(mCurrentDate, false);
@@ -86,13 +89,13 @@ public class TasksView extends ViewBase {
             public void onClick(View v) {
                 AppContext.getCurrent().getActivity().showLoadingScreen();
                 EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
-                String taskName = taskNameCtrl.getText().toString();
-                String taskDate = HelperService.getDateString("yyMMdd", mCurrentDate);
+
+                // get changes
+                mNewTask.setName(taskNameCtrl.getText().toString());
                 taskNameCtrl.setText("");
-                HashMap<String,String> data = new HashMap<>();
-                data.put("taskname", taskName);
-                data.put("taskdate", taskDate);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", data, new Callback() {
+
+                // save to server
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", mNewTask.getDataMap(), new Callback() {
                     @Override
                     public void execute(HashMap<String, Object> params, S s) {
                         if(s == S.Error) return;
@@ -110,13 +113,13 @@ public class TasksView extends ViewBase {
         return new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                EditText taskNameText = (EditText) findViewById(R.id.view_tasks_add_text);
-                String taskName = taskNameText.getText().toString();
-                taskNameText.setText("");
-                HashMap<String, String> navParams = new HashMap<>();
-                navParams.put("taskname", taskName);
-                navParams.put("taskdate", HelperService.getDateKey(mCurrentDate));
-                AppContext.getCurrent().getNavigationService().navigateChild(TaskCreateView.class, navParams);
+                EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
+
+                // get changes
+                mNewTask.setName(taskNameCtrl.getText().toString());
+                taskNameCtrl.setText("");
+
+                AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, mNewTask.getDataMap());
             }
         };
     }
@@ -132,7 +135,7 @@ public class TasksView extends ViewBase {
                 Calendar c = Calendar.getInstance();
                 c.setTime(mCurrentDate);
                 c.add(Calendar.DATE, numDays);
-                mCurrentDate = c.getTime();
+                mCurrentDate = new TaskDate(c.getTime());
                 refresh();
             }
         };

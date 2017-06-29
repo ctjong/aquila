@@ -9,10 +9,9 @@ import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.S;
 import com.projectaquila.models.Task;
-import com.projectaquila.services.HelperService;
+import com.projectaquila.models.TaskDate;
 import com.projectaquila.views.TaskDetailView;
 
-import java.util.Date;
 import java.util.HashMap;
 
 public class TaskControl {
@@ -43,10 +42,10 @@ public class TaskControl {
             @Override
             public void execute(HashMap<String, Object> params, S s) {
                 System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
-                Date postponedDate = HelperService.getModifiedDate(mTask.getDate(), 1);
+                TaskDate postponedDate = mTask.getDate().getModified(1);
                 mTask.setDate(postponedDate);
                 HashMap<String, String> data = new HashMap<>();
-                data.put("taskdate", HelperService.getDateKey(postponedDate));
+                data.put("taskdate", postponedDate.toDateKey());
                 AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
                 mTask.notifyListeners();
             }

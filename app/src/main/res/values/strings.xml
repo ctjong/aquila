@@ -28,6 +28,26 @@
     <string name="taskupdate_title">Update task</string>
     <string name="taskupdate_taskname_hint">Task name</string>
     <string name="taskupdate_taskdate_hint">Task date</string>
+    <string name="taskupdate_recurrence_label">Repeat: </string>
     <string name="taskupdate_save_btn_text">Save</string>
     <string name="taskupdate_cancel_btn_text">Cancel</string>
+
+    <string name="taskupdate_recmode_none">None</string>
+    <string name="taskupdate_recmode_daily">Daily</string>
+    <string name="taskupdate_recmode_weekly">Weekly</string>
+    <string name="taskupdate_recmode_monthlydatebased">Monthly, date based</string>
+    <string name="taskupdate_recmode_monthlyweekbased">Monthly, week based</string>
+    <string name="taskupdate_recmode_yearly">Yearly</string>
+
+    <string name="taskupdate_recdays_label">on day(s):</string>
+    <string name="taskupdate_recinterval_label">every:</string>
+    <string name="taskupdate_recinterval_suffix_days">day(s)</string>
+    <string name="taskupdate_recinterval_suffix_weeks">week(s)</string>
+    <string name="taskupdate_recinterval_suffix_months">month(s)</string>
+    <string name="taskupdate_recinterval_suffix_years">year(s)</string>
+    <string name="taskupdate_recend_label">until:</string>
+    <string name="taskupdate_recend_spinner_forever">Forever</string>
+    <string name="taskupdate_recend_spinner_date">Date</string>
+
+
 </resources>

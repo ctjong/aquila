@@ -1,24 +1,24 @@
 package com.projectaquila.models;
 
-import com.projectaquila.services.HelperService;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
+import java.util.HashMap;
 
 public class Task {
     private String mId;
-    private Date mDate;
+    private TaskDate mDate;
     private String mName;
     private boolean mIsCompleted;
+    private TaskRecurrence mRecurrence;
     private Event mChangedEvent;
 
-    public Task(String id, Date date, String name, boolean isCompleted){
+    public Task(String id, TaskDate date, String name, boolean isCompleted, TaskRecurrence recurrence){
         mId = id;
         mDate = date;
         mName = name;
         mIsCompleted = isCompleted;
+        mRecurrence = recurrence;
         mChangedEvent = new Event();
     }
 
@@ -30,19 +30,38 @@ public class Task {
         try{
             String id = json.getString("id");
             String dateString = json.getString("taskdate");
-            Date date = HelperService.parseDateKey(dateString);
+            TaskDate date = TaskDate.parseDateKey(dateString);
             if(date == null){
                 System.err.println("[Task.parse] failed to parse date: " + dateString);
                 return null;
             }
             String name = json.getString("taskname");
             boolean isCompleted = json.getBoolean("iscompleted");
-            return new Task(id, date, name, isCompleted);
+
+            if(json.isNull("recmode")) {
+                return new Task(id, date, name, isCompleted, null);
+            }else{
+                TaskRecurrence rec = TaskRecurrence.parse(
+                        json.getInt("recmode"),
+                        json.getString("recdays"),
+                        json.getInt("recinterval"),
+                        json.getString("recend"),
+                        json.getString("recactive"));
+                if(rec == null){
+                    System.err.println("[Task.parse] failed to parse recurrence");
+                    return null;
+                }
+                return new Task(id, date, name, isCompleted, rec);
+            }
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getDateKey(){
+        return mDate.toDateKey();
     }
 
     public void addChangedHandler(Callback handler){
@@ -53,7 +72,7 @@ public class Task {
         return mId;
     }
 
-    public Date getDate(){
+    public TaskDate getDate(){
         return mDate;
     }
 
@@ -65,7 +84,11 @@ public class Task {
         return mIsCompleted;
     }
 
-    public void setDate(Date date){
+    public TaskRecurrence getRecurrence(){
+        return mRecurrence;
+    }
+
+    public void setDate(TaskDate date){
         mDate = date;
     }
 
@@ -77,7 +100,30 @@ public class Task {
         mIsCompleted = isCompleted;
     }
 
+    public void setRecurrence(TaskRecurrence recurrence){
+        mRecurrence = recurrence;
+    }
+
     public void notifyListeners(){
         mChangedEvent.invoke(null);
+    }
+
+    public HashMap<String, String> getDataMap(){
+        HashMap<String, String> data = new HashMap<>();
+        data.put("taskdate", mDate.toDateKey());
+        data.put("taskname", mName);
+        data.put("iscompleted", mIsCompleted ? "1" : "0");
+        if(mRecurrence == null){
+            data.put("recmode", null);
+            data.put("recdays", null);
+            data.put("recinterval", null);
+            data.put("recactive", null);
+        }else{
+            data.put("recmode", mRecurrence.getMode().getValue() + "");
+            data.put("recdays", mRecurrence.getDaysString());
+            data.put("recinterval", mRecurrence.getInterval() + "");
+            data.put("recactive", mRecurrence.getActiveString());
+        }
+        return data;
     }
 }
