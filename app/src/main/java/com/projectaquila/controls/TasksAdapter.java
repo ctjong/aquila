@@ -54,8 +54,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             retrieveFromServer(0);
         }else {
             if (!mControlsMap.containsKey(key)) {
-                initNearbyDateKeys();
-                updateControlsMap();
+                expandControlsMap();
             }
             clear();
             List<TaskControl> activeControls = mControlsMap.get(key);
@@ -82,6 +81,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             }
         }
         final TaskControl taskControl = getItem(position);
+        final String taskKey = taskControl.getTask().getDateKey();
         if(taskControl == null){
             System.err.println("[TasksAdapter.getView] failed to get task data at position " + position);
             return new TextView(getContext());
@@ -89,7 +89,11 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         taskControl.getTask().addChangedHandler(new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                updateControlsMap();
+                updateControlsMap(taskControl.getTask().getDate());
+                String currentKey = taskControl.getTask().getDateKey();
+                if(!taskKey.equals(currentKey)){
+                    updateControlsMap(taskControl.getTask().getDate());
+                }
             }
         });
         taskControl.renderView(convertView);
@@ -125,8 +129,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
                 if(mDownloadCount < count){
                     retrieveFromServer(partNum + 1);
                 }else{
-                    initNearbyDateKeys();
-                    updateControlsMap();
+                    expandControlsMap();
                     AppContext.getCurrent().getActivity().showContentScreen();
                 }
             }
@@ -157,42 +160,35 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     /**
      * Initialize keys for dates that are near the active date in the controls map
      */
-    private void initNearbyDateKeys(){
+    private void expandControlsMap(){
         for(int i=-1*CACHE_DAYS_SPAN; i<=CACHE_DAYS_SPAN; i++){
-            String key = mActiveDate.getModifiedKey(i);
-            mControlsMap.put(key, null);
+            updateControlsMap(mActiveDate.getModified(i));
         }
     }
 
     /**
-     * Update the controls map based on the tasks model
+     * Update the controls map based on the tasks model for the given date
      */
-    private void updateControlsMap(){
+    private void updateControlsMap(TaskDate mapDate){
         clear();
         String activeKey = mActiveDate.toDateKey();
-        for (String mapKey : mControlsMap.keySet()) {
-            mControlsMap.put(mapKey, new LinkedList<TaskControl>());
-        }
+        String mapKey = mapDate.toDateKey();
+        mControlsMap.put(mapKey, new LinkedList<TaskControl>());
         for(Map.Entry<String,Task> entry : AppContext.getCurrent().getTasks().entrySet()){
             Task task = entry.getValue();
             if(task.isCompleted()) continue;
             TaskControl control = new TaskControl(task);
             String taskKey = task.getDate().toDateKey();
-            if(task.getRecurrence() == null){
-                if(mControlsMap.containsKey(taskKey)){
-                    mControlsMap.get(taskKey).add(control);
-                    if(taskKey.equals(activeKey)) {
-                        add(control);
-                    }
+            if(task.getRecurrence() == null && taskKey == mapKey && mControlsMap.containsKey(taskKey)) {
+                mControlsMap.get(taskKey).add(control);
+                if(taskKey.equals(activeKey)) {
+                    add(control);
                 }
-            }else{
-                for (String mapKey : mControlsMap.keySet()) {
-                    TaskDate mapDate = TaskDate.parseDateKey(mapKey);
-                    if(task.getRecurrence().isIncluded(mapDate)){
-                        mControlsMap.get(mapKey).add(control);
-                    }
+            } else if(task.getRecurrence() != null) {
+                if(task.getRecurrence().isIncluded(mapDate)){
+                    mControlsMap.get(mapKey).add(control);
                 }
-                if(task.getRecurrence().isIncluded(mActiveDate)) {
+                if(mapKey.equals(activeKey) && task.getRecurrence().isIncluded(mActiveDate)) {
                     add(control);
                 }
             }
