@@ -8,11 +8,10 @@ import android.widget.DatePicker;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.S;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.TaskDate;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
 
 public class HelperService {
@@ -47,9 +46,7 @@ public class HelperService {
                         c.set(Calendar.YEAR, year);
                         c.set(Calendar.MONTH, month);
                         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        HashMap<String, Object> retVal = new HashMap<>();
-                        retVal.put("retval", new TaskDate(c.getTime()));
-                        dateSetHandler.execute(retVal, S.OK);
+                        dateSetHandler.execute(new CallbackParams("retval", new TaskDate(c.getTime())));
                     }
                 }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
             }

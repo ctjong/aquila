@@ -8,19 +8,38 @@ import java.util.HashMap;
 
 public class ApiResult {
     private int mStatusCode;
-    private HashMap<String, Object> mData;
+    private int mCount;
+    private JSONArray mItems;
+    private Exception mException;
 
-    public ApiResult(int statusCode, JSONObject dataJson){
+    public ApiResult(int statusCode, int count, JSONArray items){
         mStatusCode = statusCode;
-        mData = convertJson(dataJson);
+        mCount = count;
+        mItems = items;
+        mException = null;
+    }
+
+    public ApiResult(Exception e){
+        mStatusCode = -1;
+        mCount = 0;
+        mItems = null;
+        mException = e;
     }
 
     public int getStatusCode(){
         return mStatusCode;
     }
 
-    public HashMap<String, Object> getData(){
-        return mData;
+    public int getCount(){
+        return mCount;
+    }
+
+    public JSONArray getItems(){
+        return mItems;
+    }
+
+    public boolean isSuccess(){
+        return mStatusCode == 200;
     }
 
     private HashMap<String, Object> convertJson(JSONObject json){

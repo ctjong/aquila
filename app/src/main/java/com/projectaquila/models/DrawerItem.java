@@ -2,8 +2,6 @@ package com.projectaquila.models;
 
 import com.projectaquila.AppContext;
 
-import java.util.HashMap;
-
 public class DrawerItem {
     private String mTitle;
     private Class mTarget;
@@ -19,15 +17,15 @@ public class DrawerItem {
         return mTitle;
     }
 
-    public Callback getHandler(){
-        return new Callback() {
-            @Override
-            public void execute(HashMap<String, Object> params, S s) {
-                if(mIsLogoutMenu){
-                    AppContext.getCurrent().getAuthService().logOut();
-                }
-                AppContext.getCurrent().getNavigationService().navigate(mTarget, null);
-            }
-        };
+    public void invoke(){
+        if(mIsLogoutMenu){
+            AppContext.getCurrent().getAuthService().logOut();
+        }
+        AppContext.getCurrent().getNavigationService().navigate(mTarget, null);
+    }
+
+    @Override
+    public String toString(){
+        return mTitle;
     }
 }

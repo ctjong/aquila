@@ -13,8 +13,8 @@ import com.projectaquila.controls.DateEditText;
 import com.projectaquila.controls.DaysPicker;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.RecurrenceMode;
-import com.projectaquila.models.S;
 import com.projectaquila.models.Task;
 import com.projectaquila.models.TaskDate;
 import com.projectaquila.models.TaskRecurrence;
@@ -153,7 +153,7 @@ public class TaskUpdateView extends ViewBase {
                     HashSet<Integer> recDays = mRecDaysPicker.getValue();
                     int recInterval = Integer.parseInt(mRecIntervalText.getText().toString());
                     TaskDate recEnd = mRecEndSpinner.getSelectedItemPosition() == 0 ? null : mRecEndText.getValue();
-                    TaskRecurrence rec = new TaskRecurrence(recMode, recDays, recInterval, recEnd);
+                    TaskRecurrence rec = new TaskRecurrence(mTask.getDate(), recMode, recDays, recInterval, recEnd);
                     mTask.setRecurrence(rec);
                 }
 
@@ -164,8 +164,7 @@ public class TaskUpdateView extends ViewBase {
                 String url = mTask.getId() == null ? "/data/task/public" : "/data/task/private/" + mTask.getId();
                 AppContext.getCurrent().getDataService().request(method, url, mTask.getDataMap(), new Callback() {
                     @Override
-                    public void execute(HashMap<String, Object> params, S s) {
-                        if(s != S.OK) return;
+                    public void execute(CallbackParams params) {
                         HashMap<String, String> navParams = new HashMap<>();
                         navParams.put("date", mTask.getDateKey());
                         AppContext.getCurrent().getNavigationService().navigate(TasksView.class, navParams);

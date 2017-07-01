@@ -5,27 +5,24 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.controls.DrawerItemClickListener;
 import com.projectaquila.controls.DrawerToggle;
 import com.projectaquila.models.Callback;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.DrawerItem;
-import com.projectaquila.models.S;
 import com.projectaquila.views.MainView;
 import com.projectaquila.views.TasksView;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class MainActivity extends ShellActivity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawer;
-    private ArrayAdapter<String> mDrawerAdapter;
+    private ArrayAdapter<DrawerItem> mDrawerAdapter;
     private ActionBarDrawerToggle mDrawerToggle;
 
     /**
@@ -54,7 +51,7 @@ public class MainActivity extends ShellActivity {
         setupDrawer();
         AppContext.getCurrent().getAuthService().addAuthStateChangeHandler(new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 setupDrawer();
             }
         });
@@ -99,25 +96,26 @@ public class MainActivity extends ShellActivity {
      * Setup the menu items on the drawer
      */
     private void setupDrawer() {
-        List<DrawerItem> drawerItems = new ArrayList<>();
-        if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
-            drawerItems.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false));
-            drawerItems.add(new DrawerItem(getString(R.string.menu_logout), MainView.class, true));
-        }else{
-            drawerItems.add(new DrawerItem(getString(R.string.menu_login), MainView.class, false));
-        }
         if(mDrawerAdapter == null){
             mDrawerAdapter = new ArrayAdapter<>(this, R.layout.control_draweritem);
             mDrawer.setAdapter(mDrawerAdapter);
         }
         mDrawerAdapter.clear();
-        List<Callback> handlers = new ArrayList<>();
-        for(int i=0; i<drawerItems.size(); i++){
-            DrawerItem item = drawerItems.get(i);
-            mDrawerAdapter.add(item.getTitle());
-            handlers.add(item.getHandler());
+        if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_logout), MainView.class, true));
+        }else{
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_login), MainView.class, false));
         }
         mDrawerAdapter.notifyDataSetChanged();
-        mDrawer.setOnItemClickListener(new DrawerItemClickListener(handlers));
+        mDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DrawerItem item = mDrawerAdapter.getItem(position);
+                if(item != null){
+                    item.invoke();
+                }
+            }
+        });
     }
 }

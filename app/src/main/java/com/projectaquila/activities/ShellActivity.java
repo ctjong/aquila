@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.models.Callback;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Event;
 import com.projectaquila.views.MainView;
 
@@ -166,10 +167,10 @@ public abstract class ShellActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("requestCode", requestCode);
-        params.put("resultCode", resultCode);
-        params.put("data", data);
+        CallbackParams params = new CallbackParams();
+        params.set("requestCode", requestCode);
+        params.set("resultCode", resultCode);
+        params.set("data", data);
         mActivityResultEvent.invoke(params);
     }
 }

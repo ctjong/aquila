@@ -42,6 +42,7 @@ public class Task {
                 return new Task(id, date, name, isCompleted, null);
             }else{
                 TaskRecurrence rec = TaskRecurrence.parse(
+                        date,
                         json.getInt("recmode"),
                         json.getString("recdays"),
                         json.getInt("recinterval"),

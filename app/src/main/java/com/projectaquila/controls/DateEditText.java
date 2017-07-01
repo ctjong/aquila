@@ -6,11 +6,9 @@ import android.util.AttributeSet;
 
 import com.projectaquila.R;
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.S;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.TaskDate;
 import com.projectaquila.services.HelperService;
-
-import java.util.HashMap;
 
 public class DateEditText extends android.support.v7.widget.AppCompatTextView{
     private TaskDate mValue;
@@ -34,7 +32,7 @@ public class DateEditText extends android.support.v7.widget.AppCompatTextView{
     private OnClickListener getDateTextClickHandler(){
         return HelperService.getDatePickerClickHandler(mValue, new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 setValue((TaskDate)params.get("retval"));
             }
         });

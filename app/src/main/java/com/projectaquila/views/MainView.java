@@ -7,10 +7,8 @@ import com.facebook.login.widget.LoginButton;
 import com.projectaquila.R;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.S;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.services.AuthService;
-
-import java.util.HashMap;
 
 /**
  * Main activity
@@ -38,7 +36,7 @@ public class MainView extends ViewBase {
         // setup activity result event handler
         AppContext.getCurrent().getActivity().addActivityResultHandler(new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 int requestCode = (int)params.get("requestCode");
                 int resultCode = (int)params.get("resultCode");
                 Intent data = (Intent)params.get("data");
@@ -57,11 +55,11 @@ public class MainView extends ViewBase {
         LoginButton fbLoginButton = (LoginButton) findViewById(R.id.view_main_loginbutton);
         authService.setupFbLoginButton(fbLoginButton, new Callback(){
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 setAuthErrorText("");
 
                 // check fb token retrieval response
-                if(s != S.OK) {
+                if(params == null) {
                     setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.main_error_login_failed));
                     return;
                 }
@@ -71,8 +69,8 @@ public class MainView extends ViewBase {
                 String fbToken = (String)params.get("fbToken");
                 authService.convertFbToken(fbToken, new Callback() {
                     @Override
-                    public void execute(HashMap<String, Object> params, S s) {
-                        if(s != S.OK ) {
+                    public void execute(CallbackParams params) {
+                        if(params == null) {
                             setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.main_error_invalid_login));
                             AppContext.getCurrent().getActivity().showContentScreen();
                         }else{

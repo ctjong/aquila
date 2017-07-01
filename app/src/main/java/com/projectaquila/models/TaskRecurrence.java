@@ -11,6 +11,7 @@ public class TaskRecurrence {
     private int mInterval;
     private TaskDate mEnd;
     private List<DateBlock> mActiveBlocks;
+    private TaskDate mStart;
 
     /**
      * Try to construct a TaskRecurrence from the provided details
@@ -21,7 +22,7 @@ public class TaskRecurrence {
      * @param activeStr recurrence active blocks string
      * @return task recurrence object
      */
-    public static TaskRecurrence parse(int modeInt, String daysStr, int interval, String endStr, String activeStr){
+    public static TaskRecurrence parse(TaskDate taskDate, int modeInt, String daysStr, int interval, String endStr, String activeStr){
         // parse mode
         RecurrenceMode mode = RecurrenceMode.parse(modeInt);
         if(mode == null){
@@ -58,44 +59,48 @@ public class TaskRecurrence {
         }
 
         // parse active blocks
-        List<DateBlock> activeBlocks = new LinkedList<>();
-        if(activeStr != null && !activeStr.equals("null")) {
+        List<DateBlock> activeBlocks = null;
+        if(activeStr != null && !activeStr.equals("null") && !activeStr.equals("")) {
+            activeBlocks = new LinkedList<>();
             String[] activeStrTokens = activeStr.split(",");
             for (String activeStrToken : activeStrTokens) {
-                DateBlock block = DateBlock.parse(activeStrToken);
+                DateBlock block = DateBlock.parse(activeStrToken, taskDate, end);
                 if (block != null) {
                     activeBlocks.add(block);
                 }
             }
         }
 
-        return new TaskRecurrence(mode, days, interval, end, activeBlocks);
+        return new TaskRecurrence(taskDate, mode, days, interval, end, activeBlocks);
     }
 
     /**
-     * Construct a task recurrence from the given details, with empty active blocks
+     * Construct a task recurrence from the given details, with null active blocks
+     * @param start recurrence start date
      * @param mode recurrence mode
      * @param days recurrence days
      * @param interval recurrence interval
      * @param end recurrence end date
      */
-    public TaskRecurrence(RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end){
-        this(mode, days, interval, end, new LinkedList<DateBlock>());
+    public TaskRecurrence(TaskDate start, RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end){
+        this(start, mode, days, interval, end, null);
     }
 
     /**
      * Construct a task recurrence from the given details
+     * @param start recurrence start date
      * @param mode recurrence mode
      * @param days recurrence days
      * @param interval recurrence interval
      * @param end recurrence end date
      * @param activeBlocks recurrence active blocks
      */
-    public TaskRecurrence(RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end, List<DateBlock> activeBlocks){
+    public TaskRecurrence(TaskDate start, RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end, List<DateBlock> activeBlocks){
+        mStart = start;
         mMode = mode;
         mDays = days;
         mInterval = interval;
-        mEnd = end;
+        mEnd = end == null ? new TaskDate(Long.MAX_VALUE) : end;
         mActiveBlocks = activeBlocks;
     }
 
@@ -198,5 +203,22 @@ public class TaskRecurrence {
         mDays = tr.getDays();
         mInterval = tr.getInterval();
         mEnd = tr.getEnd();
+    }
+
+    /**
+     * Check whether the given date is included in the recurrence
+     * @return true if included, false otherwise
+     */
+    public boolean isIncluded(TaskDate date){
+        if(mActiveBlocks == null){
+            mActiveBlocks = new LinkedList<>();
+            mActiveBlocks.add(new DateBlock(mStart, mEnd));
+        }
+        for(DateBlock block : mActiveBlocks){
+            if(block.isInRange(date)){
+                return true;
+            }
+        }
+        return false;
     }
 }

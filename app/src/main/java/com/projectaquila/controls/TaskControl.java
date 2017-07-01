@@ -7,7 +7,7 @@ import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.S;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Task;
 import com.projectaquila.models.TaskDate;
 import com.projectaquila.views.TaskDetailView;
@@ -29,17 +29,21 @@ public class TaskControl {
         TextView text = (TextView) view.findViewById(R.id.taskcontrol_text);
         text.setText(mTask.getName());
 
-        Callback completeTaskAction = getCompleteTaskAction();
-        Callback postponeTaskAction = getPostponeTaskAction();
         Callback openTaskAction = getOpenTaskAction();
         View slider = view.findViewById(R.id.taskcontrol_slider);
-        SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
+        if(mTask.getRecurrence() == null) {
+            Callback completeTaskAction = getCompleteTaskAction();
+            Callback postponeTaskAction = getPostponeTaskAction();
+            SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
+        }else{
+            SwipeListener.listen(slider, slider, null, null, openTaskAction);
+        }
     }
 
     private Callback getPostponeTaskAction(){
         return new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
                 TaskDate postponedDate = mTask.getDate().getModified(1);
                 mTask.setDate(postponedDate);
@@ -54,7 +58,7 @@ public class TaskControl {
     private Callback getCompleteTaskAction(){
         return new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
                 mTask.setCompletedState(true);
                 HashMap<String, String> data = new HashMap<>();
@@ -68,7 +72,7 @@ public class TaskControl {
     private Callback getOpenTaskAction(){
         return new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 System.out.println("[TaskListItem.getOpenTaskAction] opening task " + mTask.getId());
                 HashMap<String, String> navParams = new HashMap<>();
                 navParams.put("id", mTask.getId());

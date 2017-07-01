@@ -5,7 +5,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.S;
 
 public class SwipeListener implements View.OnTouchListener {
     private static final int DragMinX = 200;
@@ -43,11 +42,11 @@ public class SwipeListener implements View.OnTouchListener {
         }else if(action == MotionEvent.ACTION_UP){
             float delta = Math.abs(pointerX - mTouchStartX);
             if(pointerX - mTouchStartX > DragMinX && mRightSwipeHandler != null){
-                mRightSwipeHandler.execute(null, S.OK);
+                mRightSwipeHandler.execute(null);
             }else if(mTouchStartX - pointerX > DragMinX && mLeftSwipeHandler != null){
-                mLeftSwipeHandler.execute(null, S.OK);
+                mLeftSwipeHandler.execute(null);
             }else if(delta < ClickMaxX && mClickHandler != null){
-                mClickHandler.execute(null, S.OK);
+                mClickHandler.execute(null);
             }
             mTouchStartX = null;
             mDraggable.setTranslationX(0);

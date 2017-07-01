@@ -7,10 +7,10 @@ import com.projectaquila.models.ApiResult;
 import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
-import com.projectaquila.models.AsyncTaskResult;
-import com.projectaquila.models.S;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.views.MainView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -21,12 +21,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult>> {
+public class DataService extends AsyncTask<Void, Void, ApiResult> {
+    private static final int TIMEOUT = 7000;
+
     private ApiTaskMethod mMethod;
     private String mSourceUrl;
     private HashMap<String,String> mData;
@@ -42,11 +44,12 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
     }
 
     @Override
-    protected AsyncTaskResult<ApiResult> doInBackground(Void... params) {
+    protected ApiResult doInBackground(Void... params) {
         try {
             System.out.println("[DataService.doInBackground] " + mMethod.name() + " " + mSourceUrl);
             URL url = new URL(mSourceUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(TIMEOUT);
 
             // set token header
             String token = AppContext.getCurrent().getAuthService().getAccessToken();
@@ -80,7 +83,7 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
             // get the incoming response
             int responseCode = conn.getResponseCode();
             if(responseCode != 200) {
-                return new AsyncTaskResult<>(new ApiResult(responseCode, null));
+                return new ApiResult(responseCode, 0, null);
             }
             String line;
             String responseStr = "";
@@ -90,57 +93,39 @@ public class DataService extends AsyncTask<Void, Void, AsyncTaskResult<ApiResult
             }
 
             // prepare outgoing response
-            Object responseObj;
-            try {
-                responseObj = new JSONTokener(responseStr).nextValue();
-            }catch(JSONException e){
-                responseObj = responseStr;
+            if(mMethod == ApiTaskMethod.GET){
+                JSONObject responseObj = (JSONObject)new JSONTokener(responseStr).nextValue();
+                int count = Integer.parseInt(responseObj.getString("count"));
+                JSONArray items = (JSONArray)responseObj.get("items");
+                return new ApiResult(responseCode, count, items);
             }
-            JSONObject res;
-            if(responseObj instanceof JSONObject){
-                res = (JSONObject)responseObj;
-            }else{
-                res = new JSONObject();
-                res.put("value", responseObj);
-            }
-            return new AsyncTaskResult<>(new ApiResult(responseCode, res));
-        }catch(SocketException e){
-            return new AsyncTaskResult<>(new ApiResult(404, null));
+            return new ApiResult(responseCode, 0, null);
+        }catch(SocketTimeoutException e){
+            return new ApiResult(404, 0, null);
         } catch (Exception e) {
             System.err.println("[DataService.doInBackground] exception");
             e.printStackTrace();
-            return new AsyncTaskResult<>(e);
+            return new ApiResult(e);
         }
     }
 
     @Override
-    protected void onPostExecute(AsyncTaskResult<ApiResult> result) {
-        HashMap<String, Object> data = null;
-        S status = S.Error;
-        if(result.getError() != null) {
-            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
-        }else{
-            ApiResult res = result.getResult();
-            int statusCode = res.getStatusCode();
-            System.out.println("[DataService.onPostExecute] found statusCode " + statusCode);
-            if(statusCode == 404) {
-                AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_connection);
-            }else if(statusCode == 401) {
-                if(mMethod == ApiTaskMethod.GET) {
-                    AppContext.getCurrent().getAuthService().logOut();
-                    AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
-                }else{
-                    AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unauthorized);
-                }
-            }else if(statusCode != 200){
-                AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
+    protected void onPostExecute(ApiResult result) {
+        int statusCode = result.getStatusCode();
+        System.out.println("[DataService.onPostExecute] found statusCode " + statusCode);
+        if(statusCode == 404) {
+            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_connection);
+        }else if(statusCode == 401) {
+            if(mMethod == ApiTaskMethod.GET) {
+                AppContext.getCurrent().getAuthService().logOut();
+                AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
             }else{
-                data = res.getData();
-                status = S.OK;
+                AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unauthorized);
             }
-        }
-        if(mCallback != null){
-            mCallback.execute(data, status);
+        }else if(statusCode != 200){
+            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
+        }else if(mCallback != null){
+            mCallback.execute(new CallbackParams(result));
         }
     }
 

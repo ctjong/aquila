@@ -4,14 +4,14 @@ public class DateBlock {
     private TaskDate mStart;
     private TaskDate mEnd;
 
-    public static DateBlock parse(String str){
+    public static DateBlock parse(String str, TaskDate min, TaskDate max){
         str = str.replace("[", "").replace("]", "");
         String[] tokens = str.split("|");
         if(tokens.length < 2) {
             System.err.println("[DateBlock.parse] failed to parse " + str);
             return null;
         }
-        TaskDate start = new TaskDate(Long.MIN_VALUE);
+        TaskDate start = min == null ? new TaskDate(Long.MIN_VALUE) : min;
         if(tokens[0].length() > 0) {
             start = TaskDate.parseDateKey(tokens[0]);
             if (start == null) {
@@ -19,7 +19,7 @@ public class DateBlock {
                 return null;
             }
         }
-        TaskDate end = new TaskDate(Long.MAX_VALUE);
+        TaskDate end = max == null ? new TaskDate(Long.MAX_VALUE) : max;
         if(tokens[1].length() > 0){
             end = TaskDate.parseDateKey(tokens[1]);
             if(end == null){
@@ -36,12 +36,12 @@ public class DateBlock {
         mEnd = end;
     }
 
-    public TaskDate getStart(){
-        return mStart;
-    }
-
     public TaskDate getEnd(){
         return mEnd;
+    }
+
+    public boolean isInRange(TaskDate date){
+        return date.getTime() >= mStart.getTime() && date.getTime() <= mEnd.getTime();
     }
 
     @Override

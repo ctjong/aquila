@@ -1,14 +1,13 @@
 package com.projectaquila.models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Event{
     private List<Callback> handlers;
 
     public Event(){
-        handlers = new ArrayList<Callback>();
+        handlers = new ArrayList<>();
     }
 
     public void addHandler(Callback cb){
@@ -19,9 +18,9 @@ public class Event{
         handlers.clear();
     }
 
-    public void invoke(HashMap<String, Object> params){
+    public void invoke(CallbackParams params){
         for(int i=0; i<handlers.size(); i++){
-            handlers.get(i).execute(params, S.OK);
+            handlers.get(i).execute(params);
         }
     }
 }

@@ -8,9 +8,10 @@ import android.widget.TextView;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
+import com.projectaquila.models.ApiResult;
 import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.S;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Task;
 import com.projectaquila.models.TaskDate;
 
@@ -31,13 +32,13 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     private static final int CACHE_DAYS_SPAN = 3;
     private HashMap<String, List<TaskControl>> mControlsMap;
     private TaskDate mActiveDate;
+    private int mDownloadCount;
 
     /**
      * Instantiate a new tasks adapter
      */
     public TasksAdapter(){
         super(AppContext.getCurrent().getActivity(), R.layout.control_taskcontrol);
-        mControlsMap = new HashMap<>();
     }
 
     /**
@@ -48,13 +49,18 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     public void loadDate(TaskDate date, boolean refreshCache){
         mActiveDate = date;
         String key = date.toDateKey();
-        if(mControlsMap.containsKey(key) && !refreshCache){
+        if(refreshCache || mControlsMap == null){
+            AppContext.getCurrent().getActivity().showLoadingScreen();
+            retrieveFromServer(0);
+        }else {
+            if (!mControlsMap.containsKey(key)) {
+                initNearbyDateKeys();
+                updateControlsMap();
+            }
             clear();
             List<TaskControl> activeControls = mControlsMap.get(key);
             addAll(activeControls);
             notifyDataSetChanged();
-        }else{
-            retrieveFromServer();
         }
     }
 
@@ -82,7 +88,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         }
         taskControl.getTask().addChangedHandler(new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 updateControlsMap();
             }
         });
@@ -93,30 +99,36 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     /**
      * Retrieve data for the active date from API
      */
-    private void retrieveFromServer(){
-        AppContext.getCurrent().getActivity().showLoadingScreen();
+    private void retrieveFromServer(final int partNum){
+        if(mControlsMap == null){
+            mControlsMap = new HashMap<>();
+        }
 
         // get data URL
-        String dataUrl = getDataUrlForActiveDate();
-        if(dataUrl == null) return;
+        int skip = partNum * ITEMS_PER_DATE;
+        String dataUrl = "/data/task/private/findall/id/" + skip + "/" + ITEMS_PER_DATE;
 
         // request data
+        if(partNum == 0) {
+            AppContext.getCurrent().getTasks().clear();
+            mDownloadCount = 0;
+        }
         AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, dataUrl, null, new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
-                // check for errors
-                if(s == S.Error) return;
-                JSONArray tasks = (JSONArray)params.get("value");
-                if(tasks == null) {
-                    System.err.println("[TasksView.loadTasks] null tasks returned");
-                    return;
-                }
-
-                // update tasks list
+            public void execute(CallbackParams params) {
+                ApiResult res = params.getApiResult();
+                JSONArray tasks = res.getItems();
+                mDownloadCount += tasks.length();
+                int count = res.getCount();
+                System.out.println("[TasksAdapter.retrieveFromServer] retrieved " + mDownloadCount + "/" + count);
                 addToTasksModel(tasks);
-                initNearbyDateKeys();
-                updateControlsMap();
-                AppContext.getCurrent().getActivity().showContentScreen();
+                if(mDownloadCount < count){
+                    retrieveFromServer(partNum + 1);
+                }else{
+                    initNearbyDateKeys();
+                    updateControlsMap();
+                    AppContext.getCurrent().getActivity().showContentScreen();
+                }
             }
         });
     }
@@ -157,38 +169,35 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      */
     private void updateControlsMap(){
         clear();
-        for (String key : mControlsMap.keySet()) {
-            mControlsMap.put(key, new LinkedList<TaskControl>());
-        }
         String activeKey = mActiveDate.toDateKey();
+        for (String mapKey : mControlsMap.keySet()) {
+            mControlsMap.put(mapKey, new LinkedList<TaskControl>());
+        }
         for(Map.Entry<String,Task> entry : AppContext.getCurrent().getTasks().entrySet()){
             Task task = entry.getValue();
             if(task.isCompleted()) continue;
             TaskControl control = new TaskControl(task);
-            String key = task.getDate().toDateKey();
-            if(!mControlsMap.containsKey(key)) continue;
-            mControlsMap.get(key).add(control);
-            if(key.equals(activeKey)) add(control);
+            String taskKey = task.getDate().toDateKey();
+            if(task.getRecurrence() == null){
+                if(mControlsMap.containsKey(taskKey)){
+                    mControlsMap.get(taskKey).add(control);
+                    if(taskKey.equals(activeKey)) {
+                        add(control);
+                    }
+                }
+            }else{
+                for (String mapKey : mControlsMap.keySet()) {
+                    TaskDate mapDate = TaskDate.parseDateKey(mapKey);
+                    if(task.getRecurrence().isIncluded(mapDate)){
+                        mControlsMap.get(mapKey).add(control);
+                    }
+                }
+                if(task.getRecurrence().isIncluded(mActiveDate)) {
+                    add(control);
+                }
+            }
+
         }
         notifyDataSetChanged();
-    }
-
-    /**
-     * Get data URL for the active date. This will retrieve data for date +/- CACHE_DAYS_SPAN days.
-     * @return URL string
-     */
-    private String getDataUrlForActiveDate(){
-        try {
-            String startDate = mActiveDate.getModifiedKey(-1 * CACHE_DAYS_SPAN);
-            String endDate = mActiveDate.getModifiedKey(CACHE_DAYS_SPAN);
-            //String condition = URLEncoder.encode("taskdate>=" + startDate + "&taskdate<=" + endDate, "UTF-8");
-            String condition = URLEncoder.encode("recmode<>null", "UTF-8");
-            return "/data/task/private/findbyconditions/id/0/" + ITEMS_PER_DATE + "/" + condition;
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("[TasksView.getDataUrlForCurrentDate] exception");
-            e.printStackTrace();
-            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
-            return null;
-        }
     }
 }

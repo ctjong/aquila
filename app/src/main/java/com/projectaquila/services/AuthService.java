@@ -12,8 +12,8 @@ import com.facebook.login.widget.LoginButton;
 import com.projectaquila.models.Callback;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Event;
-import com.projectaquila.models.S;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,23 +64,21 @@ public class AuthService {
             public void onSuccess(LoginResult loginResult) {
                 setAccessToken(null);
                 String fbToken = loginResult.getAccessToken().getToken();
-                HashMap<String, Object> callbackParams = new HashMap<>();
-                callbackParams.put("fbToken", fbToken);
-                callback.execute(callbackParams, S.OK);
+                callback.execute(new CallbackParams("fbToken", fbToken));
             }
 
             @Override
             public void onCancel() {
                 logOut();
-                System.err.println("[AuthService.setupFbLoginButton] FB token request error");
-                callback.execute(null, S.Error);
+                System.err.println("[AuthService.setupFbLoginButton] FB login cancelled");
+                callback.execute(null);
             }
 
             @Override
             public void onError(FacebookException error) {
                 logOut();
                 System.err.println("[AuthService.setupFbLoginButton] FB token request error");
-                callback.execute(null, S.Error);
+                callback.execute(null);
             }
         });
     }
@@ -95,13 +93,13 @@ public class AuthService {
         apiParams.put("fbtoken", fbToken);
         AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/auth/token/fb", apiParams, new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S S) {
-                if(params == null || params.get("token") == null){
+            public void execute(CallbackParams params) {
+                if(params.get("token") == null){
                     logOut();
-                    callback.execute(null, S.Error);
+                    callback.execute(null);
                 }else {
                     setAccessToken((String) params.get("token"));
-                    callback.execute(null, S.OK);
+                    callback.execute(params);
                 }
             }
         });

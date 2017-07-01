@@ -9,15 +9,14 @@ import com.projectaquila.R;
 import com.projectaquila.controls.SwipeListener;
 import com.projectaquila.controls.TasksAdapter;
 import com.projectaquila.models.Callback;
-import com.projectaquila.models.S;
 import com.projectaquila.AppContext;
 import com.projectaquila.models.ApiTaskMethod;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Task;
 import com.projectaquila.models.TaskDate;
 import com.projectaquila.services.HelperService;
 
 import java.util.Calendar;
-import java.util.HashMap;
 
 public class TasksView extends ViewBase {
     private Task mNewTask;
@@ -47,7 +46,7 @@ public class TasksView extends ViewBase {
 
         View.OnClickListener datePickerClickHandler = HelperService.getDatePickerClickHandler(mCurrentDate, new Callback() {
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 mCurrentDate = (TaskDate)params.get("retval");
                 refresh();
             }
@@ -97,8 +96,7 @@ public class TasksView extends ViewBase {
                 // save to server
                 AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", mNewTask.getDataMap(), new Callback() {
                     @Override
-                    public void execute(HashMap<String, Object> params, S s) {
-                        if(s == S.Error) return;
+                    public void execute(CallbackParams params) {
                         mTasksAdapter.loadDate(mCurrentDate, true);
                     }
                 });
@@ -131,7 +129,7 @@ public class TasksView extends ViewBase {
     private Callback getDateUpdateAction(final int numDays) {
         return new Callback(){
             @Override
-            public void execute(HashMap<String, Object> params, S s) {
+            public void execute(CallbackParams params) {
                 Calendar c = Calendar.getInstance();
                 c.setTime(mCurrentDate);
                 c.add(Calendar.DATE, numDays);
