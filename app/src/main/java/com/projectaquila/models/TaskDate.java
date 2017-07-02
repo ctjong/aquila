@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class TaskDate extends java.util.Date {
+    public static final TaskDate MAX = TaskDate.parseDateKey("99991231");
+    private static final String DateKeyFormat = "yyyyMMdd";
+
     /**
      * Instantiate a new Date with current time
      */
@@ -33,7 +36,7 @@ public class TaskDate extends java.util.Date {
      * @return string representation
      */
     public String toDateKey(){
-        return format("yyMMdd", this);
+        return format(DateKeyFormat, this);
     }
 
     /**
@@ -42,7 +45,7 @@ public class TaskDate extends java.util.Date {
      * @return string representation of the modified date
      */
     public String getModifiedKey(int numDays){
-        return format("yyMMdd", getModified(numDays));
+        return format(DateKeyFormat, getModified(numDays));
     }
 
     /**
@@ -68,14 +71,14 @@ public class TaskDate extends java.util.Date {
     }
 
     /**
-     * Parse the given date key string (yyMMdd) into a date objecy
-     * @param dateKey yyMMdd date key string
+     * Parse the given date key string into a date objecy
+     * @param dateKey date key string
      * @return date object, or null on failure
      */
     public static TaskDate parseDateKey(String dateKey){
         if(dateKey == null) return null;
         try {
-            return new TaskDate(new SimpleDateFormat("yyMMdd").parse(dateKey));
+            return new TaskDate(new SimpleDateFormat(DateKeyFormat).parse(dateKey));
         } catch (ParseException e) {
             System.err.println("[TaskDate.parseDateKey] exception");
             e.printStackTrace();

@@ -11,7 +11,7 @@ public class DateBlock {
             System.err.println("[DateBlock.parse] failed to parse " + str);
             return null;
         }
-        TaskDate start = min == null ? new TaskDate(Long.MIN_VALUE) : min;
+        TaskDate start = min == null ? TaskDate.parseDateKey("00000000") : min;
         if(tokens[0].length() > 0) {
             start = TaskDate.parseDateKey(tokens[0]);
             if (start == null) {
@@ -19,7 +19,7 @@ public class DateBlock {
                 return null;
             }
         }
-        TaskDate end = max == null ? new TaskDate(Long.MAX_VALUE) : max;
+        TaskDate end = max == null ? TaskDate.parseDateKey("99991231") : max;
         if(tokens[1].length() > 0){
             end = TaskDate.parseDateKey(tokens[1]);
             if(end == null){

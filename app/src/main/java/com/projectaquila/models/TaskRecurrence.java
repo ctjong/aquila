@@ -46,11 +46,7 @@ public class TaskRecurrence {
 
         // parse end date
         TaskDate end = null;
-        if(endStr == null){
-            System.err.println("[TaskRecurrence.parse] missing end date");
-            return null;
-        }
-        if(endStr.length() > 0 && !endStr.equals("null")){
+        if(endStr != null && endStr.length() > 0 && !endStr.equals("null")){
             end = TaskDate.parseDateKey(endStr);
             if(end == null){
                 System.err.println("[TaskRecurrence.parse] missing end date");
@@ -100,8 +96,12 @@ public class TaskRecurrence {
         mMode = mode;
         mDays = days;
         mInterval = interval;
-        mEnd = end == null ? new TaskDate(Long.MAX_VALUE) : end;
+        mEnd = end == null ? TaskDate.MAX : end;
         mActiveBlocks = activeBlocks;
+        if(mActiveBlocks == null){
+            mActiveBlocks = new LinkedList<>();
+            mActiveBlocks.add(new DateBlock(mStart, mEnd));
+        }
     }
 
     /**
@@ -210,10 +210,6 @@ public class TaskRecurrence {
      * @return true if included, false otherwise
      */
     public boolean isIncluded(TaskDate date){
-        if(mActiveBlocks == null){
-            mActiveBlocks = new LinkedList<>();
-            mActiveBlocks.add(new DateBlock(mStart, mEnd));
-        }
         for(DateBlock block : mActiveBlocks){
             if(block.isInRange(date)){
                 return true;

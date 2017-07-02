@@ -17,8 +17,6 @@ import com.projectaquila.models.TaskDate;
 
 import org.json.JSONArray;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,11 +79,11 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             }
         }
         final TaskControl taskControl = getItem(position);
-        final String taskKey = taskControl.getTask().getDateKey();
         if(taskControl == null){
-            System.err.println("[TasksAdapter.getView] failed to get task data at position " + position);
+            System.err.println("[TasksAdapter.getView] failed to get task control at position " + position);
             return new TextView(getContext());
         }
+        final String taskKey = taskControl.getTask().getDateKey();
         taskControl.getTask().addChangedHandler(new Callback() {
             @Override
             public void execute(CallbackParams params) {
@@ -170,16 +168,18 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
      * Update the controls map based on the tasks model for the given date
      */
     private void updateControlsMap(TaskDate mapDate){
-        clear();
         String activeKey = mActiveDate.toDateKey();
         String mapKey = mapDate.toDateKey();
+        if(mapKey.equals(activeKey)){
+            clear();
+        }
         mControlsMap.put(mapKey, new LinkedList<TaskControl>());
         for(Map.Entry<String,Task> entry : AppContext.getCurrent().getTasks().entrySet()){
             Task task = entry.getValue();
             if(task.isCompleted()) continue;
             TaskControl control = new TaskControl(task);
             String taskKey = task.getDate().toDateKey();
-            if(task.getRecurrence() == null && taskKey == mapKey && mControlsMap.containsKey(taskKey)) {
+            if(task.getRecurrence() == null && taskKey.equals(mapKey) && mControlsMap.containsKey(taskKey)) {
                 mControlsMap.get(taskKey).add(control);
                 if(taskKey.equals(activeKey)) {
                     add(control);
