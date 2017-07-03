@@ -59,7 +59,7 @@
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/taskupdate_recurrence_label" />
+            android:text="@string/taskrecurrence_label" />
 
         <Spinner
             android:id="@+id/taskupdate_recspinner"
@@ -90,7 +90,7 @@
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/taskupdate_recdays_label" />
+                android:text="@string/taskrecurrence_days_label" />
 
             <com.projectaquila.controls.DaysPicker
                 android:id="@+id/taskupdate_recdays_picker"
@@ -111,7 +111,7 @@
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/taskupdate_recinterval_label" />
+                android:text="@string/taskrecurrence_interval_label" />
 
             <EditText
                 android:id="@+id/taskupdate_recinterval_text"
@@ -143,7 +143,7 @@
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/taskupdate_recend_label" />
+                android:text="@string/taskrecurrence_end_label" />
 
             <Spinner
                 android:id="@+id/taskupdate_recend_spinner"

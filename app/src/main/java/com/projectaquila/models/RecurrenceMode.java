@@ -4,12 +4,12 @@ import com.projectaquila.AppContext;
 import com.projectaquila.R;
 
 public enum RecurrenceMode {
-    None(0, R.string.taskupdate_recmode_none),
-    Daily(1, R.string.taskupdate_recmode_daily),
-    Weekly(2, R.string.taskupdate_recmode_weekly),
-    MonthlyDateBased(3, R.string.taskupdate_recmode_monthlydatebased),
-    MonthlyWeekBased(4, R.string.taskupdate_recmode_monthlyweekbased),
-    Yearly(5, R.string.taskupdate_recmode_yearly);
+    None(0, R.string.taskrecurrence_none),
+    Daily(1, R.string.taskrecurrence_daily),
+    Weekly(2, R.string.taskrecurrence_weekly),
+    MonthlyDateBased(3, R.string.taskrecurrence_monthlydatebased),
+    MonthlyWeekBased(4, R.string.taskrecurrence_monthlyweekbased),
+    Yearly(5, R.string.taskrecurrence_yearly);
 
     private final int mValue;
     private final int mStringId;

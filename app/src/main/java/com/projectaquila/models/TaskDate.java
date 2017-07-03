@@ -7,6 +7,7 @@ import java.util.Calendar;
 public class TaskDate extends java.util.Date {
     public static final TaskDate MAX = TaskDate.parseDateKey("99991231");
     private static final String DateKeyFormat = "yyyyMMdd";
+    private static final String FriendlyFormat = "MM/dd/yyyy";
 
     /**
      * Instantiate a new Date with current time
@@ -40,12 +41,11 @@ public class TaskDate extends java.util.Date {
     }
 
     /**
-     * Get a string representation of this that is n days away from the given date
-     * @param numDays number of days to add/substract
-     * @return string representation of the modified date
+     * Get a friendly string of this date
+     * @return date string
      */
-    public String getModifiedKey(int numDays){
-        return format(DateKeyFormat, getModified(numDays));
+    public String getFriendlyString(){
+        return format(FriendlyFormat, this);
     }
 
     /**

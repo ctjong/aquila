@@ -116,8 +116,8 @@ public class TaskUpdateView extends ViewBase {
         mRecEndSpinner = (Spinner) findViewById(R.id.taskupdate_recend_spinner);
         ArrayAdapter<String> recEndSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_recspinneritem);
         mRecEndSpinner.setAdapter(recEndSpinnerAdapter);
-        recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskupdate_recend_spinner_forever));
-        recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskupdate_recend_spinner_date));
+        recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskrecurrence_end_forever));
+        recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskrecurrence_end_date));
         mRecEndSpinner.setOnItemSelectedListener(getRecEndSpinnerSelectionHandler());
         mRecEndText = (DateEditText)findViewById(R.id.taskupdate_recend_date);
 
@@ -219,13 +219,13 @@ public class TaskUpdateView extends ViewBase {
                 // update interval suffix text
                 TextView recIntervalSuffix = (TextView)findViewById(R.id.taskupdate_recinterval_suffix);
                 if(mode == RecurrenceMode.Daily){
-                    recIntervalSuffix.setText(R.string.taskupdate_recinterval_suffix_days);
+                    recIntervalSuffix.setText(R.string.taskrecurrence_interval_suffix_days);
                 }else if(mode == RecurrenceMode.Weekly){
-                    recIntervalSuffix.setText(R.string.taskupdate_recinterval_suffix_weeks);
+                    recIntervalSuffix.setText(R.string.taskrecurrence_interval_suffix_weeks);
                 }else if(mode == RecurrenceMode.MonthlyWeekBased || mode == RecurrenceMode.MonthlyDateBased){
-                    recIntervalSuffix.setText(R.string.taskupdate_recinterval_suffix_months);
+                    recIntervalSuffix.setText(R.string.taskrecurrence_interval_suffix_months);
                 }else if(mode == RecurrenceMode.Yearly){
-                    recIntervalSuffix.setText(R.string.taskupdate_recinterval_suffix_years);
+                    recIntervalSuffix.setText(R.string.taskrecurrence_interval_suffix_years);
                 }else{
                     recIntervalSuffix.setText("");
                 }
@@ -283,6 +283,6 @@ public class TaskUpdateView extends ViewBase {
      * Update the view based on the change in the model
      */
     private void updateView(){
-        mTaskDateText.setText(TaskDate.format("MM/dd/yyyy", mTask.getDate()));
+        mTaskDateText.setText(mTask.getDate().getFriendlyString());
     }
 }

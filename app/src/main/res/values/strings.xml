@@ -28,26 +28,32 @@
     <string name="taskupdate_title">Update task</string>
     <string name="taskupdate_taskname_hint">Task name</string>
     <string name="taskupdate_taskdate_hint">Task date</string>
-    <string name="taskupdate_recurrence_label">Repeat: </string>
     <string name="taskupdate_save_btn_text">Save</string>
     <string name="taskupdate_cancel_btn_text">Cancel</string>
 
-    <string name="taskupdate_recmode_none">None</string>
-    <string name="taskupdate_recmode_daily">Daily</string>
-    <string name="taskupdate_recmode_weekly">Weekly</string>
-    <string name="taskupdate_recmode_monthlydatebased">Monthly, date based</string>
-    <string name="taskupdate_recmode_monthlyweekbased">Monthly, week based</string>
-    <string name="taskupdate_recmode_yearly">Yearly</string>
-
-    <string name="taskupdate_recdays_label">on day(s):</string>
-    <string name="taskupdate_recinterval_label">every:</string>
-    <string name="taskupdate_recinterval_suffix_days">day(s)</string>
-    <string name="taskupdate_recinterval_suffix_weeks">week(s)</string>
-    <string name="taskupdate_recinterval_suffix_months">month(s)</string>
-    <string name="taskupdate_recinterval_suffix_years">year(s)</string>
-    <string name="taskupdate_recend_label">until:</string>
-    <string name="taskupdate_recend_spinner_forever">Forever</string>
-    <string name="taskupdate_recend_spinner_date">Date</string>
+    <string name="taskrecurrence_label">Repeat: </string>
+    <string name="taskrecurrence_none">None</string>
+    <string name="taskrecurrence_daily">Daily</string>
+    <string name="taskrecurrence_weekly">Weekly</string>
+    <string name="taskrecurrence_monthlydatebased">Monthly, date based</string>
+    <string name="taskrecurrence_monthlyweekbased">Monthly, week based</string>
+    <string name="taskrecurrence_yearly">Yearly</string>
+    <string name="taskrecurrence_days_label">on day(s):</string>
+    <string name="taskrecurrence_days_sunday">Sunday</string>
+    <string name="taskrecurrence_days_monday">Monday</string>
+    <string name="taskrecurrence_days_tuesday">Tuesday</string>
+    <string name="taskrecurrence_days_wednesday">Wednesday</string>
+    <string name="taskrecurrence_days_thursday">Thursday</string>
+    <string name="taskrecurrence_days_friday">Friday</string>
+    <string name="taskrecurrence_days_saturday">Saturday</string>
+    <string name="taskrecurrence_interval_label">every:</string>
+    <string name="taskrecurrence_interval_suffix_days">day(s)</string>
+    <string name="taskrecurrence_interval_suffix_weeks">week(s)</string>
+    <string name="taskrecurrence_interval_suffix_months">month(s)</string>
+    <string name="taskrecurrence_interval_suffix_years">year(s)</string>
+    <string name="taskrecurrence_end_label">until:</string>
+    <string name="taskrecurrence_end_forever">Forever</string>
+    <string name="taskrecurrence_end_date">Date</string>
 
 
 </resources>

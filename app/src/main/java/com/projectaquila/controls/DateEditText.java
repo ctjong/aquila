@@ -26,7 +26,7 @@ public class DateEditText extends android.support.v7.widget.AppCompatTextView{
 
     public void setValue(TaskDate date){
         mValue = date;
-        setText(TaskDate.format("MM/dd/yyyy", mValue));
+        setText(mValue.getFriendlyString());
     }
 
     private OnClickListener getDateTextClickHandler(){
