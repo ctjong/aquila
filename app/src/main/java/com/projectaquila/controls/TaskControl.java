@@ -65,6 +65,7 @@ public class TaskControl {
             @Override
             public void execute(CallbackParams params) {
                 System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
+                AppContext.getCurrent().getTasks().remove(mTask.getId());
                 AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mTask.getId(), null, null);
                 mTask.notifyListeners();
             }
