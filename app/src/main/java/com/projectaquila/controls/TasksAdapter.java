@@ -87,8 +87,8 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         taskControl.getTask().addChangedHandler(new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                updateControlsMap(taskControl.getTask().getDate());
-                String currentKey = taskControl.getTask().getDateKey();
+                updateControlsMap(mActiveDate);
+                String currentKey = mActiveDate.toDateKey();
                 if(!taskKey.equals(currentKey)){
                     updateControlsMap(taskControl.getTask().getDate());
                 }
@@ -176,17 +176,16 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         mControlsMap.put(mapKey, new LinkedList<TaskControl>());
         for(Map.Entry<String,Task> entry : AppContext.getCurrent().getTasks().entrySet()){
             Task task = entry.getValue();
-            TaskControl control = new TaskControl(task);
             String taskKey = task.getDate().toDateKey();
             if(task.getRecurrence() == null && taskKey.equals(mapKey) && mControlsMap.containsKey(taskKey)) {
+                TaskControl control = new TaskControl(task, task.getDate());
                 mControlsMap.get(taskKey).add(control);
                 if(taskKey.equals(activeKey)) {
                     add(control);
                 }
-            } else if(task.getRecurrence() != null) {
-                if(task.getRecurrence().isIncluded(mapDate)){
-                    mControlsMap.get(mapKey).add(control);
-                }
+            } else if(task.getRecurrence() != null && task.getRecurrence().isIncluded(mapDate)){
+                TaskControl control = new TaskControl(task, mapDate);
+                mControlsMap.get(mapKey).add(control);
                 if(mapKey.equals(activeKey) && task.getRecurrence().isIncluded(mActiveDate)) {
                     add(control);
                 }

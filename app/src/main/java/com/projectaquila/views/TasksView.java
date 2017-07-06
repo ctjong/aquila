@@ -6,6 +6,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.projectaquila.R;
+import com.projectaquila.controls.DatePickerClickListener;
 import com.projectaquila.controls.SwipeListener;
 import com.projectaquila.controls.TasksAdapter;
 import com.projectaquila.models.Callback;
@@ -14,7 +15,6 @@ import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Task;
 import com.projectaquila.models.TaskDate;
-import com.projectaquila.services.HelperService;
 
 import java.util.Calendar;
 
@@ -44,7 +44,7 @@ public class TasksView extends ViewBase {
             mCurrentDate = new TaskDate();
         }
 
-        View.OnClickListener datePickerClickHandler = HelperService.getDatePickerClickHandler(mCurrentDate, new Callback() {
+        View.OnClickListener datePickerClickHandler = new DatePickerClickListener(mCurrentDate, new Callback() {
             @Override
             public void execute(CallbackParams params) {
                 mCurrentDate = (TaskDate)params.get("retval");

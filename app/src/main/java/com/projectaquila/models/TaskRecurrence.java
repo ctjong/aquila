@@ -1,17 +1,18 @@
 package com.projectaquila.models;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TaskRecurrence {
+    private Task mTask;
     private RecurrenceMode mMode;
     private HashSet<Integer> mDays;
     private int mInterval;
     private TaskDate mEnd;
-    private List<DateBlock> mActiveBlocks;
-    private TaskDate mStart;
+    private HashSet<String> mHoles;
 
     /**
      * Try to construct a TaskRecurrence from the provided details
@@ -19,10 +20,10 @@ public class TaskRecurrence {
      * @param daysStr recurrence days string
      * @param interval recurrence interval
      * @param endStr recurrence end date
-     * @param activeStr recurrence active blocks string
+     * @param holesStr string that lists out the holes in the recurrence sequence
      * @return task recurrence object
      */
-    public static TaskRecurrence parse(TaskDate taskDate, int modeInt, String daysStr, int interval, String endStr, String activeStr){
+    public static TaskRecurrence parse(Task task, int modeInt, String daysStr, int interval, String endStr, String holesStr){
         // parse mode
         RecurrenceMode mode = RecurrenceMode.parse(modeInt);
         if(mode == null){
@@ -55,53 +56,48 @@ public class TaskRecurrence {
         }
 
         // parse active blocks
-        List<DateBlock> activeBlocks = null;
-        if(activeStr != null && !activeStr.equals("null") && !activeStr.equals("")) {
-            activeBlocks = new LinkedList<>();
-            String[] activeStrTokens = activeStr.split(",");
-            for (String activeStrToken : activeStrTokens) {
-                DateBlock block = DateBlock.parse(activeStrToken, taskDate, end);
-                if (block != null) {
-                    activeBlocks.add(block);
+        HashSet<String> holes = new HashSet<>();
+        if(holesStr != null && !holesStr.equals("null") && !holesStr.equals("")) {
+            String[] holesStrArr = holesStr.split(",");
+            for (String holeStr : holesStrArr) {
+                TaskDate hole = TaskDate.parseDateKey(holeStr);
+                if(hole != null){
+                    holes.add(holeStr);
                 }
             }
         }
 
-        return new TaskRecurrence(taskDate, mode, days, interval, end, activeBlocks);
+        return new TaskRecurrence(task, mode, days, interval, end, holes);
     }
 
     /**
-     * Construct a task recurrence from the given details, with null active blocks
-     * @param start recurrence start date
+     * Construct a task recurrence from the given details, with no holes
+     * @param task parent task
      * @param mode recurrence mode
      * @param days recurrence days
      * @param interval recurrence interval
      * @param end recurrence end date
      */
-    public TaskRecurrence(TaskDate start, RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end){
-        this(start, mode, days, interval, end, null);
+    public TaskRecurrence(Task task, RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end){
+        this(task, mode, days, interval, end, new HashSet<String>());
     }
 
     /**
      * Construct a task recurrence from the given details
-     * @param start recurrence start date
+     * @param task parent task
      * @param mode recurrence mode
      * @param days recurrence days
      * @param interval recurrence interval
      * @param end recurrence end date
-     * @param activeBlocks recurrence active blocks
+     * @param holes date holes in the recurrence sequence
      */
-    public TaskRecurrence(TaskDate start, RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end, List<DateBlock> activeBlocks){
-        mStart = start;
+    public TaskRecurrence(Task task, RecurrenceMode mode, HashSet<Integer> days, int interval, TaskDate end, HashSet<String> holes){
+        mTask = task;
         mMode = mode;
         mDays = days;
         mInterval = interval;
         mEnd = end == null ? TaskDate.MAX : end;
-        mActiveBlocks = activeBlocks;
-        if(mActiveBlocks == null){
-            mActiveBlocks = new LinkedList<>();
-            mActiveBlocks.add(new DateBlock(mStart, mEnd));
-        }
+        mHoles = holes;
     }
 
     /**
@@ -137,11 +133,11 @@ public class TaskRecurrence {
     }
 
     /**
-     * Get recurrence active blocks
-     * @return recurrence active blocks
+     * Get a list of date-holes in the recurrence sequence
+     * @return recurrence holes
      */
-    public List<DateBlock> getActiveBlocks(){
-        return mActiveBlocks;
+    public HashSet<String> getHoles(){
+        return mHoles;
     }
 
     /**
@@ -161,13 +157,13 @@ public class TaskRecurrence {
     }
 
     /**
-     * Get string representation of the active blocks
-     * @return string representation of the active blocks
+     * Get string representation of the recurrence holes
+     * @return string representation of the recurrence holes
      */
-    public String getActiveString(){
+    public String getHolesString(){
         String str = "";
-        for(DateBlock block : mActiveBlocks){
-            str += (str.length() == 0 ? "" : ",") + block.toString();
+        for(String hole : mHoles){
+            str += (str.length() == 0 ? "" : ",") + hole;
         }
         return str;
     }
@@ -196,7 +192,7 @@ public class TaskRecurrence {
             shouldClearActiveBlocks = true;
         }
         if(shouldClearActiveBlocks){
-            mActiveBlocks.clear();
+            mHoles.clear();
         }
 
         mMode = tr.getMode();
@@ -209,12 +205,105 @@ public class TaskRecurrence {
      * Check whether the given date is included in the recurrence
      * @return true if included, false otherwise
      */
-    public boolean isIncluded(TaskDate date){
-        for(DateBlock block : mActiveBlocks){
-            if(block.isInRange(date)){
-                return true;
+    public boolean isIncluded(TaskDate target){
+        if(target.getTime() < mTask.getDate().getTime() || target.getTime() > mEnd.getTime()){
+            return false;
+        }
+        String targetKey = target.toDateKey();
+        for(String hole : mHoles){
+            if(hole.equals(targetKey)){
+                return false;
             }
         }
+        if(mMode == RecurrenceMode.Daily){
+            return true;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(target);
+        int targetDay = c.get(Calendar.DAY_OF_WEEK);
+        int targetDate = c.get(Calendar.DATE);
+        int targetWeek = c.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+        int targetMonth = c.get(Calendar.MONTH);
+        c.setTime(mTask.getDate());
+        int startDay = c.get(Calendar.DAY_OF_WEEK);
+        int startDate = c.get(Calendar.DATE);
+        int startWeek = c.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+        int startMonth = c.get(Calendar.MONTH);
+        if(mMode == RecurrenceMode.Weekly){
+            for(int day : mDays){
+                if(targetDay == day) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if(mMode == RecurrenceMode.MonthlyDateBased){
+            return targetDate == startDate;
+        }
+        if(mMode == RecurrenceMode.MonthlyWeekBased){
+            return targetWeek == startWeek && targetDay == startDay;
+        }
+        if(mMode == RecurrenceMode.Yearly){
+            return targetDate == startDate && targetMonth == startMonth;
+        }
         return false;
+    }
+
+    /**
+     * Shift task date to the next occurrence in the series
+     * @return true if next occurrence exists, false otherwise
+     */
+    public boolean shiftToNextOccurrence(){
+        TaskDate currentDate = mTask.getDate();
+        String currentDateKey = currentDate.toDateKey();
+        while(currentDate == mTask.getDate() || mHoles.contains(currentDateKey)){
+            mHoles.remove(currentDateKey);
+            Calendar c = Calendar.getInstance();
+            c.setTime(currentDate);
+            int date = c.get(Calendar.DATE);
+            int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+            int dayOfWeekInMonth = c.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+            int month = c.get(Calendar.MONTH);
+            int year = c.get(Calendar.YEAR);
+            if(mMode == RecurrenceMode.Daily){
+                c.set(Calendar.DATE, date + 1);
+            }else if(mMode == RecurrenceMode.Weekly){
+                List<Integer> daysList = new ArrayList<>(mDays);
+                Collections.sort(daysList);
+                if(daysList.size() == 0)
+                    return false;
+                boolean found = false;
+                boolean updated = false;
+                for(int day : daysList){
+                    if(found){
+                        c.set(Calendar.DAY_OF_WEEK, day);
+                        updated = true;
+                        break;
+                    }
+                    if(dayOfWeek == day){
+                        found = true;
+                    }
+                }
+                if(!updated){
+                    c.set(Calendar.DAY_OF_WEEK, daysList.get(0));
+                    c.set(Calendar.DAY_OF_WEEK_IN_MONTH, dayOfWeekInMonth + 1);
+                }
+            }else if(mMode == RecurrenceMode.MonthlyDateBased){
+                c.set(Calendar.MONTH, month + 1);
+            }else if(mMode == RecurrenceMode.MonthlyWeekBased) {
+                c.set(Calendar.MONTH, month + 1);
+                c.set(Calendar.DAY_OF_WEEK_IN_MONTH, dayOfWeekInMonth);
+                c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+            }else{
+                c.set(Calendar.YEAR, year + 1);
+            }
+            currentDate = new TaskDate(c.getTime());
+            currentDateKey = currentDate.toDateKey();
+        }
+        if(!currentDateKey.equals(mEnd.toDateKey()) && currentDate.getTime() > mEnd.getTime()) {
+            return false;
+        }
+        mTask.setDate(currentDate);
+        return true;
     }
 }

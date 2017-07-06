@@ -16,9 +16,11 @@ import java.util.HashMap;
 
 public class TaskControl {
     private Task mTask;
+    private TaskDate mDate;
 
-    public TaskControl(Task task){
+    public TaskControl(Task task, TaskDate date){
         mTask = task;
+        mDate = date;
     }
 
     public Task getTask(){
@@ -52,9 +54,7 @@ public class TaskControl {
                 System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
                 TaskDate postponedDate = mTask.getDate().getModified(1);
                 mTask.setDate(postponedDate);
-                HashMap<String, String> data = new HashMap<>();
-                data.put("taskdate", postponedDate.toDateKey());
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), mTask.getDataMap(), null);
                 mTask.notifyListeners();
             }
         };
@@ -64,9 +64,26 @@ public class TaskControl {
         return new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
-                AppContext.getCurrent().getTasks().remove(mTask.getId());
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mTask.getId(), null, null);
+                if(mTask.getRecurrence() == null) {
+                    System.out.println("[TaskListItem.getCompleteTaskAction] completing normal task " + mTask.getId());
+                    AppContext.getCurrent().getTasks().remove(mTask.getId());
+                    AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mTask.getId(), null, null);
+                }else{
+                    System.out.println("[TaskListItem.getCompleteTaskAction] completing recurrence task " + mTask.getId() + " at " + mDate.toDateKey());
+                    if(mTask.getDate().toDateKey().equals(mDate.toDateKey())){
+                        if(mTask.getRecurrence().shiftToNextOccurrence()){
+                            System.out.println("[TaskListItem.getCompleteTaskAction] shifting recurrence series to " + mTask.getDateKey());
+                            AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), mTask.getDataMap(), null);
+                        }else{
+                            System.out.println("[TaskListItem.getCompleteTaskAction] completing recurrence series " + mTask.getId());
+                            AppContext.getCurrent().getTasks().remove(mTask.getId());
+                            AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mTask.getId(), null, null);
+                        }
+                    }else{
+                        mTask.getRecurrence().getHoles().add(mDate.toDateKey());
+                        AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), mTask.getDataMap(), null);
+                    }
+                }
                 mTask.notifyListeners();
             }
         };

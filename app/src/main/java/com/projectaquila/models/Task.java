@@ -35,11 +35,10 @@ public class Task {
             }
             String name = json.getString("taskname");
 
-            if(json.isNull("recmode")) {
-                return new Task(id, date, name, null);
-            }else{
+            Task task = new Task(id, date, name, null);
+            if(!json.isNull("recmode")) {
                 TaskRecurrence rec = TaskRecurrence.parse(
-                        date,
+                        task,
                         json.getInt("recmode"),
                         json.getString("recdays"),
                         json.getInt("recinterval"),
@@ -49,8 +48,9 @@ public class Task {
                     System.err.println("[Task.parse] failed to parse recurrence");
                     return null;
                 }
-                return new Task(id, date, name, rec);
+                task.setRecurrence(rec);
             }
+            return task;
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
@@ -86,7 +86,7 @@ public class Task {
         if(date != null && !mDate.toDateKey().equals(date.toDateKey())) {
             mDate = date;
             if (mRecurrence != null) {
-                mRecurrence.getActiveBlocks().clear();
+                mRecurrence.getHoles().clear();
             }
         }
     }
@@ -115,13 +115,13 @@ public class Task {
             data.put("recmode", null);
             data.put("recdays", null);
             data.put("recinterval", null);
-            data.put("recactive", null);
+            data.put("recholes", null);
             data.put("recend", null);
         }else{
             data.put("recmode", mRecurrence.getMode().getValue() + "");
             data.put("recdays", mRecurrence.getDaysString());
             data.put("recinterval", mRecurrence.getInterval() + "");
-            data.put("recactive", mRecurrence.getActiveString());
+            data.put("recholes", mRecurrence.getHolesString());
             data.put("recend", mRecurrence.getEnd() == null ? null : mRecurrence.getEnd().toDateKey());
         }
         return data;

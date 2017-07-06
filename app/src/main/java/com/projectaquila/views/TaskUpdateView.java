@@ -53,7 +53,6 @@ public class TaskUpdateView extends ViewBase {
         initializeTaskModel();
         initializeCommonControls();
         initializeRecControls();
-        updateView();
         AppContext.getCurrent().getActivity().setToolbarText(R.string.taskupdate_title);
         AppContext.getCurrent().getActivity().showContentScreen();
     }
@@ -92,6 +91,7 @@ public class TaskUpdateView extends ViewBase {
         mTaskNameText = ((EditText)findViewById(R.id.taskupdate_taskname));
         mTaskNameText.setText(mTask.getName());
         mTaskDateText = ((DateEditText) findViewById(R.id.taskupdate_taskdate));
+        mTaskDateText.setValue(mTask.getDate());
         findViewById(R.id.taskupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
         findViewById(R.id.taskupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
     }
@@ -153,7 +153,7 @@ public class TaskUpdateView extends ViewBase {
                     HashSet<Integer> recDays = mRecDaysPicker.getValue();
                     int recInterval = Integer.parseInt(mRecIntervalText.getText().toString());
                     TaskDate recEnd = mRecEndSpinner.getSelectedItemPosition() == 0 ? null : mRecEndText.getValue();
-                    TaskRecurrence rec = new TaskRecurrence(mTask.getDate(), recMode, recDays, recInterval, recEnd);
+                    TaskRecurrence rec = new TaskRecurrence(mTask, recMode, recDays, recInterval, recEnd);
                     mTask.setRecurrence(rec);
                 }
 
@@ -277,12 +277,5 @@ public class TaskUpdateView extends ViewBase {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         };
-    }
-
-    /**
-     * Update the view based on the change in the model
-     */
-    private void updateView(){
-        mTaskDateText.setText(mTask.getDate().getFriendlyString());
     }
 }
