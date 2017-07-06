@@ -15,7 +15,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_menu_info_details" />
+            android:src="@android:drawable/ic_menu_info_details"
+            android:contentDescription="@string/taskupdate_taskname_hint"/>
 
         <EditText
             android:id="@+id/taskupdate_taskname"
@@ -23,6 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:hint="@string/taskupdate_taskname_hint" />
     </LinearLayout>
 
@@ -37,7 +39,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_menu_my_calendar" />
+            android:src="@android:drawable/ic_menu_my_calendar"
+            android:contentDescription="@string/taskupdate_taskdate_hint" />
 
         <com.projectaquila.controls.DateEditText
             android:id="@+id/taskupdate_taskdate"
@@ -45,7 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:textSize="18dp"/>
+            android:layout_marginStart="10dp"
+            android:textSize="18sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -121,14 +125,37 @@
                 android:inputType="number"
                 android:maxLength="2"
                 android:textAlignment="center"
-                android:textSize="15dp"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/taskupdate_recinterval_suffix"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
                 android:layout_marginLeft="4dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/taskrecurrence_start_label" />
+
+            <com.projectaquila.controls.DateEditText
+                android:id="@+id/taskupdate_recstart_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="15sp"/>
 
         </LinearLayout>
 
@@ -158,8 +185,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp"
-                android:textSize="15dp"/>
+                android:textSize="15sp"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -184,6 +212,7 @@
             android:id="@+id/taskupdate_cancel_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
             android:background="@color/colorPrimary"
             android:text="@string/taskupdate_cancel_btn_text"

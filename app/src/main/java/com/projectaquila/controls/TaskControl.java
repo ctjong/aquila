@@ -96,6 +96,7 @@ public class TaskControl {
                 System.out.println("[TaskListItem.getOpenTaskAction] opening task " + mTask.getId());
                 HashMap<String, String> navParams = new HashMap<>();
                 navParams.put("id", mTask.getId());
+                navParams.put("activedatekey", mDate.toDateKey());
                 AppContext.getCurrent().getNavigationService().navigateChild(TaskDetailView.class, navParams);
             }
         };

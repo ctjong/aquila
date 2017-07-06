@@ -26,6 +26,7 @@ import java.util.HashSet;
 
 public class TaskUpdateView extends ViewBase {
     private Task mTask;
+    private TaskDate mActiveDate;
     private EditText mTaskNameText;
     private DateEditText mTaskDateText;
 
@@ -33,6 +34,7 @@ public class TaskUpdateView extends ViewBase {
     private ArrayAdapter<RecurrenceMode> mRecModeSpinnerAdapter;
     private DaysPicker mRecDaysPicker;
     private EditText mRecIntervalText;
+    private DateEditText mRecStartText;
     private Spinner mRecEndSpinner;
     private DateEditText mRecEndText;
 
@@ -69,18 +71,19 @@ public class TaskUpdateView extends ViewBase {
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
                 return;
             }
+            mActiveDate = TaskDate.parseDateKey(getNavArg("activedatekey"));
             Task originalTask = AppContext.getCurrent().getTasks().get(taskId);
             mTask = new Task(originalTask.getId(), originalTask.getDate(), originalTask.getName(), originalTask.getRecurrence());
         }else{
             System.out.println("[TaskUpdateView.initializeView] mode=create");
             String taskName = getNavArg("taskname");
-            TaskDate taskDate = TaskDate.parseDateKey(getNavArg("taskdate"));
-            if(taskName == null || taskDate == null) {
+            mActiveDate = TaskDate.parseDateKey(getNavArg("taskdate"));
+            if(taskName == null || mActiveDate == null) {
                 System.err.println("[TaskUpdateView.initializeView] missing task name/date");
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
                 return;
             }
-            mTask = new Task(null, taskDate, taskName, null);
+            mTask = new Task(null, mActiveDate, taskName, null);
         }
     }
 
@@ -91,7 +94,7 @@ public class TaskUpdateView extends ViewBase {
         mTaskNameText = ((EditText)findViewById(R.id.taskupdate_taskname));
         mTaskNameText.setText(mTask.getName());
         mTaskDateText = ((DateEditText) findViewById(R.id.taskupdate_taskdate));
-        mTaskDateText.setValue(mTask.getDate());
+        mTaskDateText.setValue(mActiveDate);
         findViewById(R.id.taskupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
         findViewById(R.id.taskupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
     }
@@ -121,9 +124,10 @@ public class TaskUpdateView extends ViewBase {
         mRecEndSpinner.setOnItemSelectedListener(getRecEndSpinnerSelectionHandler());
         mRecEndText = (DateEditText)findViewById(R.id.taskupdate_recend_date);
 
-        // recurrence days interval
+        // other recurrence controls
         mRecDaysPicker = (DaysPicker)findViewById(R.id.taskupdate_recdays_picker);
         mRecIntervalText = (EditText)findViewById(R.id.taskupdate_recinterval_text);
+        mRecStartText = (DateEditText) findViewById(R.id.taskupdate_recstart_date);
 
         // init control values
         TaskRecurrence rec = mTask.getRecurrence();
@@ -143,12 +147,13 @@ public class TaskUpdateView extends ViewBase {
                 System.out.println("[TaskUpdateView.getSaveButtonClickHandler] saving");
 
                 // get the changes
-                mTask.setDate(mTaskDateText.getValue());
                 mTask.setName(mTaskNameText.getText().toString());
                 int selectedRecModePos = mRecModeSpinner.getSelectedItemPosition();
                 if(selectedRecModePos == 0){
+                    mTask.setDate(mTaskDateText.getValue());
                     mTask.setRecurrence(null);
                 }else{
+                    mTask.setDate(mRecStartText.getValue());
                     RecurrenceMode recMode = mRecModeSpinnerAdapter.getItem(selectedRecModePos);
                     HashSet<Integer> recDays = mRecDaysPicker.getValue();
                     int recInterval = Integer.parseInt(mRecIntervalText.getText().toString());
@@ -166,7 +171,7 @@ public class TaskUpdateView extends ViewBase {
                     @Override
                     public void execute(CallbackParams params) {
                         HashMap<String, String> navParams = new HashMap<>();
-                        navParams.put("date", mTask.getDateKey());
+                        navParams.put("date", mTask.getRecurrence() != null ? mActiveDate.toDateKey() : mTask.getDateKey());
                         AppContext.getCurrent().getNavigationService().navigate(TasksView.class, navParams);
                     }
                 });
@@ -205,6 +210,7 @@ public class TaskUpdateView extends ViewBase {
                 if(mode == RecurrenceMode.None) {
                     recBox.setVisibility(View.GONE);
                     recDaysRow.setVisibility(View.GONE);
+                    mTaskDateText.enable();
                     return;
                 }
 
@@ -215,6 +221,7 @@ public class TaskUpdateView extends ViewBase {
                 }else{
                     recDaysRow.setVisibility(View.GONE);
                 }
+                mTaskDateText.disable();
 
                 // update interval suffix text
                 TextView recIntervalSuffix = (TextView)findViewById(R.id.taskupdate_recinterval_suffix);
@@ -234,19 +241,21 @@ public class TaskUpdateView extends ViewBase {
                 TaskRecurrence rec = mTask.getRecurrence();
                 if(rec == null) {
                     // set to default values
-                    ((Spinner) findViewById(R.id.taskupdate_recend_spinner)).setSelection(0);
-                    ((TextView) findViewById(R.id.taskupdate_recinterval_text)).setText("1");
-                    ((DateEditText) findViewById(R.id.taskupdate_recend_date)).setValue(new TaskDate());
+                    mRecEndSpinner.setSelection(0);
+                    mRecIntervalText.setText("1");
+                    mRecStartText.setValue(mTask.getDate());
+                    mRecEndText.setValue(new TaskDate());
                     HashSet<Integer> defaultDays = new HashSet<>();
                     defaultDays.add(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
-                    ((DaysPicker) findViewById(R.id.taskupdate_recdays_picker)).setValue(defaultDays);
+                    mRecDaysPicker.setValue(defaultDays);
                 }else{
                     // set to task values
                     TaskDate recEnd = rec.getEnd();
-                    ((Spinner) findViewById(R.id.taskupdate_recend_spinner)).setSelection(recEnd != null ? 1 : 0);
-                    ((TextView) findViewById(R.id.taskupdate_recinterval_text)).setText(HelperService.toString(mTask.getRecurrence().getInterval()));
-                    ((DateEditText) findViewById(R.id.taskupdate_recend_date)).setValue(recEnd != null ? recEnd : new TaskDate());
-                    ((DaysPicker) findViewById(R.id.taskupdate_recdays_picker)).setValue(mTask.getRecurrence().getDays());
+                    mRecEndSpinner.setSelection(recEnd != null ? 1 : 0);
+                    mRecIntervalText.setText(HelperService.toString(mTask.getRecurrence().getInterval()));
+                    mRecStartText.setValue(mTask.getDate());
+                    mRecEndText.setValue(recEnd != null ? recEnd : mActiveDate);
+                    mRecDaysPicker.setValue(mTask.getRecurrence().getDays());
                 }
             }
 

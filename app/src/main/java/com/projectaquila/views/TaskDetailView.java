@@ -8,6 +8,7 @@ import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.models.RecurrenceMode;
 import com.projectaquila.models.Task;
+import com.projectaquila.models.TaskDate;
 import com.projectaquila.models.TaskRecurrence;
 import com.projectaquila.services.HelperService;
 
@@ -25,20 +26,23 @@ public class TaskDetailView extends ViewBase {
     @Override
     protected void initializeView(){
         String taskId = getNavArg("id");
-        if(taskId == null || !AppContext.getCurrent().getTasks().containsKey(taskId)) {
+        final String activeDateKey = getNavArg("activedatekey");
+        if(taskId == null || activeDateKey == null || !AppContext.getCurrent().getTasks().containsKey(taskId)) {
             System.err.println("[TaskDetailView.initializeView] invalid task id found in nav params");
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
             return;
         }
 
+        TaskDate activeDate = TaskDate.parseDateKey(activeDateKey);
         final Task task = AppContext.getCurrent().getTasks().get(taskId);
         ((TextView)findViewById(R.id.taskdetail_taskname)).setText(task.getName());
-        ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(task.getDate().getFriendlyString());
+        ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(activeDate.getFriendlyString());
         findViewById(R.id.taskdetail_edit_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 HashMap<String, String> navParams = new HashMap<>();
                 navParams.put("id", task.getId());
+                navParams.put("activedatekey", activeDateKey);
                 AppContext.getCurrent().getNavigationService().navigate(TaskUpdateView.class, navParams);
             }
         });
@@ -89,6 +93,9 @@ public class TaskDetailView extends ViewBase {
             }else if(mode == RecurrenceMode.Yearly){
                 ((TextView)findViewById(R.id.taskdetail_recinterval_suffix)).setText(R.string.taskrecurrence_interval_suffix_years);
             }
+
+            // recurrence start
+            ((TextView)findViewById(R.id.taskdetail_recstart)).setText(task.getDate().getFriendlyString());
 
             // recurrence end
             ((TextView)findViewById(R.id.taskdetail_recend)).setText(rec.getEnd().getFriendlyString());

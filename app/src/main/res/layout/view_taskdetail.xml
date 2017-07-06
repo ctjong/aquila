@@ -16,13 +16,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_menu_info_details" />
+            android:src="@android:drawable/ic_menu_info_details"
+            android:contentDescription="@string/taskupdate_taskname_hint" />
 
         <TextView
             android:id="@+id/taskdetail_taskname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" />
     </LinearLayout>
 
@@ -37,13 +39,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_menu_my_calendar" />
+            android:src="@android:drawable/ic_menu_my_calendar"
+            android:contentDescription="@string/taskupdate_taskdate_hint" />
 
         <TextView
             android:id="@+id/taskdetail_taskdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" />
     </LinearLayout>
 
@@ -65,6 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" />
     </LinearLayout>
 
@@ -94,6 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp" />
         </LinearLayout>
 
@@ -115,6 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp" />
 
             <TextView
@@ -122,8 +129,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/taskrecurrence_start_label"/>
+
+            <TextView
+                android:id="@+id/taskdetail_recstart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp" />
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -143,6 +174,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp" />
         </LinearLayout>
 

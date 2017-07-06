@@ -1,6 +1,7 @@
 package com.projectaquila.controls;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
@@ -23,8 +24,8 @@ public class DateEditText extends android.support.v7.widget.AppCompatTextView{
                 setValue((TaskDate)params.get("retval"));
             }
         });
-        setOnClickListener(mClickListener);
         setBackgroundResource(R.drawable.bottomborder);
+        enable();
     }
 
     public TaskDate getValue(){
@@ -35,5 +36,15 @@ public class DateEditText extends android.support.v7.widget.AppCompatTextView{
         mValue = date;
         setText(mValue.getFriendlyString());
         mClickListener.setDefaultValue(mValue);
+    }
+
+    public void disable(){
+        setOnClickListener(null);
+        setTextColor(Color.GRAY);
+    }
+
+    public void enable(){
+        setOnClickListener(mClickListener);
+        setTextColor(Color.BLACK);
     }
 }

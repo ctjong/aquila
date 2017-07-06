@@ -51,6 +51,7 @@
     <string name="taskrecurrence_interval_suffix_weeks">week(s)</string>
     <string name="taskrecurrence_interval_suffix_months">month(s)</string>
     <string name="taskrecurrence_interval_suffix_years">year(s)</string>
+    <string name="taskrecurrence_start_label">from:</string>
     <string name="taskrecurrence_end_label">until:</string>
     <string name="taskrecurrence_end_forever">Forever</string>
     <string name="taskrecurrence_end_date">Date</string>
