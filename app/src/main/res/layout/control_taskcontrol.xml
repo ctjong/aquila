@@ -33,7 +33,7 @@
             android:id="@+id/taskcontrol_slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/tasks_list_item"
+            android:background="@drawable/taskcontrol_normal"
             android:orientation="horizontal"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

@@ -32,7 +32,7 @@ public class TasksView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        mNewTask = new Task(null, new TaskDate(), "", false, null);
+        mNewTask = new Task(null, new TaskDate(), "", null);
         mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
         mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
         mTasksAdapter = new TasksAdapter();

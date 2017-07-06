@@ -9,15 +9,13 @@ public class Task {
     private String mId;
     private TaskDate mDate;
     private String mName;
-    private boolean mIsCompleted;
     private TaskRecurrence mRecurrence;
     private Event mChangedEvent;
 
-    public Task(String id, TaskDate date, String name, boolean isCompleted, TaskRecurrence recurrence){
+    public Task(String id, TaskDate date, String name, TaskRecurrence recurrence){
         mId = id;
         mDate = date;
         mName = name;
-        mIsCompleted = isCompleted;
         mRecurrence = recurrence;
         mChangedEvent = new Event();
     }
@@ -36,10 +34,9 @@ public class Task {
                 return null;
             }
             String name = json.getString("taskname");
-            boolean isCompleted = json.getBoolean("iscompleted");
 
             if(json.isNull("recmode")) {
-                return new Task(id, date, name, isCompleted, null);
+                return new Task(id, date, name, null);
             }else{
                 TaskRecurrence rec = TaskRecurrence.parse(
                         date,
@@ -47,12 +44,12 @@ public class Task {
                         json.getString("recdays"),
                         json.getInt("recinterval"),
                         json.getString("recend"),
-                        json.getString("recactive"));
+                        json.getString("recholes"));
                 if(rec == null){
                     System.err.println("[Task.parse] failed to parse recurrence");
                     return null;
                 }
-                return new Task(id, date, name, isCompleted, rec);
+                return new Task(id, date, name, rec);
             }
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
@@ -81,10 +78,6 @@ public class Task {
         return mName;
     }
 
-    public boolean isCompleted(){
-        return mIsCompleted;
-    }
-
     public TaskRecurrence getRecurrence(){
         return mRecurrence;
     }
@@ -100,10 +93,6 @@ public class Task {
 
     public void setName(String name){
         mName = name;
-    }
-
-    public void setCompletedState(boolean isCompleted){
-        mIsCompleted = isCompleted;
     }
 
     public void setRecurrence(TaskRecurrence recurrence){
@@ -122,7 +111,6 @@ public class Task {
         HashMap<String, String> data = new HashMap<>();
         data.put("taskdate", mDate.toDateKey());
         data.put("taskname", mName);
-        data.put("iscompleted", mIsCompleted ? "1" : "0");
         if(mRecurrence == null){
             data.put("recmode", null);
             data.put("recdays", null);

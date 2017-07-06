@@ -176,7 +176,6 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         mControlsMap.put(mapKey, new LinkedList<TaskControl>());
         for(Map.Entry<String,Task> entry : AppContext.getCurrent().getTasks().entrySet()){
             Task task = entry.getValue();
-            if(task.isCompleted()) continue;
             TaskControl control = new TaskControl(task);
             String taskKey = task.getDate().toDateKey();
             if(task.getRecurrence() == null && taskKey.equals(mapKey) && mControlsMap.containsKey(taskKey)) {

@@ -71,7 +71,7 @@ public class TaskUpdateView extends ViewBase {
                 return;
             }
             Task originalTask = AppContext.getCurrent().getTasks().get(taskId);
-            mTask = new Task(originalTask.getId(), originalTask.getDate(), originalTask.getName(), originalTask.isCompleted(), originalTask.getRecurrence());
+            mTask = new Task(originalTask.getId(), originalTask.getDate(), originalTask.getName(), originalTask.getRecurrence());
         }else{
             System.out.println("[TaskUpdateView.initializeView] mode=create");
             String taskName = getNavArg("taskname");
@@ -81,7 +81,7 @@ public class TaskUpdateView extends ViewBase {
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
                 return;
             }
-            mTask = new Task(null, taskDate, taskName, false, null);
+            mTask = new Task(null, taskDate, taskName, null);
         }
     }
 

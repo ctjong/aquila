@@ -31,12 +31,17 @@ public class TaskControl {
 
         Callback openTaskAction = getOpenTaskAction();
         View slider = view.findViewById(R.id.taskcontrol_slider);
+        if(mTask.getRecurrence() == null){
+            slider.setBackgroundResource(R.drawable.taskcontrol_normal);
+        }else{
+            slider.setBackgroundResource(R.drawable.taskcontrol_recurrence);
+        }
+        Callback completeTaskAction = getCompleteTaskAction();
         if(mTask.getRecurrence() == null) {
-            Callback completeTaskAction = getCompleteTaskAction();
             Callback postponeTaskAction = getPostponeTaskAction();
             SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
         }else{
-            SwipeListener.listen(slider, slider, null, null, openTaskAction);
+            SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction);
         }
     }
 
@@ -60,10 +65,7 @@ public class TaskControl {
             @Override
             public void execute(CallbackParams params) {
                 System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
-                mTask.setCompletedState(true);
-                HashMap<String, String> data = new HashMap<>();
-                data.put("iscompleted", "1");
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), data, null);
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mTask.getId(), null, null);
                 mTask.notifyListeners();
             }
         };
