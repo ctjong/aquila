@@ -20,9 +20,11 @@ import com.projectaquila.models.TaskDate;
 import com.projectaquila.models.TaskRecurrence;
 import com.projectaquila.services.HelperService;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class TaskUpdateView extends ViewBase {
     private Task mTask;
@@ -245,7 +247,7 @@ public class TaskUpdateView extends ViewBase {
                     mRecIntervalText.setText("1");
                     mRecStartText.setValue(mTask.getDate());
                     mRecEndText.setValue(new TaskDate());
-                    HashSet<Integer> defaultDays = new HashSet<>();
+                    List<Integer> defaultDays = new ArrayList<>();
                     defaultDays.add(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
                     mRecDaysPicker.setValue(defaultDays);
                 }else{

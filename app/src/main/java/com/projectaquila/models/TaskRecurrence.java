@@ -112,8 +112,10 @@ public class TaskRecurrence {
      * Get recurrence days
      * @return recurrence days
      */
-    public HashSet<Integer> getDays(){
-        return mDays;
+    public List<Integer> getDays(){
+        List<Integer> daysList = new ArrayList<>(mDays);
+        Collections.sort(daysList);
+        return daysList;
     }
 
     /**
@@ -177,9 +179,9 @@ public class TaskRecurrence {
         if(mMode != tr.getMode()){
             shouldClearActiveBlocks = true;
         }
-        HashSet<Integer> trDays = tr.getDays();
-        for(int recDay : mDays){
-            if(!trDays.contains(recDay)){
+        List<Integer> trDays = tr.getDays();
+        for(int trDay : trDays){
+            if(!mDays.contains(trDay)){
                 shouldClearActiveBlocks = true;
             }
         }
@@ -196,7 +198,7 @@ public class TaskRecurrence {
         }
 
         mMode = tr.getMode();
-        mDays = tr.getDays();
+        mDays = new HashSet<>(trDays);
         mInterval = tr.getInterval();
         mEnd = tr.getEnd();
     }
@@ -256,20 +258,20 @@ public class TaskRecurrence {
     public boolean shiftToNextOccurrence(){
         TaskDate currentDate = mTask.getDate();
         String currentDateKey = currentDate.toDateKey();
+        List<Integer> daysList = getDays();
         while(currentDate == mTask.getDate() || mHoles.contains(currentDateKey)){
             mHoles.remove(currentDateKey);
             Calendar c = Calendar.getInstance();
             c.setTime(currentDate);
             int date = c.get(Calendar.DATE);
             int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+            int weekOfMonth = c.get(Calendar.WEEK_OF_MONTH);
             int dayOfWeekInMonth = c.get(Calendar.DAY_OF_WEEK_IN_MONTH);
             int month = c.get(Calendar.MONTH);
             int year = c.get(Calendar.YEAR);
             if(mMode == RecurrenceMode.Daily){
                 c.set(Calendar.DATE, date + 1);
             }else if(mMode == RecurrenceMode.Weekly){
-                List<Integer> daysList = new ArrayList<>(mDays);
-                Collections.sort(daysList);
                 if(daysList.size() == 0)
                     return false;
                 boolean found = false;
@@ -286,7 +288,7 @@ public class TaskRecurrence {
                 }
                 if(!updated){
                     c.set(Calendar.DAY_OF_WEEK, daysList.get(0));
-                    c.set(Calendar.DAY_OF_WEEK_IN_MONTH, dayOfWeekInMonth + 1);
+                    c.set(Calendar.WEEK_OF_MONTH, weekOfMonth + 1);
                 }
             }else if(mMode == RecurrenceMode.MonthlyDateBased){
                 c.set(Calendar.MONTH, month + 1);

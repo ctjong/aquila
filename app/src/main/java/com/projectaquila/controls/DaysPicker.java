@@ -13,6 +13,7 @@ import com.projectaquila.R;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 public class DaysPicker extends LinearLayout {
@@ -77,9 +78,10 @@ public class DaysPicker extends LinearLayout {
      * Set the value of this control
      * @param newValue value set
      */
-    public void setValue(HashSet<Integer> newValue){
+    public void setValue(List<Integer> newValue){
+        HashSet<Integer> newValueSet = new HashSet<>(newValue);
         for(Map.Entry<Integer, Integer> entry : mControlToCalendarDaysMap.entrySet()){
-            mControlValues.put(entry.getKey(), newValue.contains(entry.getValue()));
+            mControlValues.put(entry.getKey(), newValueSet.contains(entry.getValue()));
         }
         updateView();
     }

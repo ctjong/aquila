@@ -18,7 +18,7 @@ import com.projectaquila.services.HelperService;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 
 public class TaskDetailView extends ViewBase {
     @Override
@@ -52,7 +52,7 @@ public class TaskDetailView extends ViewBase {
             // recurrence days
             if(mode == RecurrenceMode.Weekly){
                 findViewById(R.id.taskdetail_recdays_row).setVisibility(View.VISIBLE);
-                HashSet<Integer> days = rec.getDays();
+                List<Integer> days = rec.getDays();
                 String daysStr = "";
                 Context ctx = AppContext.getCurrent().getActivity();
                 for(int day : days){
