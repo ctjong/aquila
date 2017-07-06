@@ -182,13 +182,37 @@
 
     <Button
         android:id="@+id/taskdetail_edit_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimary"
         android:textColor="@color/cardview_light_background"
-        android:text="@string/taskdetail_edit_btn_text"/>
+        android:text="@string/taskdetail_edit_btn_text"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/taskdetail_completeocc_btn"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimaryAltDark"
+        android:textColor="@color/cardview_light_background"
+        android:text="@string/taskdetail_completeocc_btn_text"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/taskdetail_complete_btn"
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimaryAltDark"
+        android:textColor="@color/cardview_light_background"
+        android:text="@string/taskdetail_complete_btn_text"
+        android:textAllCaps="false" />
 
 </LinearLayout>
 

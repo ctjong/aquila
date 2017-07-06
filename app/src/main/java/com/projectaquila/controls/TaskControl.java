@@ -64,27 +64,12 @@ public class TaskControl {
         return new Callback() {
             @Override
             public void execute(CallbackParams params) {
+                System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
                 if(mTask.getRecurrence() == null) {
-                    System.out.println("[TaskListItem.getCompleteTaskAction] completing normal task " + mTask.getId());
-                    AppContext.getCurrent().getTasks().remove(mTask.getId());
-                    AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mTask.getId(), null, null);
+                    mTask.complete(null);
                 }else{
-                    System.out.println("[TaskListItem.getCompleteTaskAction] completing recurrence task " + mTask.getId() + " at " + mDate.toDateKey());
-                    if(mTask.getDate().toDateKey().equals(mDate.toDateKey())){
-                        if(mTask.getRecurrence().shiftToNextOccurrence()){
-                            System.out.println("[TaskListItem.getCompleteTaskAction] shifting recurrence series to " + mTask.getDateKey());
-                            AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), mTask.getDataMap(), null);
-                        }else{
-                            System.out.println("[TaskListItem.getCompleteTaskAction] completing recurrence series " + mTask.getId());
-                            AppContext.getCurrent().getTasks().remove(mTask.getId());
-                            AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mTask.getId(), null, null);
-                        }
-                    }else{
-                        mTask.getRecurrence().getHoles().add(mDate.toDateKey());
-                        AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mTask.getId(), mTask.getDataMap(), null);
-                    }
+                    mTask.completeOccurrence(mDate, null);
                 }
-                mTask.notifyListeners();
             }
         };
     }

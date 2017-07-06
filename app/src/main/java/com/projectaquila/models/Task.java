@@ -1,5 +1,7 @@
 package com.projectaquila.models;
 
+import com.projectaquila.AppContext;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,5 +127,31 @@ public class Task {
             data.put("recend", mRecurrence.getEnd() == null ? null : mRecurrence.getEnd().toDateKey());
         }
         return data;
+    }
+
+    public void complete(Callback cb){
+        System.out.println("[Task.complete] completing task " + mId);
+        AppContext.getCurrent().getTasks().remove(mId);
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mId, null, cb);
+        notifyListeners();
+    }
+
+    public void completeOccurrence(TaskDate occDate, Callback cb){
+        String occDateKey = occDate.toDateKey();
+        System.out.println("[Task.completeOccurrence] completing recurrence task " + mId + " at " + occDateKey);
+        if(mDate.toDateKey().equals(occDateKey)){
+            if(mRecurrence.shiftToNextOccurrence()){
+                System.out.println("[Task.completeOccurrence] shifting recurrence series to " + getDateKey());
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mId, getDataMap(), cb);
+            }else{
+                System.out.println("[Task.completeOccurrence] completing recurrence series " + mId);
+                AppContext.getCurrent().getTasks().remove(mId);
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/private/" + mId, null, cb);
+            }
+        }else{
+            mRecurrence.getHoles().add(occDateKey);
+            AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/private/" + mId, getDataMap(), cb);
+        }
+        notifyListeners();
     }
 }

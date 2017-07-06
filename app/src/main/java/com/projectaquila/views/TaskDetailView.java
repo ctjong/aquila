@@ -2,10 +2,13 @@ package com.projectaquila.views;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
+import com.projectaquila.models.Callback;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.RecurrenceMode;
 import com.projectaquila.models.Task;
 import com.projectaquila.models.TaskDate;
@@ -33,19 +36,11 @@ public class TaskDetailView extends ViewBase {
             return;
         }
 
-        TaskDate activeDate = TaskDate.parseDateKey(activeDateKey);
+        // task details
+        final TaskDate activeDate = TaskDate.parseDateKey(activeDateKey);
         final Task task = AppContext.getCurrent().getTasks().get(taskId);
         ((TextView)findViewById(R.id.taskdetail_taskname)).setText(task.getName());
         ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(activeDate.getFriendlyString());
-        findViewById(R.id.taskdetail_edit_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashMap<String, String> navParams = new HashMap<>();
-                navParams.put("id", task.getId());
-                navParams.put("activedatekey", activeDateKey);
-                AppContext.getCurrent().getNavigationService().navigate(TaskUpdateView.class, navParams);
-            }
-        });
 
         // task recurrence
         if(task.getRecurrence() != null){
@@ -105,7 +100,67 @@ public class TaskDetailView extends ViewBase {
             findViewById(R.id.taskdetail_recurrence_box).setVisibility(View.GONE);
         }
 
+        // buttons
+        findViewById(R.id.taskdetail_edit_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> navParams = new HashMap<>();
+                navParams.put("id", task.getId());
+                navParams.put("activedatekey", activeDateKey);
+                AppContext.getCurrent().getNavigationService().navigate(TaskUpdateView.class, navParams);
+            }
+        });
+        Button completeBtn = (Button)findViewById(R.id.taskdetail_complete_btn);
+        Button completeOccBtn = (Button)findViewById(R.id.taskdetail_completeocc_btn);
+        if(task.getRecurrence() == null){
+            completeBtn.setText(R.string.taskdetail_complete_btn_text);
+            completeOccBtn.setVisibility(View.GONE);
+        }else{
+            completeBtn.setText(R.string.taskdetail_completeser_btn_text);
+            completeOccBtn.setVisibility(View.VISIBLE);
+        }
+        completeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppContext.getCurrent().getActivity().onBackPressed();
+                AppContext.getCurrent().getActivity().showLoadingScreen();
+                task.complete(new Callback() {
+                    @Override
+                    public void execute(CallbackParams params) {
+                        HashMap<String, String> navParams = new HashMap<>();
+                        navParams.put("date", activeDateKey);
+                        AppContext.getCurrent().getNavigationService().navigate(TasksView.class, navParams);
+                    }
+                });
+            }
+        });
+        completeBtn.setOnClickListener(getCompleteTaskAction(task, null, activeDateKey));
+        completeOccBtn.setOnClickListener(getCompleteTaskAction(task, activeDate, activeDateKey));
+
         AppContext.getCurrent().getActivity().setToolbarText(R.string.taskdetail_title);
         AppContext.getCurrent().getActivity().showContentScreen();
+    }
+
+    private View.OnClickListener getCompleteTaskAction(final Task task, final TaskDate occurrenceDate, final String activeDateKey){
+        final Callback cb = new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                HashMap<String, String> navParams = new HashMap<>();
+                navParams.put("date", activeDateKey);
+                AppContext.getCurrent().getNavigationService().navigate(TasksView.class, navParams);
+            }
+        };
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppContext.getCurrent().getActivity().onBackPressed();
+                AppContext.getCurrent().getActivity().showLoadingScreen();
+                if(occurrenceDate == null){
+                    task.complete(cb);
+                }else{
+                    task.completeOccurrence(occurrenceDate, cb);
+                }
+            }
+        };
     }
 }

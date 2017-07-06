@@ -23,6 +23,9 @@
 
     <string name="taskdetail_title">Task detail</string>
     <string name="taskdetail_edit_btn_text">Edit</string>
+    <string name="taskdetail_complete_btn_text">Mark as completed</string>
+    <string name="taskdetail_completeocc_btn_text">Mark occurrence as completed</string>
+    <string name="taskdetail_completeser_btn_text">Mark series as completed</string>
 
     <string name="taskcreate_title">Create task</string>
     <string name="taskupdate_title">Update task</string>
