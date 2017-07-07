@@ -15,6 +15,8 @@ import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Event;
 
+import org.json.JSONException;
+
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -94,12 +96,14 @@ public class AuthService {
         AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/auth/token/fb", apiParams, new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                if(params.get("token") == null){
+                try {
+                    setAccessToken(params.getApiResult().getObject().getString("token"));
+                    callback.execute(params);
+                } catch (JSONException e) {
+                    System.err.println("[AuthService.convertFbToken] exception");
+                    e.printStackTrace();
                     logOut();
                     callback.execute(null);
-                }else {
-                    setAccessToken((String) params.get("token"));
-                    callback.execute(params);
                 }
             }
         });

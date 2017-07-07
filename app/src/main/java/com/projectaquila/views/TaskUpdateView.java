@@ -168,7 +168,7 @@ public class TaskUpdateView extends ViewBase {
                 AppContext.getCurrent().getActivity().onBackPressed();
                 AppContext.getCurrent().getActivity().showLoadingScreen();
                 ApiTaskMethod method = mTask.getId() == null ? ApiTaskMethod.POST : ApiTaskMethod.PUT;
-                String url = mTask.getId() == null ? "/data/task/public" : "/data/task/private/" + mTask.getId();
+                String url = mTask.getId() == null ? "/data/task/public" : "/data/task/public/" + mTask.getId();
                 AppContext.getCurrent().getDataService().request(method, url, mTask.getDataMap(), new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
@@ -204,7 +204,7 @@ public class TaskUpdateView extends ViewBase {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 RecurrenceMode mode = mRecModeSpinnerAdapter.getItem(position);
-                System.out.println("[TaskUpdateView.getRecSpinnerSelectionHandler] new mode = " + mode);
+                System.out.println("[TaskUpdateView.getRecSpinnerSelectionHandler] recurrence mode = " + mode);
                 View recBox = findViewById(R.id.taskupdate_recurrence_box);
                 View recDaysRow = findViewById(R.id.taskupdate_recdays_row);
 

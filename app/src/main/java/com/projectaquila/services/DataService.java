@@ -93,14 +93,22 @@ public class DataService extends AsyncTask<Void, Void, ApiResult> {
             }
 
             // prepare outgoing response
-            if(mMethod == ApiTaskMethod.GET){
-                JSONObject responseObj = (JSONObject)new JSONTokener(responseStr).nextValue();
-                int count = Integer.parseInt(responseObj.getString("count"));
-                JSONArray items = (JSONArray)responseObj.get("items");
-                return new ApiResult(responseCode, count, items);
+            if(!responseStr.equals("")) {
+                Object responseRaw = new JSONTokener(responseStr).nextValue();
+                if (responseRaw instanceof JSONObject) {
+                    JSONObject responseObj = (JSONObject) responseRaw;
+                    if (responseObj.isNull("count")) {
+                        return new ApiResult(responseCode, responseObj);
+                    } else {
+                        int count = Integer.parseInt(responseObj.getString("count"));
+                        JSONArray items = (JSONArray) responseObj.get("items");
+                        return new ApiResult(responseCode, count, items);
+                    }
+                }
             }
             return new ApiResult(responseCode, 0, null);
         }catch(SocketTimeoutException e){
+            System.err.println("[DataService.doInBackground] timed out");
             return new ApiResult(404, 0, null);
         } catch (Exception e) {
             System.err.println("[DataService.doInBackground] exception");
