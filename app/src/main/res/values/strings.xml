@@ -9,15 +9,18 @@
     <string name="shell_error_unknown">Something went wrong.</string>
     <string name="shell_error_unauthorized">You don\'t have permission to do the requested operation</string>
 
-    <string name="menu_tasks">Today</string>
+    <string name="menu_tasks">Tasks</string>
+    <string name="menu_enrolled_plans">Enrolled plans</string>
+    <string name="menu_browse_plans">Browse plans</string>
+    <string name="menu_created_plans">My plans</string>
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
 
-    <string name="main_intro_text">Welcome! Please login to continue.</string>
-    <string name="main_facebook_app_id">1323560431073064</string>
-    <string name="main_facebook_login_text">Log in with Facebook</string>
-    <string name="main_error_login_failed">Login failed</string>
-    <string name="main_error_invalid_login">Invalid login</string>
+    <string name="login_intro_text">Welcome! Please login to continue.</string>
+    <string name="login_facebook_app_id">1323560431073064</string>
+    <string name="login_facebook_login_text">Log in with Facebook</string>
+    <string name="login_error_login_failed">Login failed</string>
+    <string name="login_error_invalid_login">Invalid login</string>
 
     <string name="tasks_add_hint">Add new task</string>
 
@@ -58,6 +61,10 @@
     <string name="taskrecurrence_end_label">until:</string>
     <string name="taskrecurrence_end_forever">Forever</string>
     <string name="taskrecurrence_end_date">Date</string>
+
+    <string name="plans_enrolled_null">You have not enrolled to any plan. Go to "Browse plans" on the side menu to get started.</string>
+    <string name="plans_created_null">You have not created any plan. Click the add button below to create one.</string>
+    <string name="plans_browse_null">No plan found with the given criteria.</string>
 
 
 </resources>

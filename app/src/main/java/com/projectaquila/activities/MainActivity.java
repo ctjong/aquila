@@ -16,7 +16,10 @@ import com.projectaquila.controls.DrawerToggle;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.DrawerItem;
-import com.projectaquila.views.MainView;
+import com.projectaquila.models.PlansViewMode;
+import com.projectaquila.services.HelperService;
+import com.projectaquila.views.LoginView;
+import com.projectaquila.views.PlansView;
 import com.projectaquila.views.TasksView;
 
 public class MainActivity extends ShellActivity {
@@ -57,7 +60,7 @@ public class MainActivity extends ShellActivity {
         });
 
         showLoadingScreen();
-        AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
+        AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
     }
 
     /**
@@ -102,10 +105,16 @@ public class MainActivity extends ShellActivity {
         }
         mDrawerAdapter.clear();
         if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
-            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false));
-            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_logout), MainView.class, true));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false, null));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_enrolled_plans), PlansView.class, false,
+                    HelperService.getOnePairMap("mode", PlansViewMode.ENROLLED.toString())));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_browse_plans), PlansView.class, false,
+                    HelperService.getOnePairMap("mode", PlansViewMode.BROWSE.toString())));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_created_plans), PlansView.class, false,
+                    HelperService.getOnePairMap("mode", PlansViewMode.CREATED.toString())));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_logout), LoginView.class, true, null));
         }else{
-            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_login), MainView.class, false));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_login), LoginView.class, false, null));
         }
         mDrawerAdapter.notifyDataSetChanged();
         mDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {

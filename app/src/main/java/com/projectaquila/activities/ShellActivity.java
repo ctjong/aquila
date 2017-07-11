@@ -17,9 +17,7 @@ import com.projectaquila.R;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Event;
-import com.projectaquila.views.MainView;
-
-import java.util.HashMap;
+import com.projectaquila.views.LoginView;
 
 public abstract class ShellActivity extends AppCompatActivity {
     private FrameLayout mContentScreen;
@@ -67,7 +65,7 @@ public abstract class ShellActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AppContext.getCurrent().setChildActivity(null);
-                AppContext.getCurrent().getNavigationService().navigate(MainView.class, null);
+                AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
             }
         });
 

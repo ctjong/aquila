@@ -11,9 +11,9 @@ import com.projectaquila.models.CallbackParams;
 import com.projectaquila.services.AuthService;
 
 /**
- * Main activity
+ * Login view
  */
-public class MainView extends ViewBase {
+public class LoginView extends ViewBase {
     private TextView mErrorText;
 
     /**
@@ -22,7 +22,7 @@ public class MainView extends ViewBase {
      */
     @Override
     protected int getLayoutId() {
-        return R.layout.view_main;
+        return R.layout.view_login;
     }
 
     /**
@@ -40,6 +40,7 @@ public class MainView extends ViewBase {
                 int requestCode = (int)params.get("requestCode");
                 int resultCode = (int)params.get("resultCode");
                 Intent data = (Intent)params.get("data");
+                System.out.println("[LoginView.initializeView] activity result event received [" + requestCode + "," + resultCode + "]");
                 authService.onFbActivityResult(requestCode, resultCode, data);
             }
         });
@@ -52,7 +53,7 @@ public class MainView extends ViewBase {
 
         // clear any existing login session and setup login button
         AppContext.getCurrent().getAuthService().logOut();
-        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.view_main_loginbutton);
+        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.view_login_loginbutton);
         authService.setupFbLoginButton(fbLoginButton, new Callback(){
             @Override
             public void execute(CallbackParams params) {
@@ -60,20 +61,24 @@ public class MainView extends ViewBase {
 
                 // check fb token retrieval response
                 if(params == null) {
-                    setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.main_error_login_failed));
+                    System.out.println("[LoginView.setupFbLoginButton] login response error received from FB.");
+                    setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.login_error_login_failed));
                     return;
                 }
 
                 // convert fb token to long term token
+                System.out.println("[LoginView.setupFbLoginButton] login response received from FB. converting it.");
                 AppContext.getCurrent().getActivity().showLoadingScreen();
                 String fbToken = (String)params.get("fbToken");
                 authService.convertFbToken(fbToken, new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
                         if(params == null) {
-                            setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.main_error_invalid_login));
+                            System.out.println("[LoginView.setupFbLoginButton] failed to convert FB token. null response params.");
+                            setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.login_error_invalid_login));
                             AppContext.getCurrent().getActivity().showContentScreen();
                         }else{
+                            System.out.println("[LoginView.setupFbLoginButton] FB token conversion successful.");
                             AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);
                         }
                     }
@@ -91,7 +96,7 @@ public class MainView extends ViewBase {
      */
     private void setAuthErrorText(String errorMsg){
         if(mErrorText == null){
-            mErrorText = (TextView) findViewById(R.id.view_main_errortext);
+            mErrorText = (TextView) findViewById(R.id.view_login_errortext);
         }
         mErrorText.setText(errorMsg);
     }

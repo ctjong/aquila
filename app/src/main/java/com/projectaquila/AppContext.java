@@ -6,6 +6,7 @@ import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.models.Task;
+import com.projectaquila.models.User;
 import com.projectaquila.services.AuthService;
 import com.projectaquila.services.DataService;
 import com.projectaquila.services.NavigationService;
@@ -54,6 +55,7 @@ public class AppContext {
     private MainActivity mMainActivity;
     private ChildActivity mChildActivity;
     private HashMap<String, Task> mTasks;
+    private User mActiveUser;
 
     // services
     private AuthService mAuthService;
@@ -98,6 +100,10 @@ public class AppContext {
         return mTasks;
     }
 
+    public User getActiveUser(){
+        return mActiveUser;
+    }
+
     /*----------------------------------
         Member property setters
     ----------------------------------*/
@@ -108,6 +114,10 @@ public class AppContext {
 
     public void setChildActivity(ChildActivity child){
         mChildActivity = child;
+    }
+
+    public void setActiveUser(User user){
+        mActiveUser = user;
     }
 
     /*----------------------------------

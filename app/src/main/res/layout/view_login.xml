@@ -1,7 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/view_main"
+    android:id="@+id/view_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,24 +10,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/view_main_loginbutton"
+        android:layout_above="@+id/view_login_loginbutton"
         android:layout_marginBottom="10dp"
-        android:text="@string/main_intro_text"
+        android:text="@string/login_intro_text"
         android:textAlignment="center" />
 
     <TextView
-        android:id="@+id/view_main_errortext"
+        android:id="@+id/view_login_errortext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/view_main_loginbutton"
+        android:layout_below="@+id/view_login_loginbutton"
         android:layout_marginTop="10dp"
         android:textAlignment="center"
         android:textColor="@android:color/holo_red_dark" />
 
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/view_main_loginbutton"
+        android:id="@+id/view_login_loginbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -37,7 +37,7 @@
         android:paddingLeft="15dp"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
-        facebook:com_facebook_login_text="@string/main_facebook_login_text" />
+        facebook:com_facebook_login_text="@string/login_facebook_login_text" />
 
 
 </RelativeLayout>

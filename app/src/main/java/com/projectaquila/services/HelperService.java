@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Build;
 
 import com.projectaquila.AppContext;
+
+import java.util.HashMap;
 import java.util.Locale;
 
 public class HelperService {
@@ -21,5 +23,17 @@ public class HelperService {
             currentLocale = ctx.getResources().getConfiguration().locale;
         }
         return String.format(currentLocale, "%d", i);
+    }
+
+    /**
+     * Create a map with one pair content
+     * @param key pair key
+     * @param val pair value
+     * @return map
+     */
+    public static HashMap<String, String> getOnePairMap(String key, String val){
+        HashMap<String, String> map = new HashMap<>();
+        map.put(key, val);
+        return map;
     }
 }

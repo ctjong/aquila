@@ -8,8 +8,6 @@ import android.widget.TextView;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.models.ApiResult;
-import com.projectaquila.models.ApiTaskMethod;
 import com.projectaquila.models.Callback;
 import com.projectaquila.models.CallbackParams;
 import com.projectaquila.models.Task;
@@ -26,11 +24,9 @@ import java.util.Map;
  * Adapter for populating tasks on the tasks view
  */
 public class TasksAdapter extends ArrayAdapter<TaskControl>{
-    private static final int ITEMS_PER_DATE = 100;
     private static final int CACHE_DAYS_SPAN = 3;
     private HashMap<String, List<TaskControl>> mControlsMap;
     private TaskDate mActiveDate;
-    private int mDownloadCount;
 
     /**
      * Instantiate a new tasks adapter
@@ -48,8 +44,20 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         mActiveDate = date;
         String key = date.toDateKey();
         if(refreshCache || mControlsMap == null){
+            mControlsMap = new HashMap<>();
             AppContext.getCurrent().getActivity().showLoadingScreen();
-            retrieveFromServer(0);
+            AppContext.getCurrent().getTasks().clear();
+            AppContext.getCurrent().getDataService().requestAll("/data/task/private/findall/id/%d/%d", new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    List result = (List)params.get("result");
+                    for(Object tasks : result){
+                        addToTasksModel((JSONArray)tasks);
+                    }
+                    expandControlsMap();
+                    AppContext.getCurrent().getActivity().showContentScreen();
+                }
+            });
         }else {
             if (!mControlsMap.containsKey(key)) {
                 expandControlsMap();
@@ -96,42 +104,6 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         });
         taskControl.renderView(convertView);
         return convertView;
-    }
-
-    /**
-     * Retrieve data for the active date from API
-     */
-    private void retrieveFromServer(final int partNum){
-        if(mControlsMap == null){
-            mControlsMap = new HashMap<>();
-        }
-
-        // get data URL
-        int skip = partNum * ITEMS_PER_DATE;
-        String dataUrl = "/data/task/private/findall/id/" + skip + "/" + ITEMS_PER_DATE;
-
-        // request data
-        if(partNum == 0) {
-            AppContext.getCurrent().getTasks().clear();
-            mDownloadCount = 0;
-        }
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, dataUrl, null, new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                ApiResult res = params.getApiResult();
-                JSONArray tasks = res.getItems();
-                mDownloadCount += tasks.length();
-                int count = res.getCount();
-                System.out.println("[TasksAdapter.retrieveFromServer] retrieved " + mDownloadCount + "/" + count);
-                addToTasksModel(tasks);
-                if(mDownloadCount < count){
-                    retrieveFromServer(partNum + 1);
-                }else{
-                    expandControlsMap();
-                    AppContext.getCurrent().getActivity().showContentScreen();
-                }
-            }
-        });
     }
 
     /**
