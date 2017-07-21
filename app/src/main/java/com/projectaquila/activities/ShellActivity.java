@@ -64,7 +64,7 @@ public abstract class ShellActivity extends AppCompatActivity {
         reloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().setChildActivity(null);
+                AppContext.getCurrent().getNavigationService().goToMainActivity();
                 AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
             }
         });

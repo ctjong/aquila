@@ -11,6 +11,7 @@ import com.projectaquila.views.ViewBase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * A service that handles navigation between views
@@ -19,12 +20,14 @@ public class NavigationService {
     private HashMap<String, ViewBase> mViews;
     private Bundle mCurrentViewParams;
     private ViewBase mCurrentView;
+    private Stack<ChildActivity> mChildStack;
 
     /**
      * Instantiate a new navigation service
      */
     public NavigationService(){
         mViews = new HashMap<>();
+        mChildStack = new Stack<>();
     }
 
     /**
@@ -50,10 +53,41 @@ public class NavigationService {
     }
 
     /**
-     * Reload current view
+     * Invoked when a child activity is loaded
      */
-    public void reloadView(){
+    public void onChildActivityLoad(ChildActivity activity){
+        mChildStack.push(activity);
         mCurrentView.onStart(mCurrentViewParams);
+    }
+
+    /**
+     * Go up one level in the back stack
+     */
+    public void goBack(){
+        if(mChildStack.isEmpty())
+            return;
+        ChildActivity child = mChildStack.pop();
+        child.finish();
+        child.overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_left);
+    }
+
+    /**
+     * Exit all child activities and go to main
+     */
+    public void goToMainActivity(){
+        while(!mChildStack.isEmpty()){
+            goBack();
+        }
+    }
+
+    /**
+     * Get the active child activity, or null if none is active
+     * @return child activity or null
+     */
+    public ChildActivity getActiveChildActivity(){
+        if(mChildStack.isEmpty())
+            return null;
+        return mChildStack.peek();
     }
 
     /**

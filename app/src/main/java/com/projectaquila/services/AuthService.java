@@ -136,7 +136,7 @@ public class AuthService {
      * @return access token, or null if no token is stored
      */
     public String getAccessToken(){
-        SharedPreferences settings = AppContext.getCurrent().getMainActivity().getPreferences(0);
+        SharedPreferences settings = AppContext.getCurrent().getLocalSettings();
         return settings.getString("token", null);
     }
 
@@ -145,7 +145,7 @@ public class AuthService {
      * @param token access token
      */
     private void setAccessToken(String token){
-        SharedPreferences settings = AppContext.getCurrent().getMainActivity().getPreferences(0);
+        SharedPreferences settings = AppContext.getCurrent().getLocalSettings();
         SharedPreferences.Editor settingsEditor = settings.edit();
         settingsEditor.putString("token", token);
         settingsEditor.apply();

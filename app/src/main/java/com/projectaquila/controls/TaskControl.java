@@ -54,7 +54,7 @@ public class TaskControl {
                 System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
                 TaskDate postponedDate = mTask.getDate().getModified(1);
                 mTask.setDate(postponedDate);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/public/" + mTask.getId(), mTask.getDataMap(), null);
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/" + mTask.getId(), mTask.getDataMap(), null);
                 mTask.notifyListeners();
             }
         };

@@ -1,6 +1,7 @@
 package com.projectaquila;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.activities.MainActivity;
@@ -53,7 +54,6 @@ public class AppContext {
     private Context mCore;
     private HashMap<String, String> mDebugConfig;
     private MainActivity mMainActivity;
-    private ChildActivity mChildActivity;
     private HashMap<String, Task> mTasks;
     private User mActiveUser;
 
@@ -89,10 +89,9 @@ public class AppContext {
     }
 
     public ShellActivity getActivity() {
-        return mChildActivity != null ? mChildActivity : mMainActivity;
-    }
-
-    public ShellActivity getMainActivity() {
+        ChildActivity child = mNavigationService.getActiveChildActivity();
+        if(child != null)
+            return child;
         return mMainActivity;
     }
 
@@ -110,10 +109,6 @@ public class AppContext {
 
     public void setMainActivity(MainActivity shell){
         mMainActivity = shell;
-    }
-
-    public void setChildActivity(ChildActivity child){
-        mChildActivity = child;
     }
 
     public void setActiveUser(User user){
@@ -134,6 +129,14 @@ public class AppContext {
 
     public NavigationService getNavigationService(){
         return mNavigationService;
+    }
+
+    /*----------------------------------
+        Other public accessors
+    ----------------------------------*/
+
+    public SharedPreferences getLocalSettings(){
+        return mMainActivity.getPreferences(0);
     }
 
     /*----------------------------------

@@ -94,7 +94,7 @@ public class TasksView extends ViewBase {
                 taskNameCtrl.setText("");
 
                 // save to server
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task/public", mNewTask.getDataMap(), new Callback() {
+                AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task", mNewTask.getDataMap(), new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
                         mTasksAdapter.loadDate(mCurrentDate, true);

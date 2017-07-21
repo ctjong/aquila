@@ -107,7 +107,7 @@ public class TaskDetailView extends ViewBase {
                 HashMap<String, String> navParams = new HashMap<>();
                 navParams.put("id", task.getId());
                 navParams.put("activedatekey", activeDateKey);
-                AppContext.getCurrent().getNavigationService().navigate(TaskUpdateView.class, navParams);
+                AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, navParams);
             }
         });
         Button completeBtn = (Button)findViewById(R.id.taskdetail_complete_btn);
@@ -119,21 +119,6 @@ public class TaskDetailView extends ViewBase {
             completeBtn.setText(R.string.taskdetail_completeser_btn_text);
             completeOccBtn.setVisibility(View.VISIBLE);
         }
-        completeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppContext.getCurrent().getActivity().onBackPressed();
-                AppContext.getCurrent().getActivity().showLoadingScreen();
-                task.complete(new Callback() {
-                    @Override
-                    public void execute(CallbackParams params) {
-                        HashMap<String, String> navParams = new HashMap<>();
-                        navParams.put("date", activeDateKey);
-                        AppContext.getCurrent().getNavigationService().navigate(TasksView.class, navParams);
-                    }
-                });
-            }
-        });
         completeBtn.setOnClickListener(getCompleteTaskAction(task, null, activeDateKey));
         completeOccBtn.setOnClickListener(getCompleteTaskAction(task, activeDate, activeDateKey));
 
@@ -145,15 +130,13 @@ public class TaskDetailView extends ViewBase {
         final Callback cb = new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                HashMap<String, String> navParams = new HashMap<>();
-                navParams.put("date", activeDateKey);
-                AppContext.getCurrent().getNavigationService().navigate(TasksView.class, navParams);
+                AppContext.getCurrent().getNavigationService().navigate(TasksView.class, HelperService.getOnePairMap("date", activeDateKey));
             }
         };
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().getActivity().onBackPressed();
+                AppContext.getCurrent().getNavigationService().goToMainActivity();
                 AppContext.getCurrent().getActivity().showLoadingScreen();
                 if(occurrenceDate == null){
                     task.complete(cb);

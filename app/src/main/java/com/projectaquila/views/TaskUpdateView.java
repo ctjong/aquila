@@ -22,7 +22,6 @@ import com.projectaquila.services.HelperService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -165,16 +164,15 @@ public class TaskUpdateView extends ViewBase {
                 }
 
                 // go back to main activity and reload
-                AppContext.getCurrent().getActivity().onBackPressed();
+                AppContext.getCurrent().getNavigationService().goToMainActivity();
                 AppContext.getCurrent().getActivity().showLoadingScreen();
                 ApiTaskMethod method = mTask.getId() == null ? ApiTaskMethod.POST : ApiTaskMethod.PUT;
-                String url = mTask.getId() == null ? "/data/task/public" : "/data/task/public/" + mTask.getId();
+                String url = mTask.getId() == null ? "/data/task" : "/data/task/" + mTask.getId();
                 AppContext.getCurrent().getDataService().request(method, url, mTask.getDataMap(), new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        HashMap<String, String> navParams = new HashMap<>();
-                        navParams.put("date", mTask.getRecurrence() != null ? mActiveDate.toDateKey() : mTask.getDateKey());
-                        AppContext.getCurrent().getNavigationService().navigate(TasksView.class, navParams);
+                        String returnDateKey = mTask.getRecurrence() != null ? mActiveDate.toDateKey() : mTask.getDateKey();
+                        AppContext.getCurrent().getNavigationService().navigate(TasksView.class, HelperService.getOnePairMap("date", returnDateKey));
                     }
                 });
             }
@@ -190,7 +188,7 @@ public class TaskUpdateView extends ViewBase {
             @Override
             public void onClick(View v) {
                 System.out.println("[TaskUpdateView.getCancelButtonClickHandler] cancelling");
-                AppContext.getCurrent().getActivity().onBackPressed();
+                AppContext.getCurrent().getNavigationService().goBack();
             }
         };
     }

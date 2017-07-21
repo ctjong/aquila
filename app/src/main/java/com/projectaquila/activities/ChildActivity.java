@@ -12,7 +12,6 @@ public class ChildActivity extends ShellActivity {
      */
     @Override
     protected void onBeforeCreate() {
-        AppContext.getCurrent().setChildActivity(this);
     }
 
     /**
@@ -26,10 +25,10 @@ public class ChildActivity extends ShellActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                AppContext.getCurrent().getNavigationService().goBack();
             }
         });
-        AppContext.getCurrent().getNavigationService().reloadView();
+        AppContext.getCurrent().getNavigationService().onChildActivityLoad(this);
     }
 
     /**
@@ -37,16 +36,6 @@ public class ChildActivity extends ShellActivity {
      */
     @Override
     protected void onBeforeViewLoad() {
-    }
-
-    /**
-     * Called when the back button is invoked
-     */
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        AppContext.getCurrent().setChildActivity(null);
-        overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_left);
     }
 
     /**
