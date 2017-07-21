@@ -4,11 +4,13 @@ public class User {
     private String mId;
     private String mFirstName;
     private String mLastName;
+    private String mToken;
 
-    public User(String id, String firstName, String lastName){
+    public User(String id, String firstName, String lastName, String token){
         mId = id;
         mFirstName = firstName;
         mLastName = lastName;
+        mToken = token;
     }
 
     public String getId(){
@@ -21,6 +23,10 @@ public class User {
 
     public String getLastName(){
         return mLastName;
+    }
+
+    public String getToken(){
+        return mToken;
     }
 
     public void setFirstName(String firstName){

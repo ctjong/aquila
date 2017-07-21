@@ -18,12 +18,14 @@ public class DateEditText extends android.support.v7.widget.AppCompatTextView{
         super(context, attrs);
         mValue = new TaskDate();
         setText(mValue.getFriendlyString());
-        mClickListener = new DatePickerClickListener(mValue, new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                setValue((TaskDate)params.get("retval"));
-            }
-        });
+        if(!isInEditMode()) {
+            mClickListener = new DatePickerClickListener(mValue, new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    setValue((TaskDate) params.get("retval"));
+                }
+            });
+        }
         setBackgroundResource(R.drawable.bottomborder);
         enable();
     }

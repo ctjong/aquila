@@ -49,6 +49,18 @@ public class TaskUpdateView extends ViewBase {
     }
 
     /**
+     * Get title bar string id
+     * @return title bar string id
+     */
+    @Override
+    protected int getTitleBarStringId(){
+        if(getNavArg("id") != null){
+            return R.string.taskupdate_title;
+        }
+        return R.string.taskcreate_title;
+    }
+
+    /**
      * Initialize the view
      */
     @Override
@@ -56,7 +68,6 @@ public class TaskUpdateView extends ViewBase {
         initializeTaskModel();
         initializeCommonControls();
         initializeRecControls();
-        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskupdate_title);
         AppContext.getCurrent().getActivity().showContentScreen();
     }
 

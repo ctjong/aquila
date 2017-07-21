@@ -27,6 +27,11 @@ public class TaskDetailView extends ViewBase {
     }
 
     @Override
+    protected int getTitleBarStringId(){
+        return R.string.taskdetail_title;
+    }
+
+    @Override
     protected void initializeView(){
         String taskId = getNavArg("id");
         final String activeDateKey = getNavArg("activedatekey");
@@ -122,7 +127,6 @@ public class TaskDetailView extends ViewBase {
         completeBtn.setOnClickListener(getCompleteTaskAction(task, null, activeDateKey));
         completeOccBtn.setOnClickListener(getCompleteTaskAction(task, activeDate, activeDateKey));
 
-        AppContext.getCurrent().getActivity().setToolbarText(R.string.taskdetail_title);
         AppContext.getCurrent().getActivity().showContentScreen();
     }
 

@@ -33,8 +33,7 @@ public class MainActivity extends ShellActivity {
      */
     @Override
     public void onBeforeCreate() {
-        AppContext.initialize(this.getApplicationContext());
-        AppContext.getCurrent().setMainActivity(this);
+        AppContext.initialize(this);
     }
 
     /**
@@ -56,18 +55,18 @@ public class MainActivity extends ShellActivity {
             @Override
             public void execute(CallbackParams params) {
                 setupDrawer();
-            }
+}
         });
 
-        showLoadingScreen();
-        AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
-    }
+                showLoadingScreen();
+                AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
+        }
 
     /**
      * To be executed before loading a view
      */
     @Override
-    public void onBeforeViewLoad() {
+    public void onViewChange() {
         mDrawerLayout.closeDrawers();
     }
 

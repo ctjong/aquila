@@ -1,10 +1,11 @@
 package com.projectaquila.views;
 
-import android.provider.Settings;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.controls.PlansAdapter;
 import com.projectaquila.models.PlansViewMode;
@@ -25,6 +26,16 @@ public class PlansView extends ViewBase {
         list.setAdapter(adapter);
         if(mode == PlansViewMode.BROWSE){
             adapter.loadPart(0, 20);
+        }else if(mode == PlansViewMode.CREATED){
+            Button addBtn = (Button)findViewById(R.id.view_plans_add);
+            addBtn.setVisibility(View.VISIBLE);
+            addBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, null);
+                }
+            });
+            adapter.load();
         }else{
             adapter.load();
         }

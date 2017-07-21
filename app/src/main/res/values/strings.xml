@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Project Aquila</string>
 
+    <string name="common_edit">Edit</string>
+    <string name="common_save">Save</string>
+    <string name="common_cancel">Cancel</string>
+
     <string name="shell_drawer_open">Open left nav</string>
     <string name="shell_drawer_close">Close left nav</string>
     <string name="shell_loading">Please wait</string>
@@ -12,7 +16,7 @@
     <string name="menu_tasks">Tasks</string>
     <string name="menu_enrolled_plans">Enrolled plans</string>
     <string name="menu_browse_plans">Browse plans</string>
-    <string name="menu_created_plans">My plans</string>
+    <string name="menu_created_plans">Created plans</string>
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
 
@@ -25,7 +29,6 @@
     <string name="tasks_add_hint">Add new task</string>
 
     <string name="taskdetail_title">Task detail</string>
-    <string name="taskdetail_edit_btn_text">Edit</string>
     <string name="taskdetail_complete_btn_text">Mark as completed</string>
     <string name="taskdetail_completeocc_btn_text">Mark occurrence as completed</string>
     <string name="taskdetail_completeser_btn_text">Mark series as completed</string>
@@ -34,8 +37,6 @@
     <string name="taskupdate_title">Update task</string>
     <string name="taskupdate_taskname_hint">Task name</string>
     <string name="taskupdate_taskdate_hint">Task date</string>
-    <string name="taskupdate_save_btn_text">Save</string>
-    <string name="taskupdate_cancel_btn_text">Cancel</string>
 
     <string name="taskrecurrence_label">Repeat: </string>
     <string name="taskrecurrence_none">None</string>
@@ -66,5 +67,11 @@
     <string name="plans_created_null">You have not created any plan. Click the add button below to create one.</string>
     <string name="plans_browse_null">No plan found with the given criteria.</string>
 
+    <string name="plancreate_title">Create plan</string>
+    <string name="planupdate_title">Update plan</string>
+    <string name="planupdate_name_label">Plan name</string>
+    <string name="planupdate_name_hint">Name for your plan</string>
+    <string name="planupdate_desc_label">Plan description</string>
+    <string name="planupdate_desc_hint">Short description of your plan</string>
 
 </resources>

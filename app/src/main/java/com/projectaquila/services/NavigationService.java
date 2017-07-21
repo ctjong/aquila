@@ -74,6 +74,7 @@ public class NavigationService {
      * Go up one level in the back stack programmatically
      */
     public void goBack() {
+        System.out.println("[NavigationService.goBack] initiated");
         if(mChildStack.isEmpty())
             return;
         mChildStack.peek().onBackPressed();

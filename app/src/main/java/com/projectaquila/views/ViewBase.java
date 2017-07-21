@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.projectaquila.AppContext;
+import com.projectaquila.R;
 
 /**
  * Base class for all views in this project
  */
 public abstract class ViewBase {
-    protected Bundle mNavArgs;
+    private Bundle mNavArgs;
 
     /**
      * Get layout ID
@@ -23,12 +24,22 @@ public abstract class ViewBase {
     protected abstract void initializeView();
 
     /**
+     * Get the string ID to be shown on the title bar
+     * @return string ID
+     */
+    protected int getTitleBarStringId() { return -1; }
+
+    /**
      * Invoked when this view is started
      * @param navArgs navigation arguments
      */
     public void onStart(Bundle navArgs) {
         mNavArgs = navArgs;
         AppContext.getCurrent().getActivity().loadView(getLayoutId());
+        int titleBarStringId = getTitleBarStringId();
+        if(titleBarStringId >= 0) {
+            AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
+        }
         initializeView();
     }
 

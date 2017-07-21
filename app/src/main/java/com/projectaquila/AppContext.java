@@ -1,6 +1,5 @@
 package com.projectaquila;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.projectaquila.activities.ChildActivity;
@@ -40,8 +39,8 @@ public class AppContext {
     ----------------------------------*/
 
     private static AppContext mCurrent;
-    public static void initialize(Context coreContext) {
-        mCurrent = new AppContext(coreContext);
+    public static void initialize(MainActivity mainActivity) {
+        mCurrent = new AppContext(mainActivity);
     }
     public static AppContext getCurrent(){
         return mCurrent;
@@ -51,7 +50,6 @@ public class AppContext {
         Member variables
     ----------------------------------*/
 
-    private Context mCore;
     private HashMap<String, String> mDebugConfig;
     private MainActivity mMainActivity;
     private HashMap<String, Task> mTasks;
@@ -66,10 +64,11 @@ public class AppContext {
         Constructor
     ----------------------------------*/
 
-    private AppContext(Context coreContext) {
-        mCore = coreContext;
-        initDebugConfig(DEBUG_CONFIG_FILENAME);
+    private AppContext(MainActivity mainActivity) {
         mTasks = new HashMap<>();
+        mMainActivity = mainActivity;
+        initActiveUser();
+        initDebugConfig();
 
         // services
         mAuthService = new AuthService();
@@ -107,12 +106,26 @@ public class AppContext {
         Member property setters
     ----------------------------------*/
 
-    public void setMainActivity(MainActivity shell){
-        mMainActivity = shell;
-    }
-
     public void setActiveUser(User user){
-        mActiveUser = user;
+        SharedPreferences settings = getLocalSettings();
+        SharedPreferences.Editor settingsEditor = settings.edit();
+        if(user == null){
+            mActiveUser = null;
+            settingsEditor.remove("userid");
+            settingsEditor.remove("userfirstname");
+            settingsEditor.remove("userlastname");
+            settingsEditor.remove("usertoken");
+            System.out.println("[AppContext.setActiveUser] active user cleared");
+        }else {
+            mActiveUser = user;
+            settingsEditor.putString("userid", user.getId());
+            settingsEditor.putString("userfirstname", user.getFirstName());
+            settingsEditor.putString("userlastname", user.getLastName());
+            settingsEditor.putString("usertoken", user.getToken());
+            settingsEditor.apply();
+            System.out.println("[AppContext.setActiveUser] active user updated (" +
+                    user.getId() + "," + user.getFirstName() + "," + user.getLastName() + ")");
+        }
     }
 
     /*----------------------------------
@@ -143,20 +156,36 @@ public class AppContext {
         Private
     ----------------------------------*/
 
-    private void initDebugConfig(String debugConfigFilename) {
+    private void initActiveUser(){
+        SharedPreferences settings = getLocalSettings();
+        String id = settings.getString("userid", null);
+        String firstName = settings.getString("userfirstname", null);
+        String lastName = settings.getString("userlastname", null);
+        String token = settings.getString("usertoken", null);
+        if(id == null || firstName == null || lastName == null || token == null){
+            System.out.println("[AppContenxt.initActiveUser] user not found in local settings");
+            return;
+        }
+        mActiveUser = new User(id, firstName, lastName, token);
+        System.out.println("[AppContext.initActiveUser] active user restored (" +
+                mActiveUser.getId() + "," + mActiveUser.getFirstName() + "," + mActiveUser.getLastName() + ")");
+    }
+
+
+    private void initDebugConfig() {
         try {
             mDebugConfig = new HashMap<>();
-            File file = mCore.getFileStreamPath(debugConfigFilename);
+            File file = mMainActivity.getFileStreamPath(DEBUG_CONFIG_FILENAME);
             if(!file.exists()) {
-                System.out.println("[AppContext.initDebugConfig] " + debugConfigFilename + " not found");
+                System.out.println("[AppContext.initDebugConfig] " + DEBUG_CONFIG_FILENAME + " not found");
                 return;
             }
-            System.out.println("[AppContext.initDebugConfig] " + debugConfigFilename + " found");
+            System.out.println("[AppContext.initDebugConfig] " + DEBUG_CONFIG_FILENAME + " found");
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(false);
             dbf.setValidating(false);
             DocumentBuilder db = dbf.newDocumentBuilder();
-            FileInputStream fos = mCore.openFileInput(debugConfigFilename);
+            FileInputStream fos = mMainActivity.openFileInput(DEBUG_CONFIG_FILENAME);
 
             Document configXml = db.parse(fos);
             NodeList nodes = configXml.getChildNodes();

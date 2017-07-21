@@ -37,9 +37,9 @@ public abstract class ShellActivity extends AppCompatActivity {
     public void onAfterCreate() { }
 
     /**
-     * To be executed before loading a view
+     * To be executed when the view changed on this activity
      */
-    public void onBeforeViewLoad() { }
+    public void onViewChange() { }
 
     /**
      * Invoked when the activity is created
@@ -77,8 +77,8 @@ public abstract class ShellActivity extends AppCompatActivity {
      * @param layoutId layout ID
      */
     public void loadView(int layoutId){
-        System.out.println("[ShellActivity.load] " + layoutId + "");
-        onBeforeViewLoad();
+        System.out.println("[ShellActivity.loadView] changing view on " + this.getLocalClassName());
+        onViewChange();
         mActivityResultEvent.removeAllHandlers();
         LayoutInflater factory = getLayoutInflater();
         mCurrentView = factory.inflate(layoutId, null);

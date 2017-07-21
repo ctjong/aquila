@@ -188,7 +188,7 @@
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimary"
         android:textColor="@color/cardview_light_background"
-        android:text="@string/taskdetail_edit_btn_text"
+        android:text="@string/common_edit"
         android:textAllCaps="false"/>
 
     <Button

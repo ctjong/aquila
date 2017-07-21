@@ -139,8 +139,8 @@ public class DataService {
                 conn.setConnectTimeout(TIMEOUT);
 
                 // set token header
-                String token = AppContext.getCurrent().getAuthService().getAccessToken();
-                if(token != null) {
+                if(AppContext.getCurrent().getActiveUser() != null) {
+                    String token = AppContext.getCurrent().getActiveUser().getToken();
                     conn.addRequestProperty("Authorization", "Bearer " + token);
                 }
 

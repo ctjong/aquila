@@ -9,6 +9,17 @@
         android:layout_height="match_parent"
         android:layout_margin="20dp"/>
 
+    <Button
+        android:id="@+id/view_plans_add"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/plans_add"
+        android:visibility="gone"/>
+
     <RelativeLayout
         android:id="@+id/view_plans_null"
         android:layout_width="match_parent"

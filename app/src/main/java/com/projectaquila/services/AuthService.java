@@ -42,8 +42,7 @@ public class AuthService {
      * @return true if logged in, false otherwise
      */
     public boolean isUserLoggedIn(){
-        String token = getAccessToken();
-        return token != null;
+        return AppContext.getCurrent().getActiveUser() != null;
     }
 
     /**
@@ -66,7 +65,7 @@ public class AuthService {
         fbLoginButton.registerCallback(mFbCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                setAccessToken(null);
+                setActiveUser(null);
                 String fbToken = loginResult.getAccessToken().getToken();
                 callback.execute(new CallbackParams("fbToken", fbToken));
             }
@@ -98,18 +97,12 @@ public class AuthService {
         AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/auth/token/fb", apiParams, new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                try {
-                    JSONObject userObj = params.getApiResult().getObject();
-                    setAccessToken(userObj.getString("token"));
-                    User activeUser = new User(userObj.getString("id"), userObj.getString("firstname"), userObj.getString("lastname"));
-                    AppContext.getCurrent().setActiveUser(activeUser);
-                    callback.execute(params);
-                } catch (JSONException e) {
-                    System.err.println("[AuthService.convertFbToken] exception");
-                    e.printStackTrace();
-                    logOut();
-                    callback.execute(null);
-                }
+                    if(setActiveUser(params.getApiResult().getObject())){
+                        callback.execute(params);
+                    }else{
+                        logOut();
+                        callback.execute(null);
+                    }
             }
         });
     }
@@ -119,7 +112,7 @@ public class AuthService {
      */
     public void logOut(){
         LoginManager.getInstance().logOut();
-        setAccessToken(null);
+        setActiveUser(null);
         AppContext.getCurrent().setActiveUser(null);
     }
 
@@ -132,23 +125,26 @@ public class AuthService {
     }
 
     /**
-     * Get the current access token
-     * @return access token, or null if no token is stored
+     * Set the active user in app context
+     * @param userObj user JSON
+     * @return true on success, false otherwise
      */
-    public String getAccessToken(){
-        SharedPreferences settings = AppContext.getCurrent().getLocalSettings();
-        return settings.getString("token", null);
-    }
+    private boolean setActiveUser(JSONObject userObj){
+        if(userObj == null){
+            AppContext.getCurrent().setActiveUser(null);
+            return true;
+        }
 
-    /**
-     * Set current access token in the local setting
-     * @param token access token
-     */
-    private void setAccessToken(String token){
-        SharedPreferences settings = AppContext.getCurrent().getLocalSettings();
-        SharedPreferences.Editor settingsEditor = settings.edit();
-        settingsEditor.putString("token", token);
-        settingsEditor.apply();
-        mAuthStateChange.invoke(null);
+        try {
+            User activeUser = new User(userObj.getString("id"), userObj.getString("firstname"),
+                    userObj.getString("lastname"), userObj.getString("token"));
+            AppContext.getCurrent().setActiveUser(activeUser);
+            mAuthStateChange.invoke(null);
+            return true;
+        } catch (JSONException e) {
+            System.err.println("[AuthService.convertFbToken] exception");
+            e.printStackTrace();
+        }
+        return false;
     }
 }
