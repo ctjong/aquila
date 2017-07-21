@@ -29,17 +29,17 @@ public abstract class ShellActivity extends AppCompatActivity {
     /**
      * To be executed before the activity is created
      */
-    protected abstract void onBeforeCreate();
+    public void onBeforeCreate() { }
 
     /**
      * To be executed after the activity is created
      */
-    protected abstract void onAfterCreate();
+    public void onAfterCreate() { }
 
     /**
      * To be executed before loading a view
      */
-    protected abstract void onBeforeViewLoad();
+    public void onBeforeViewLoad() { }
 
     /**
      * Invoked when the activity is created

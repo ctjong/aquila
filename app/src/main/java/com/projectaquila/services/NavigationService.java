@@ -7,6 +7,8 @@ import android.os.Bundle;
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.activities.ChildActivity;
+import com.projectaquila.models.Callback;
+import com.projectaquila.models.CallbackParams;
 import com.projectaquila.views.ViewBase;
 
 import java.util.HashMap;
@@ -58,25 +60,32 @@ public class NavigationService {
     public void onChildActivityLoad(ChildActivity activity){
         mChildStack.push(activity);
         mCurrentView.onStart(mCurrentViewParams);
+        activity.addBackPressedHandler(new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                if(mChildStack.isEmpty())
+                    return;
+                mChildStack.pop();
+            }
+        });
     }
 
     /**
-     * Go up one level in the back stack
+     * Go up one level in the back stack programmatically
      */
-    public void goBack(){
+    public void goBack() {
         if(mChildStack.isEmpty())
             return;
-        ChildActivity child = mChildStack.pop();
-        child.finish();
-        child.overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_left);
+        mChildStack.peek().onBackPressed();
     }
 
     /**
      * Exit all child activities and go to main
      */
     public void goToMainActivity(){
+        goBack();
         while(!mChildStack.isEmpty()){
-            goBack();
+            mChildStack.pop().finish();
         }
     }
 

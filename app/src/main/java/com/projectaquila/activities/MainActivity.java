@@ -32,7 +32,7 @@ public class MainActivity extends ShellActivity {
      * To be executed before the activity is created
      */
     @Override
-    protected void onBeforeCreate() {
+    public void onBeforeCreate() {
         AppContext.initialize(this.getApplicationContext());
         AppContext.getCurrent().setMainActivity(this);
     }
@@ -41,7 +41,7 @@ public class MainActivity extends ShellActivity {
      * To be executed after the activity is created
      */
     @Override
-    protected void onAfterCreate() {
+    public void onAfterCreate() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.shell_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_drawer);
@@ -67,7 +67,7 @@ public class MainActivity extends ShellActivity {
      * To be executed before loading a view
      */
     @Override
-    protected void onBeforeViewLoad() {
+    public void onBeforeViewLoad() {
         mDrawerLayout.closeDrawers();
     }
 

@@ -5,20 +5,24 @@ import android.view.View;
 
 import com.projectaquila.AppContext;
 import com.projectaquila.R;
+import com.projectaquila.models.Callback;
+import com.projectaquila.models.Event;
 
 public class ChildActivity extends ShellActivity {
+    private Event mBackPressed;
+
     /**
-     * To be executed before the activity is created
+     * Instantiate a new child activity
      */
-    @Override
-    protected void onBeforeCreate() {
+    public ChildActivity(){
+        mBackPressed = new Event();
     }
 
     /**
      * To be executed after the activity is created
      */
     @Override
-    protected void onAfterCreate() {
+    public void onAfterCreate() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.shell_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(android.R.drawable.ic_menu_close_clear_cancel);
@@ -32,19 +36,30 @@ public class ChildActivity extends ShellActivity {
     }
 
     /**
-     * To be executed before loading a view
-     */
-    @Override
-    protected void onBeforeViewLoad() {
-    }
-
-    /**
      * Show the error screen
      * @param stringId id of the error msg string
      */
     @Override
     public void showErrorScreen(int stringId){
-        onBackPressed();
+        AppContext.getCurrent().getNavigationService().goToMainActivity();
         AppContext.getCurrent().getActivity().showErrorScreen(stringId);
+    }
+
+    /**
+     * Add a new handler for the back pressed event
+     * @param handler event handler
+     */
+    public void addBackPressedHandler(Callback handler){
+        mBackPressed.addHandler(handler);
+    }
+
+    /**
+     * To be executed when the back button is pressed
+     */
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_left);
+        mBackPressed.invoke(null);
     }
 }
