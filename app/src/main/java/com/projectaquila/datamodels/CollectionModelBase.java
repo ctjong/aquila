@@ -83,6 +83,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
             public void execute(CallbackParams params) {
                 mOngoingRequestCount--;
                 if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
+                    System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
                     cb.execute(null);
                     mRequestsSubmitted = false;
                 }
@@ -95,6 +96,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
                 public void execute(CallbackParams params) {
                     mOngoingRequestCount--;
                     if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
+                        System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
                         cb.execute(null);
                         mRequestsSubmitted = false;
                     }
@@ -102,5 +104,6 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
             });
         }
         mRequestsSubmitted = true;
+        System.out.println("[CollectionModelBase.write] all requests submitted");
     }
 }
