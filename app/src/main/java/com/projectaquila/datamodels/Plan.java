@@ -3,12 +3,14 @@ package com.projectaquila.datamodels;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 
 public class Plan extends CollectionModelBase<PlanItem> {
     private String mAuthorId;
@@ -92,8 +94,11 @@ public class Plan extends CollectionModelBase<PlanItem> {
 
     @Override
     protected HashMap<String, String> getDataMap() {
-        //TODO
-        return null;
+        HashMap<String, String> data = new HashMap<>();
+        data.put("title", mTitle);
+        data.put("description", mDescription);
+        data.put("imageurl", mImageUrl);
+        return data;
     }
 
     @Override
@@ -112,7 +117,22 @@ public class Plan extends CollectionModelBase<PlanItem> {
 
     @Override
     protected void setupItems(CallbackParams params) {
-        //TODO
+        List result = (List)params.get("result");
+        getItems().clear();
+        if(result == null)
+            return;
+        for(Object planItemsObj : result){
+            JSONArray planItems = (JSONArray)planItemsObj;
+            for(int i=0; i<planItems.length(); i++){
+                try {
+                    PlanItem planItem = PlanItem.parse(planItems.get(i));
+                    getItems().put(planItem.getId(), planItem);
+                }catch(JSONException e){
+                    System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

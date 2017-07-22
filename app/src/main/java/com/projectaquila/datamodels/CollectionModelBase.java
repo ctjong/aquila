@@ -7,8 +7,10 @@ import com.projectaquila.contexts.AppContext;
 
 import java.util.HashMap;
 
-public abstract class CollectionModelBase<T> extends DataModelBase {
+public abstract class CollectionModelBase<T extends DataModelBase> extends DataModelBase {
     private HashMap<String, T> mItems;
+    private int mOngoingRequestCount;
+    private boolean mRequestsSubmitted;
 
     public CollectionModelBase(String id){
         super(id);
@@ -74,6 +76,31 @@ public abstract class CollectionModelBase<T> extends DataModelBase {
 
     @Override
     protected void write(ApiTaskMethod method, String url, HashMap<String, String> data, final Callback cb){
-        //TODO
+        mRequestsSubmitted = false;
+        mOngoingRequestCount = 1;
+        super.write(method, url, data, new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                mOngoingRequestCount--;
+                if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
+                    cb.execute(null);
+                    mRequestsSubmitted = false;
+                }
+            }
+        });
+        for(DataModelBase item : getItems().values()){
+            mOngoingRequestCount++;
+            item.submitUpdate(new Callback(){
+                @Override
+                public void execute(CallbackParams params) {
+                    mOngoingRequestCount--;
+                    if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
+                        cb.execute(null);
+                        mRequestsSubmitted = false;
+                    }
+                }
+            });
+        }
+        mRequestsSubmitted = true;
     }
 }
