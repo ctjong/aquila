@@ -5,7 +5,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 
 /**

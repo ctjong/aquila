@@ -8,13 +8,12 @@ import android.widget.TextView;
 import com.projectaquila.R;
 import com.projectaquila.controls.DatePickerClickListener;
 import com.projectaquila.controls.SwipeListener;
-import com.projectaquila.controls.TasksAdapter;
-import com.projectaquila.models.Callback;
-import com.projectaquila.AppContext;
-import com.projectaquila.models.ApiTaskMethod;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.Task;
-import com.projectaquila.models.TaskDate;
+import com.projectaquila.controls.TaskCollectionAdapter;
+import com.projectaquila.common.Callback;
+import com.projectaquila.contexts.AppContext;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.datamodels.Task;
+import com.projectaquila.common.TaskDate;
 
 import java.util.Calendar;
 
@@ -22,7 +21,7 @@ public class TasksView extends ViewBase {
     private Task mNewTask;
     private TextView mCurrentDateText;
     private TextView mCurrentMonthText;
-    private TasksAdapter mTasksAdapter;
+    private TaskCollectionAdapter mTaskCollectionAdapter;
     private TaskDate mCurrentDate;
 
     @Override
@@ -35,7 +34,7 @@ public class TasksView extends ViewBase {
         mNewTask = new Task(null, new TaskDate(), "", null);
         mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
         mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
-        mTasksAdapter = new TasksAdapter();
+        mTaskCollectionAdapter = new TaskCollectionAdapter();
 
         String dateArg = getNavArg("date");
         if(dateArg != null){
@@ -63,7 +62,7 @@ public class TasksView extends ViewBase {
         View draggableView = findViewById(R.id.view_tasks);
         SwipeListener.listen(draggableView, draggableView, incrementDateAction, decrementDateAction, null);
         SwipeListener.listen(tasksList, draggableView, incrementDateAction, decrementDateAction, null);
-        tasksList.setAdapter(mTasksAdapter);
+        tasksList.setAdapter(mTaskCollectionAdapter);
         refresh();
     }
 
@@ -76,7 +75,7 @@ public class TasksView extends ViewBase {
         mCurrentMonthText.setText(TaskDate.format("MMMM yyyy", mCurrentDate));
 
         // update tasks list
-        mTasksAdapter.loadDate(mCurrentDate, false);
+        mTaskCollectionAdapter.loadDate(mCurrentDate, false);
     }
 
     /**
@@ -94,10 +93,10 @@ public class TasksView extends ViewBase {
                 taskNameCtrl.setText("");
 
                 // save to server
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/data/task", mNewTask.getDataMap(), new Callback() {
+                mNewTask.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        mTasksAdapter.loadDate(mCurrentDate, true);
+                        mTaskCollectionAdapter.loadDate(mCurrentDate, true);
                     }
                 });
             }

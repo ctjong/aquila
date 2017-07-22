@@ -6,14 +6,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.Task;
-import com.projectaquila.models.TaskDate;
-
-import org.json.JSONArray;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.datamodels.Task;
+import com.projectaquila.common.TaskDate;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,7 +21,7 @@ import java.util.Map;
 /**
  * Adapter for populating tasks on the tasks view
  */
-public class TasksAdapter extends ArrayAdapter<TaskControl>{
+public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
     private static final int CACHE_DAYS_SPAN = 3;
     private HashMap<String, List<TaskControl>> mControlsMap;
     private TaskDate mActiveDate;
@@ -31,7 +29,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
     /**
      * Instantiate a new tasks adapter
      */
-    public TasksAdapter(){
+    public TaskCollectionAdapter(){
         super(AppContext.getCurrent().getActivity(), R.layout.control_taskcontrol);
     }
 
@@ -46,14 +44,9 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         if(refreshCache || mControlsMap == null){
             mControlsMap = new HashMap<>();
             AppContext.getCurrent().getActivity().showLoadingScreen();
-            AppContext.getCurrent().getTasks().clear();
-            AppContext.getCurrent().getDataService().requestAll("/data/task/private/findall/id/%d/%d", new Callback() {
+            AppContext.getCurrent().getData().getTasks().load(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
-                    List result = (List)params.get("result");
-                    for(Object tasks : result){
-                        addToTasksModel((JSONArray)tasks);
-                    }
                     expandControlsMap();
                     AppContext.getCurrent().getActivity().showContentScreen();
                 }
@@ -82,13 +75,13 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         if(convertView == null || convertView instanceof TextView) {
             convertView = View.inflate(getContext(), R.layout.control_taskcontrol, null);
             if (convertView == null) {
-                System.err.println("[TasksAdapter.getView] failed to get view for task at index" + position);
+                System.err.println("[TaskCollectionAdapter.getView] failed to get view for task at index" + position);
                 return new TextView(getContext());
             }
         }
         final TaskControl taskControl = getItem(position);
         if(taskControl == null){
-            System.err.println("[TasksAdapter.getView] failed to get task control at position " + position);
+            System.err.println("[TaskCollectionAdapter.getView] failed to get task control at position " + position);
             return new TextView(getContext());
         }
         final String taskKey = taskControl.getTask().getDateKey();
@@ -104,27 +97,6 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
         });
         taskControl.renderView(convertView);
         return convertView;
-    }
-
-    /**
-     * Add the specified tasks to the tasks model in app context
-     * @param tasks new tasks
-     */
-    private void addToTasksModel(JSONArray tasks){
-        for(int i=0; i<tasks.length(); i++){
-            try {
-                Object taskObj = tasks.get(i);
-                Task task = Task.parse(taskObj);
-                if(task == null){
-                    System.err.println("[TasksView.addToTasksModel] failed to parse task object. skipping.");
-                    continue;
-                }
-                AppContext.getCurrent().getTasks().put(task.getId(), task);
-            } catch (Exception e) {
-                System.err.println("[TasksView.addToTasksModel] an exception occurred. skipping.");
-                e.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -146,7 +118,7 @@ public class TasksAdapter extends ArrayAdapter<TaskControl>{
             clear();
         }
         mControlsMap.put(mapKey, new LinkedList<TaskControl>());
-        for(Map.Entry<String,Task> entry : AppContext.getCurrent().getTasks().entrySet()){
+        for(Map.Entry<String,Task> entry : AppContext.getCurrent().getData().getTasks().getItems().entrySet()){
             Task task = entry.getValue();
             String taskKey = task.getDate().toDateKey();
             if(task.getRecurrence() == null && taskKey.equals(mapKey) && mControlsMap.containsKey(taskKey)) {

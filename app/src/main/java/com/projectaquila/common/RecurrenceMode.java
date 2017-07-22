@@ -1,6 +1,6 @@
-package com.projectaquila.models;
+package com.projectaquila.common;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 
 public enum RecurrenceMode {

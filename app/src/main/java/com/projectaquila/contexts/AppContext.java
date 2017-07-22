@@ -1,12 +1,12 @@
-package com.projectaquila;
+package com.projectaquila.contexts;
 
 import android.content.SharedPreferences;
 
 import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.ShellActivity;
-import com.projectaquila.models.Task;
-import com.projectaquila.models.User;
+import com.projectaquila.datamodels.Task;
+import com.projectaquila.datamodels.User;
 import com.projectaquila.services.AuthService;
 import com.projectaquila.services.DataService;
 import com.projectaquila.services.NavigationService;
@@ -52,7 +52,7 @@ public class AppContext {
 
     private HashMap<String, String> mDebugConfig;
     private MainActivity mMainActivity;
-    private HashMap<String, Task> mTasks;
+    private DataContext mData;
     private User mActiveUser;
 
     // services
@@ -65,7 +65,7 @@ public class AppContext {
     ----------------------------------*/
 
     private AppContext(MainActivity mainActivity) {
-        mTasks = new HashMap<>();
+        mData = new DataContext();
         mMainActivity = mainActivity;
         initActiveUser();
         initDebugConfig();
@@ -94,8 +94,8 @@ public class AppContext {
         return mMainActivity;
     }
 
-    public HashMap<String, Task> getTasks(){
-        return mTasks;
+    public DataContext getData(){
+        return mData;
     }
 
     public User getActiveUser(){

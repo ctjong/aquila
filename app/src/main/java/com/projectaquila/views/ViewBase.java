@@ -3,8 +3,7 @@ package com.projectaquila.views;
 import android.os.Bundle;
 import android.view.View;
 
-import com.projectaquila.AppContext;
-import com.projectaquila.R;
+import com.projectaquila.contexts.AppContext;
 
 /**
  * Base class for all views in this project

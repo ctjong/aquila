@@ -3,10 +3,10 @@ package com.projectaquila.activities;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.Event;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.Event;
 
 public class ChildActivity extends ShellActivity {
     private Event mBackPressed;

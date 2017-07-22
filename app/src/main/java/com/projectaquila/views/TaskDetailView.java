@@ -5,14 +5,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.RecurrenceMode;
-import com.projectaquila.models.Task;
-import com.projectaquila.models.TaskDate;
-import com.projectaquila.models.TaskRecurrence;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.RecurrenceMode;
+import com.projectaquila.datamodels.Task;
+import com.projectaquila.common.TaskDate;
+import com.projectaquila.common.TaskRecurrence;
 import com.projectaquila.services.HelperService;
 
 
@@ -35,7 +35,7 @@ public class TaskDetailView extends ViewBase {
     protected void initializeView(){
         String taskId = getNavArg("id");
         final String activeDateKey = getNavArg("activedatekey");
-        if(taskId == null || activeDateKey == null || !AppContext.getCurrent().getTasks().containsKey(taskId)) {
+        if(taskId == null || activeDateKey == null || !AppContext.getCurrent().getData().getTasks().getItems().containsKey(taskId)) {
             System.err.println("[TaskDetailView.initializeView] invalid task id found in nav params");
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
             return;
@@ -43,7 +43,7 @@ public class TaskDetailView extends ViewBase {
 
         // task details
         final TaskDate activeDate = TaskDate.parseDateKey(activeDateKey);
-        final Task task = AppContext.getCurrent().getTasks().get(taskId);
+        final Task task = AppContext.getCurrent().getData().getTasks().getItems().get(taskId);
         ((TextView)findViewById(R.id.taskdetail_taskname)).setText(task.getName());
         ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(activeDate.getFriendlyString());
 

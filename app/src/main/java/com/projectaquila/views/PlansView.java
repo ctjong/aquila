@@ -5,10 +5,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.controls.PlansAdapter;
-import com.projectaquila.models.PlansViewMode;
+import com.projectaquila.controls.PlanCollectionAdapter;
+import com.projectaquila.common.PlanCollectionType;
 
 public class PlansView extends ViewBase {
     @Override
@@ -20,13 +20,13 @@ public class PlansView extends ViewBase {
     protected void initializeView(){
         String modeStr = getNavArg("mode");
         System.out.println("[PlansView.initializeView] mode=" + modeStr);
-        PlansViewMode mode = PlansViewMode.parse(modeStr);
-        PlansAdapter adapter = new PlansAdapter(mode);
+        PlanCollectionType mode = PlanCollectionType.parse(modeStr);
+        PlanCollectionAdapter adapter = new PlanCollectionAdapter(mode);
         ListView list = (ListView)findViewById(R.id.view_plans_list);
         list.setAdapter(adapter);
-        if(mode == PlansViewMode.BROWSE){
+        if(mode == PlanCollectionType.BROWSE){
             adapter.loadPart(0, 20);
-        }else if(mode == PlansViewMode.CREATED){
+        }else if(mode == PlanCollectionType.CREATED){
             Button addBtn = (Button)findViewById(R.id.view_plans_add);
             addBtn.setVisibility(View.VISIBLE);
             addBtn.setOnClickListener(new View.OnClickListener() {
@@ -42,9 +42,9 @@ public class PlansView extends ViewBase {
         if(adapter.getCount() == 0) {
             list.setVisibility(View.GONE);
             TextView nullText = (TextView) findViewById(R.id.view_plans_null_text);
-            if(mode == PlansViewMode.ENROLLED) {
+            if(mode == PlanCollectionType.ENROLLED) {
                 nullText.setText(R.string.plans_enrolled_null);
-            }else if(mode == PlansViewMode.CREATED) {
+            }else if(mode == PlanCollectionType.CREATED) {
                 nullText.setText(R.string.plans_created_null);
             }else{
                 nullText.setText(R.string.plans_browse_null);

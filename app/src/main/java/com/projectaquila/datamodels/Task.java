@@ -1,25 +1,25 @@
-package com.projectaquila.models;
+package com.projectaquila.datamodels;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.TaskDate;
+import com.projectaquila.common.TaskRecurrence;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
-public class Task {
-    private String mId;
+public class Task extends DataModelBase {
     private TaskDate mDate;
     private String mName;
     private TaskRecurrence mRecurrence;
-    private Event mChangedEvent;
 
     public Task(String id, TaskDate date, String name, TaskRecurrence recurrence){
-        mId = id;
+        super(id);
         mDate = date;
         mName = name;
         mRecurrence = recurrence;
-        mChangedEvent = new Event();
     }
 
     public static Task parse(Object object){
@@ -64,14 +64,6 @@ public class Task {
         return mDate.toDateKey();
     }
 
-    public void addChangedHandler(Callback handler){
-        mChangedEvent.addHandler(handler);
-    }
-
-    public String getId(){
-        return mId;
-    }
-
     public TaskDate getDate(){
         return mDate;
     }
@@ -105,10 +97,33 @@ public class Task {
         }
     }
 
-    public void notifyListeners(){
-        mChangedEvent.invoke(null);
+    public void complete(Callback cb){
+        System.out.println("[Task.complete] completing task " + getId());
+        AppContext.getCurrent().getData().getTasks().remove(getId());
+        submitDelete(cb);
+        notifyListeners();
     }
 
+    public void completeOccurrence(TaskDate occDate, Callback cb){
+        String occDateKey = occDate.toDateKey();
+        System.out.println("[Task.completeOccurrence] completing recurrence task " + getId() + " at " + occDateKey);
+        if(mDate.toDateKey().equals(occDateKey)){
+            if(mRecurrence.shiftToNextOccurrence()){
+                System.out.println("[Task.completeOccurrence] shifting recurrence series to " + getDateKey());
+                submitUpdate(cb);
+            }else{
+                System.out.println("[Task.completeOccurrence] completing recurrence series " + getId());
+                AppContext.getCurrent().getData().getTasks().remove(getId());
+                submitDelete(cb);
+            }
+        }else{
+            mRecurrence.getHoles().add(occDateKey);
+            submitUpdate(cb);
+        }
+        notifyListeners();
+    }
+
+    @Override
     public HashMap<String, String> getDataMap(){
         HashMap<String, String> data = new HashMap<>();
         data.put("taskdate", mDate.toDateKey());
@@ -129,29 +144,18 @@ public class Task {
         return data;
     }
 
-    public void complete(Callback cb){
-        System.out.println("[Task.complete] completing task " + mId);
-        AppContext.getCurrent().getTasks().remove(mId);
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/" + mId, null, cb);
-        notifyListeners();
+    @Override
+    protected String getUpdateUrl() {
+        return "/data/task/" + getId();
     }
 
-    public void completeOccurrence(TaskDate occDate, Callback cb){
-        String occDateKey = occDate.toDateKey();
-        System.out.println("[Task.completeOccurrence] completing recurrence task " + mId + " at " + occDateKey);
-        if(mDate.toDateKey().equals(occDateKey)){
-            if(mRecurrence.shiftToNextOccurrence()){
-                System.out.println("[Task.completeOccurrence] shifting recurrence series to " + getDateKey());
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/" + mId, getDataMap(), cb);
-            }else{
-                System.out.println("[Task.completeOccurrence] completing recurrence series " + mId);
-                AppContext.getCurrent().getTasks().remove(mId);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.DELETE, "/data/task/" + mId, null, cb);
-            }
-        }else{
-            mRecurrence.getHoles().add(occDateKey);
-            AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/" + mId, getDataMap(), cb);
-        }
-        notifyListeners();
+    @Override
+    protected String getCreateUrl() {
+        return "/data/task";
+    }
+
+    @Override
+    protected String getDeleteUrl() {
+        return "/data/task/" + getId();
     }
 }

@@ -1,12 +1,16 @@
-package com.projectaquila.models;
+package com.projectaquila.datamodels;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.contexts.AppContext;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Plan {
-    private String mId;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+
+public class Plan extends CollectionModelBase<PlanItem> {
     private String mAuthorId;
     private boolean mIsPublic;
     private String mTitle;
@@ -14,7 +18,7 @@ public class Plan {
     private String mImageUrl;
 
     public Plan(String id, String authorId, boolean isPublic, String title, String description, String imageUrl){
-        mId = id;
+        super(id);
         mAuthorId = authorId;
         mIsPublic = isPublic;
         mTitle = title;
@@ -44,14 +48,6 @@ public class Plan {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public String getId(){
-        return mId;
-    }
-
-    public String getAuthorId(){
-        return mAuthorId;
     }
 
     public String getTitle(){
@@ -92,5 +88,45 @@ public class Plan {
         if(AppContext.getCurrent().getActiveUser().getId().equals(mAuthorId)){
             mIsPublic = isPublic;
         }
+    }
+
+    @Override
+    protected HashMap<String, String> getDataMap() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    protected String getItemsUrlFormat() {
+        try {
+            if (mIsPublic)
+                return "/data/planitem/public/findbyconditions/id/%d/%d/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
+            else
+                return "/data/planitem/private/findbyconditions/id/%d/%d/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
+        }catch(UnsupportedEncodingException e){
+            System.err.println("[Plan.getItemsUrlFormat] encoding error");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    protected void setupItems(CallbackParams params) {
+        //TODO
+    }
+
+    @Override
+    protected String getCreateUrl() {
+        return "/data/plan";
+    }
+
+    @Override
+    protected String getUpdateUrl() {
+        return "/data/plan/" + getId();
+    }
+
+    @Override
+    protected String getDeleteUrl() {
+        return "/data/plan/" + getId();
     }
 }

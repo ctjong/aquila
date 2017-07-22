@@ -2,9 +2,9 @@ package com.projectaquila.views;
 
 import android.view.View;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.models.Plan;
+import com.projectaquila.datamodels.Plan;
 
 public class PlanUpdateView extends ViewBase {
     private Plan mPlan;

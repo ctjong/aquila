@@ -3,7 +3,7 @@ package com.projectaquila.services;
 import android.content.Context;
 import android.os.Build;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 
 import java.util.HashMap;
 import java.util.Locale;

@@ -3,13 +3,12 @@ package com.projectaquila.controls;
 import android.view.View;
 import android.widget.TextView;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.models.ApiTaskMethod;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.Task;
-import com.projectaquila.models.TaskDate;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.datamodels.Task;
+import com.projectaquila.common.TaskDate;
 import com.projectaquila.views.TaskDetailView;
 
 import java.util.HashMap;
@@ -54,7 +53,7 @@ public class TaskControl {
                 System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
                 TaskDate postponedDate = mTask.getDate().getModified(1);
                 mTask.setDate(postponedDate);
-                AppContext.getCurrent().getDataService().request(ApiTaskMethod.PUT, "/data/task/" + mTask.getId(), mTask.getDataMap(), null);
+                mTask.submitUpdate(null);
                 mTask.notifyListeners();
             }
         };

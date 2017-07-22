@@ -5,10 +5,10 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.DatePicker;
 
-import com.projectaquila.AppContext;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.TaskDate;
+import com.projectaquila.contexts.AppContext;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.TaskDate;
 
 import java.util.Calendar;
 

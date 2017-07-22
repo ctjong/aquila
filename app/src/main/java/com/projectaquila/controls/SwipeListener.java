@@ -4,7 +4,7 @@ package com.projectaquila.controls;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.projectaquila.models.Callback;
+import com.projectaquila.common.Callback;
 
 public class SwipeListener implements View.OnTouchListener {
     private static final int DragMinX = 200;

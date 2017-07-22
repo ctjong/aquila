@@ -6,9 +6,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.projectaquila.R;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.TaskDate;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.TaskDate;
 
 public class DateEditText extends android.support.v7.widget.AppCompatTextView{
     private TaskDate mValue;

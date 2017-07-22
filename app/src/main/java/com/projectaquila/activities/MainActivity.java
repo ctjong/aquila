@@ -10,13 +10,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.controls.DrawerToggle;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.DrawerItem;
-import com.projectaquila.models.PlansViewMode;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.DrawerItem;
+import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.services.HelperService;
 import com.projectaquila.views.LoginView;
 import com.projectaquila.views.PlansView;
@@ -106,11 +106,11 @@ public class MainActivity extends ShellActivity {
         if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false, null));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_enrolled_plans), PlansView.class, false,
-                    HelperService.getOnePairMap("mode", PlansViewMode.ENROLLED.toString())));
+                    HelperService.getOnePairMap("mode", PlanCollectionType.ENROLLED.toString())));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_browse_plans), PlansView.class, false,
-                    HelperService.getOnePairMap("mode", PlansViewMode.BROWSE.toString())));
+                    HelperService.getOnePairMap("mode", PlanCollectionType.BROWSE.toString())));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_created_plans), PlansView.class, false,
-                    HelperService.getOnePairMap("mode", PlansViewMode.CREATED.toString())));
+                    HelperService.getOnePairMap("mode", PlanCollectionType.CREATED.toString())));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_logout), LoginView.class, true, null));
         }else{
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_login), LoginView.class, false, null));

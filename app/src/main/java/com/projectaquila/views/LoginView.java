@@ -5,9 +5,9 @@ import android.widget.TextView;
 
 import com.facebook.login.widget.LoginButton;
 import com.projectaquila.R;
-import com.projectaquila.AppContext;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
+import com.projectaquila.contexts.AppContext;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
 import com.projectaquila.services.AuthService;
 
 /**

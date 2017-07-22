@@ -3,11 +3,11 @@ package com.projectaquila.services;
 import android.os.AsyncTask;
 
 import com.projectaquila.R;
-import com.projectaquila.models.ApiResult;
-import com.projectaquila.models.Callback;
-import com.projectaquila.AppContext;
-import com.projectaquila.models.ApiTaskMethod;
-import com.projectaquila.models.CallbackParams;
+import com.projectaquila.common.ApiResult;
+import com.projectaquila.common.Callback;
+import com.projectaquila.contexts.AppContext;
+import com.projectaquila.common.ApiTaskMethod;
+import com.projectaquila.common.CallbackParams;
 import com.projectaquila.views.LoginView;
 
 import org.json.JSONArray;

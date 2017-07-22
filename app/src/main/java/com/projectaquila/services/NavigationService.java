@@ -4,11 +4,11 @@ package com.projectaquila.services;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.activities.ChildActivity;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
 import com.projectaquila.views.ViewBase;
 
 import java.util.HashMap;

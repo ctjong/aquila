@@ -1,4 +1,6 @@
-package com.projectaquila.models;
+package com.projectaquila.common;
+
+import com.projectaquila.datamodels.Task;
 
 import java.util.ArrayList;
 import java.util.Calendar;

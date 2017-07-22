@@ -7,17 +7,16 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.projectaquila.AppContext;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.controls.DateEditText;
 import com.projectaquila.controls.DaysPicker;
-import com.projectaquila.models.ApiTaskMethod;
-import com.projectaquila.models.Callback;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.RecurrenceMode;
-import com.projectaquila.models.Task;
-import com.projectaquila.models.TaskDate;
-import com.projectaquila.models.TaskRecurrence;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.RecurrenceMode;
+import com.projectaquila.datamodels.Task;
+import com.projectaquila.common.TaskDate;
+import com.projectaquila.common.TaskRecurrence;
 import com.projectaquila.services.HelperService;
 
 import java.util.ArrayList;
@@ -78,13 +77,13 @@ public class TaskUpdateView extends ViewBase {
         String taskId = getNavArg("id");
         if(taskId != null){
             System.out.println("[TaskUpdateView.initializeView] mode=update, id=" + taskId);
-            if(!AppContext.getCurrent().getTasks().containsKey(taskId)) {
+            if(!AppContext.getCurrent().getData().getTasks().getItems().containsKey(taskId)) {
                 System.err.println("[TaskUpdateView.initializeView] invalid task id found in nav params");
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
                 return;
             }
             mActiveDate = TaskDate.parseDateKey(getNavArg("activedatekey"));
-            Task originalTask = AppContext.getCurrent().getTasks().get(taskId);
+            Task originalTask = AppContext.getCurrent().getData().getTasks().getItems().get(taskId);
             mTask = new Task(originalTask.getId(), originalTask.getDate(), originalTask.getName(), originalTask.getRecurrence());
         }else{
             System.out.println("[TaskUpdateView.initializeView] mode=create");
@@ -177,9 +176,7 @@ public class TaskUpdateView extends ViewBase {
                 // go back to main activity and reload
                 AppContext.getCurrent().getNavigationService().goToMainActivity();
                 AppContext.getCurrent().getActivity().showLoadingScreen();
-                ApiTaskMethod method = mTask.getId() == null ? ApiTaskMethod.POST : ApiTaskMethod.PUT;
-                String url = mTask.getId() == null ? "/data/task" : "/data/task/" + mTask.getId();
-                AppContext.getCurrent().getDataService().request(method, url, mTask.getDataMap(), new Callback() {
+                mTask.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
                         String returnDateKey = mTask.getRecurrence() != null ? mActiveDate.toDateKey() : mTask.getDateKey();

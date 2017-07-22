@@ -1,7 +1,6 @@
 package com.projectaquila.services;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -9,12 +8,12 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.projectaquila.models.Callback;
-import com.projectaquila.AppContext;
-import com.projectaquila.models.ApiTaskMethod;
-import com.projectaquila.models.CallbackParams;
-import com.projectaquila.models.Event;
-import com.projectaquila.models.User;
+import com.projectaquila.common.Callback;
+import com.projectaquila.contexts.AppContext;
+import com.projectaquila.common.ApiTaskMethod;
+import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.Event;
+import com.projectaquila.datamodels.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
