@@ -124,7 +124,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
      * @param cb callback to execute after it's done
      */
     @Override
-    protected void write(ApiTaskMethod method, String url, HashMap<String, String> data, final Callback cb){
+    protected void write(final ApiTaskMethod method, String url, HashMap<String, String> data, final Callback cb){
         super.write(method, url, data, new Callback() {
             @Override
             public void execute(CallbackParams params) {
