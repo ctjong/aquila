@@ -5,6 +5,8 @@ import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 
 /**
@@ -123,34 +125,36 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
      */
     @Override
     protected void write(ApiTaskMethod method, String url, HashMap<String, String> data, final Callback cb){
-        mRequestsSubmitted = false;
-        mOngoingRequestCount = 1;
         super.write(method, url, data, new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                mOngoingRequestCount--;
-                if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
-                    System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
-                    cb.execute(null);
+                try {
                     mRequestsSubmitted = false;
+                    mOngoingRequestCount = 0;
+                    if(getId() == null){
+                        initializeId(params.getApiResult().getObject().getString("value"));
+                    }
+                    for(DataModelBase item : getItems().values()){
+                        mOngoingRequestCount++;
+                        item.submitUpdate(new Callback(){
+                            @Override
+                            public void execute(CallbackParams params) {
+                                mOngoingRequestCount--;
+                                if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
+                                    System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
+                                    cb.execute(null);
+                                    mRequestsSubmitted = false;
+                                }
+                            }
+                        });
+                    }
+                    mRequestsSubmitted = true;
+                    System.out.println("[CollectionModelBase.write] all requests submitted");
+                } catch (JSONException e) {
+                    System.err.println("[CollectionModelBase.write] exception");
+                    e.printStackTrace();
                 }
             }
         });
-        for(DataModelBase item : getItems().values()){
-            mOngoingRequestCount++;
-            item.submitUpdate(new Callback(){
-                @Override
-                public void execute(CallbackParams params) {
-                    mOngoingRequestCount--;
-                    if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
-                        System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
-                        cb.execute(null);
-                        mRequestsSubmitted = false;
-                    }
-                }
-            });
-        }
-        mRequestsSubmitted = true;
-        System.out.println("[CollectionModelBase.write] all requests submitted");
     }
 }

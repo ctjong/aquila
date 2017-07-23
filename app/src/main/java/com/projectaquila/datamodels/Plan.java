@@ -13,15 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Plan extends CollectionModelBase<PlanItem> {
-    private String mAuthorId;
+    private String mOwnerId;
     private boolean mIsPublic;
     private String mName;
     private String mDescription;
     private String mImageUrl;
 
-    public Plan(String id, String authorId, boolean isPublic, String name, String description, String imageUrl){
+    public Plan(String id, String ownerId, boolean isPublic, String name, String description, String imageUrl){
         super(id);
-        mAuthorId = authorId;
+        mOwnerId = ownerId;
         mIsPublic = isPublic;
         mName = name;
         mDescription = description;
@@ -35,16 +35,16 @@ public class Plan extends CollectionModelBase<PlanItem> {
         JSONObject json = (JSONObject)object;
         try{
             String id = json.getString("id");
-            String authorId = json.getString("authorId");
+            String ownerId = json.getString("ownerid");
             boolean isPublic = json.getBoolean("ispublic");
             String name = json.getString("name");
             String description = json.getString("description");
             String imageUrl = json.getString("imageurl");
-            if(id == null || authorId == null || name == null){
+            if(id == null || ownerId == null || name == null){
                 System.err.println("[Plan.parse] failed to parse plan");
                 return null;
             }
-            return new Plan(id, authorId, isPublic, name, description, imageUrl);
+            return new Plan(id, ownerId, isPublic, name, description, imageUrl);
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
@@ -69,25 +69,25 @@ public class Plan extends CollectionModelBase<PlanItem> {
     }
 
     public void setName(String name){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mAuthorId)){
+        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
             mName = name;
         }
     }
 
     public void setDescription(String description){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mAuthorId)){
+        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
             mDescription = description;
         }
     }
 
     public void setImageUrl(String imageUrl){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mAuthorId)){
+        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
             mImageUrl = imageUrl;
         }
     }
 
     public void setIsPublic(boolean isPublic){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mAuthorId)){
+        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
             mIsPublic = isPublic;
         }
     }
@@ -125,7 +125,7 @@ public class Plan extends CollectionModelBase<PlanItem> {
             JSONArray planItems = (JSONArray)planItemsObj;
             for(int i=0; i<planItems.length(); i++){
                 try {
-                    PlanItem planItem = PlanItem.parse(planItems.get(i));
+                    PlanItem planItem = PlanItem.parse(this, planItems.get(i));
                     getItems().put(planItem.getId(), planItem);
                 }catch(JSONException e){
                     System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);

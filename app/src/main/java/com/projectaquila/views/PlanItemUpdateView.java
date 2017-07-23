@@ -6,6 +6,7 @@ import android.widget.EditText;
 import com.projectaquila.R;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.datamodels.PlanItem;
+import com.projectaquila.services.HelperService;
 
 public class PlanItemUpdateView extends ViewBase {
     private PlanItem mPlanItem;
@@ -36,6 +37,7 @@ public class PlanItemUpdateView extends ViewBase {
     @Override
     protected void initializeView(){
         mPlanItem = (PlanItem)getNavArgObj("planitem");
+        System.out.println("[PlanItemUpdateView.initializeView] starting. planItemId=" + HelperService.safePrint(mPlanItem.getId()));
         mNameText = (EditText)findViewById(R.id.planitemupdate_name);
         mDescText = (EditText)findViewById(R.id.planitemupdate_desc);
         mNameText.setText(mPlanItem.getName());

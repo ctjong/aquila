@@ -191,6 +191,10 @@ public class DataService {
                             JSONArray items = (JSONArray) responseObj.get("items");
                             return new ApiResult(responseCode, count, items);
                         }
+                    } else {
+                        JSONObject obj = new JSONObject();
+                        obj.put("value", responseStr);
+                        return new ApiResult(responseCode, obj);
                     }
                 }
                 return new ApiResult(responseCode, 0, null);

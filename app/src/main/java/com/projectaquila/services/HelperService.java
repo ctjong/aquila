@@ -26,6 +26,17 @@ public class HelperService {
     }
 
     /**
+     * Safe-print the given string. If it is null, return "null"
+     * @param str input string
+     * @return safe print
+     */
+    public static String safePrint(String str){
+        if(str == null)
+            return "null";
+        return str;
+    }
+
+    /**
      * Create a map with one string-object pair
      * @param key pair key
      * @param val pair value

@@ -19,7 +19,7 @@ import com.projectaquila.common.DrawerItem;
 import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.services.HelperService;
 import com.projectaquila.views.LoginView;
-import com.projectaquila.views.PlansView;
+import com.projectaquila.views.PlanCollectionView;
 import com.projectaquila.views.TasksView;
 
 public class MainActivity extends ShellActivity {
@@ -105,11 +105,11 @@ public class MainActivity extends ShellActivity {
         mDrawerAdapter.clear();
         if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false, null));
-            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_enrolled_plans), PlansView.class, false,
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_enrolled_plans), PlanCollectionView.class, false,
                     HelperService.getSinglePairMap("mode", PlanCollectionType.ENROLLED.toString())));
-            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_browse_plans), PlansView.class, false,
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_browse_plans), PlanCollectionView.class, false,
                     HelperService.getSinglePairMap("mode", PlanCollectionType.BROWSE.toString())));
-            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_created_plans), PlansView.class, false,
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_created_plans), PlanCollectionView.class, false,
                     HelperService.getSinglePairMap("mode", PlanCollectionType.CREATED.toString())));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_logout), LoginView.class, true, null));
         }else{

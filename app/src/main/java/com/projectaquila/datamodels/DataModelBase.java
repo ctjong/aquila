@@ -122,4 +122,14 @@ public abstract class DataModelBase {
         System.err.println("[DataModelBase.getDeleteUrl] not implemented");
         return null;
     }
+
+    /**
+     * Initialize ID of this model
+     * @param id model ID
+     */
+    protected void initializeId(String id){
+        if(mId != null)
+            return;
+        mId = id;
+    }
 }

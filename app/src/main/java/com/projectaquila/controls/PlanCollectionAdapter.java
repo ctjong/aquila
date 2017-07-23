@@ -33,20 +33,21 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
         } else if (viewMode == PlanCollectionType.BROWSE) {
             mPlans = AppContext.getCurrent().getData().getCreatedPlans();
         } else {
-            mPlans = new PlanCollection(PlanCollectionType.BROWSE);
+            mPlans = new PlanCollection(PlanCollectionType.CREATED);
         }
     }
 
     /**
      * Load the whole plans set for the current view
      */
-    public void load(){
+    public void load(final Callback cb){
         mPlans.load(new Callback() {
             @Override
             public void execute(CallbackParams params) {
                 clear();
                 addAll(mPlans.getItems().values());
                 AppContext.getCurrent().getActivity().showContentScreen();
+                if(cb != null) cb.execute(params);
             }
         });
     }
@@ -56,13 +57,14 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
      * @param partNum part number
      * @param take number of plans to take
      */
-    public void loadPart(int partNum, int take){
+    public void loadPart(int partNum, int take, final Callback cb){
         mPlans.loadPart(partNum * take, take, new Callback() {
             @Override
             public void execute(CallbackParams params) {
                 clear();
                 addAll(mPlans.getItems().values());
                 AppContext.getCurrent().getActivity().showContentScreen();
+                if(cb != null) cb.execute(params);
             }
         });
     }
@@ -91,9 +93,12 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
         }
         ((TextView)convertView.findViewById(R.id.plancontrol_title)).setText(plan.getName());
         ((TextView)convertView.findViewById(R.id.plancontrol_description)).setText(plan.getDescription());
-        if(plan.getImageUrl() != null) {
-            ImageView planImg = (ImageView) convertView.findViewById(R.id.plancontrol_img);
+        ImageView planImg = (ImageView) convertView.findViewById(R.id.plancontrol_img);
+        String imageUrl = plan.getImageUrl();
+        if(imageUrl != null && !imageUrl.equals("") && !imageUrl.equals("null")) {
             Picasso.with(getContext()).load(plan.getImageUrl()).into(planImg);
+        }else{
+            planImg.setImageResource(R.drawable.noimage);
         }
         return convertView;
     }

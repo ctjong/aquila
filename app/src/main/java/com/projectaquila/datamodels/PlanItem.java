@@ -11,19 +11,22 @@ import java.util.HashMap;
  * A single task in a plan
  */
 public class PlanItem extends DataModelBase {
+    private Plan mPlan;
     private int mOrder;
     private String mName;
     private String mDescription;
 
     /**
      * Construct a new plan item
+     * @param plan parent plan
      * @param id plan item id
      * @param order plan item order in the plan
      * @param name plan item name
      * @param description plan item description
      */
-    public PlanItem(String id, int order, String name, String description){
+    public PlanItem(Plan plan, String id, int order, String name, String description){
         super(id);
+        mPlan = plan;
         mOrder = order;
         mName = name;
         mDescription = description;
@@ -31,10 +34,11 @@ public class PlanItem extends DataModelBase {
 
     /**
      * Parse the given object and try to create a plan item object
+     * @param plan parent plan
      * @param object input object
      * @return plan item object, or null on failure
      */
-    public static PlanItem parse(Object object){
+    public static PlanItem parse(Plan plan, Object object){
         if(!(object instanceof JSONObject)){
             return null;
         }
@@ -48,7 +52,7 @@ public class PlanItem extends DataModelBase {
                 System.err.println("[PlanItem.parse] failed to parse plan item");
                 return null;
             }
-            return new PlanItem(id, order, name, description);
+            return new PlanItem(plan, id, order, name, description);
         }catch(JSONException e){
             System.err.println("[PlanItem.parse] received JSONException.");
             e.printStackTrace();
@@ -107,6 +111,7 @@ public class PlanItem extends DataModelBase {
     @Override
     protected HashMap<String, String> getDataMap() {
         HashMap<String, String> data = new HashMap<>();
+        data.put("planid", mPlan.getId());
         data.put("order", HelperService.toString(mOrder));
         data.put("name", mName);
         data.put("description", mDescription);

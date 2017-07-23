@@ -1,6 +1,7 @@
 package com.projectaquila.views;
 
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,6 +16,8 @@ import com.projectaquila.services.HelperService;
 public class PlanUpdateView extends ViewBase {
     private Plan mPlan;
     private LinearLayout mItemsView;
+    private EditText mNameText;
+    private EditText mDescText;
 
     /**
      * Get layout id
@@ -42,14 +45,8 @@ public class PlanUpdateView extends ViewBase {
      */
     @Override
     protected void initializeView(){
-        String planId = getNavArgStr("id");
-        if(planId == null) {
-            System.out.println("[PlanUpdateView.initializeView] mode=create");
-            mPlan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), false, null, null, null);
-        }else{
-            System.out.println("[PlanUpdateView.initializeView] mode=update");
-        }
-
+        mPlan = (Plan)getNavArgObj("plan");
+        System.out.println("[PlanUpdateView.initializeView] starting. planId=" + HelperService.safePrint(mPlan.getId()));
         mItemsView = (LinearLayout)findViewById(R.id.planupdate_schedule);
         for(PlanItem planItem : mPlan.getItems().values()){
             View control = getItemControl(planItem);
@@ -58,7 +55,7 @@ public class PlanUpdateView extends ViewBase {
         findViewById(R.id.planupdate_add_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final PlanItem planItem = new PlanItem(null, mPlan.getItems().size() + 1, "", "");
+                final PlanItem planItem = new PlanItem(mPlan, null, mPlan.getItems().size() + 1, "", "");
                 planItem.addChangedHandler(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
@@ -75,6 +72,10 @@ public class PlanUpdateView extends ViewBase {
                 AppContext.getCurrent().getNavigationService().navigateChild(PlanItemUpdateView.class, HelperService.getSinglePairMap("planitem", planItem));
             }
         });
+        mNameText = (EditText)findViewById(R.id.planupdate_name);
+        mDescText = (EditText)findViewById(R.id.planupdate_desc);
+        mNameText.setText(mPlan.getName());
+        mDescText.setText(mPlan.getDescription());
         findViewById(R.id.planupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
         findViewById(R.id.planupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
         AppContext.getCurrent().getActivity().showContentScreen();
@@ -117,7 +118,24 @@ public class PlanUpdateView extends ViewBase {
             @Override
             public void onClick(View v) {
                 System.out.println("[PlanUpdateView.getSaveButtonClickHandler] saving");
-                //TODO
+                AppContext.getCurrent().getActivity().showLoadingScreen();
+                String newName = mNameText.getText().toString();
+                if(!newName.equals("")){
+                    mPlan.setName(newName);
+                    mPlan.setDescription(mDescText.getText().toString());
+                    mPlan.submitUpdate(new Callback() {
+                        @Override
+                        public void execute(CallbackParams params) {
+                            System.out.println("[PlanUpdateView.getSaveButtonClickHandler] saving done. exiting.");
+                            mPlan.notifyListeners();
+                            AppContext.getCurrent().getNavigationService().goBack();
+                            AppContext.getCurrent().getActivity().showLoadingScreen();
+                        }
+                    });
+                }else{
+                    System.out.println("[PlanUpdateView.getSaveButtonClickHandler] missing name. exiting without saving.");
+                    AppContext.getCurrent().getNavigationService().goBack();
+                }
             }
         };
     }

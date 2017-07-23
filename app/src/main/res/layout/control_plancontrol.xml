@@ -13,6 +13,7 @@
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:contentDescription="@string/plancontrol_img_alttext"
+            android:scaleType="fitXY"
             android:src="@android:drawable/ic_menu_gallery" />
 
         <LinearLayout
@@ -27,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="25dp"
                 android:layout_marginTop="10dp"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/plancontrol_description"
@@ -35,7 +36,7 @@
                 android:layout_height="25dp"
                 android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/black" />
 
         </LinearLayout>
 
