@@ -136,7 +136,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
                     }
                     for(DataModelBase item : getItems().values()){
                         mOngoingRequestCount++;
-                        item.submitUpdate(new Callback(){
+                        Callback itemCallback = new Callback(){
                             @Override
                             public void execute(CallbackParams params) {
                                 mOngoingRequestCount--;
@@ -146,7 +146,12 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
                                     mRequestsSubmitted = false;
                                 }
                             }
-                        });
+                        };
+                        if(method == ApiTaskMethod.DELETE){
+                            item.submitDelete(itemCallback);
+                        }else{
+                            item.submitUpdate(itemCallback);
+                        }
                     }
                     mRequestsSubmitted = true;
                     System.out.println("[CollectionModelBase.write] all requests submitted");
