@@ -38,14 +38,10 @@ public class Task extends DataModelBase {
             String name = json.getString("name");
 
             Task task = new Task(id, date, name, null);
-            if(!json.isNull("recmode")) {
-                TaskRecurrence rec = TaskRecurrence.parse(
-                        task,
-                        json.getInt("recmode"),
-                        json.getString("recdays"),
-                        json.getInt("recinterval"),
-                        json.getString("recend"),
-                        json.getString("recholes"));
+            int recMode = json.getInt("recmode");
+            if(recMode != 0) {
+                TaskRecurrence rec = TaskRecurrence.parse(task,recMode, json.getString("recdays"),
+                        json.getInt("recinterval"), json.getString("recend"), json.getString("recholes"));
                 if(rec == null){
                     System.err.println("[Task.parse] failed to parse recurrence");
                     return null;
@@ -129,11 +125,11 @@ public class Task extends DataModelBase {
         data.put("date", mDate.toDateKey());
         data.put("name", mName);
         if(mRecurrence == null){
-            data.put("recmode", null);
+            data.put("recmode", "0");
             data.put("recdays", null);
-            data.put("recinterval", null);
-            data.put("recholes", null);
-            data.put("recend", null);
+            data.put("recinterval", "0");
+            data.put("recholes", "0");
+            data.put("recend", "0");
         }else{
             data.put("recmode", mRecurrence.getMode().getValue() + "");
             data.put("recdays", mRecurrence.getDaysString());
