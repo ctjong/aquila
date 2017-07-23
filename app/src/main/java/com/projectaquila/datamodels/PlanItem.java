@@ -7,11 +7,21 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+/**
+ * A single task in a plan
+ */
 public class PlanItem extends DataModelBase {
     private int mOrder;
     private String mName;
     private String mDescription;
 
+    /**
+     * Construct a new plan item
+     * @param id plan item id
+     * @param order plan item order in the plan
+     * @param name plan item name
+     * @param description plan item description
+     */
     public PlanItem(String id, int order, String name, String description){
         super(id);
         mOrder = order;
@@ -19,6 +29,11 @@ public class PlanItem extends DataModelBase {
         mDescription = description;
     }
 
+    /**
+     * Parse the given object and try to create a plan item object
+     * @param object input object
+     * @return plan item object, or null on failure
+     */
     public static PlanItem parse(Object object){
         if(!(object instanceof JSONObject)){
             return null;
@@ -39,6 +54,54 @@ public class PlanItem extends DataModelBase {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Get the plan item order
+     * @return plan item order
+     */
+    public int getOrder(){
+        return mOrder;
+    }
+
+    /**
+     * Get the plan item name
+     * @return plan item name
+     */
+    public String getName(){
+        return mName;
+    }
+
+    /**
+     * Get the plan item description
+     * @return plan item description
+     */
+    public String getDescription(){
+        return mDescription;
+    }
+
+    /**
+     * Set the order of this plan item
+     * @param order new order
+     */
+    public void setOrder(int order){
+        mOrder = order;
+    }
+
+    /**
+     * Set the name of this plan item
+     * @param name new name
+     */
+    public void setName(String name){
+        mName = name;
+    }
+
+    /**
+     * Set the description of this plan item
+     * @param description new description
+     */
+    public void setDescription(String description){
+        mDescription = description;
     }
 
     @Override

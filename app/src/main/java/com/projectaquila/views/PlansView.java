@@ -18,7 +18,7 @@ public class PlansView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        String modeStr = getNavArg("mode");
+        String modeStr = getNavArgStr("mode");
         System.out.println("[PlansView.initializeView] mode=" + modeStr);
         PlanCollectionType mode = PlanCollectionType.parse(modeStr);
         PlanCollectionAdapter adapter = new PlanCollectionAdapter(mode);

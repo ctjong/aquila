@@ -8,48 +8,48 @@
         android:layout_height="wrap_content"
         android:layout_width="20dp"
         android:textAlignment="center"
-        android:text="S"/>
+        android:text="@string/dayspicker_sun"/>
 
     <TextView
         android:id="@+id/dayspicker_mon"
         android:layout_height="wrap_content"
         android:layout_width="20dp"
         android:textAlignment="center"
-        android:text="M"/>
+        android:text="@string/dayspicker_mon"/>
 
     <TextView
         android:id="@+id/dayspicker_tue"
         android:layout_height="wrap_content"
         android:layout_width="20dp"
         android:textAlignment="center"
-        android:text="T"/>
+        android:text="@string/dayspicker_tue"/>
 
     <TextView
         android:id="@+id/dayspicker_wed"
         android:layout_height="wrap_content"
         android:layout_width="20dp"
         android:textAlignment="center"
-        android:text="W"/>
+        android:text="@string/dayspicker_wed"/>
 
     <TextView
         android:id="@+id/dayspicker_thu"
         android:layout_height="wrap_content"
         android:layout_width="20dp"
         android:textAlignment="center"
-        android:text="T"/>
+        android:text="@string/dayspicker_thu"/>
 
     <TextView
         android:id="@+id/dayspicker_fri"
         android:layout_height="wrap_content"
         android:layout_width="20dp"
         android:textAlignment="center"
-        android:text="F"/>
+        android:text="@string/dayspicker_fri"/>
 
     <TextView
         android:id="@+id/dayspicker_sat"
         android:layout_height="wrap_content"
         android:layout_width="20dp"
         android:textAlignment="center"
-        android:text="S"/>
+        android:text="@string/dayspicker_sat"/>
 
 </LinearLayout>

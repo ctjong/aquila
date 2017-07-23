@@ -19,12 +19,14 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="@string/taskcontrol_postpone_alttext"
                 android:src="@android:drawable/ic_menu_set_as" />
 
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
+                android:contentDescription="@string/taskcontrol_complete_alttext"
                 android:src="@android:drawable/checkbox_on_background" />
 
         </FrameLayout>

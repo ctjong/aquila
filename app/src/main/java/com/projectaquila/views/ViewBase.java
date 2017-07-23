@@ -5,11 +5,13 @@ import android.view.View;
 
 import com.projectaquila.contexts.AppContext;
 
+import java.util.Map;
+
 /**
  * Base class for all views in this project
  */
 public abstract class ViewBase {
-    private Bundle mNavArgs;
+    private Map<String, Object> mNavArgs;
 
     /**
      * Get layout ID
@@ -32,7 +34,7 @@ public abstract class ViewBase {
      * Invoked when this view is started
      * @param navArgs navigation arguments
      */
-    public void onStart(Bundle navArgs) {
+    public void onStart(Map<String, Object> navArgs) {
         mNavArgs = navArgs;
         AppContext.getCurrent().getActivity().loadView(getLayoutId());
         int titleBarStringId = getTitleBarStringId();
@@ -52,13 +54,25 @@ public abstract class ViewBase {
     }
 
     /**
-     * Get navigation argument with the given key
+     * Get navigation argument string with the given key
      * @param key navigation argument key
-     * @return navigation argument value, or null if not found
+     * @return navigation argument string value, or null if not found
      */
-    protected String getNavArg(String key){
+    protected String getNavArgStr(String key){
         if(mNavArgs != null && mNavArgs.containsKey(key)){
-            return mNavArgs.getString(key);
+            return (String)mNavArgs.get(key);
+        }
+        return null;
+    }
+
+    /**
+     * Get navigation argument object with the given key
+     * @param key navigation argument key
+     * @return navigation argument object value, or null if not found
+     */
+    protected Object getNavArgObj(String key){
+        if(mNavArgs != null && mNavArgs.containsKey(key)){
+            return mNavArgs.get(key);
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package com.projectaquila.views;
 
+import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -14,6 +15,7 @@ import com.projectaquila.contexts.AppContext;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.datamodels.Task;
 import com.projectaquila.common.TaskDate;
+import com.projectaquila.services.HelperService;
 
 import java.util.Calendar;
 
@@ -36,7 +38,7 @@ public class TasksView extends ViewBase {
         mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
         mTaskCollectionAdapter = new TaskCollectionAdapter();
 
-        String dateArg = getNavArg("date");
+        String dateArg = getNavArgStr("date");
         if(dateArg != null){
             mCurrentDate = TaskDate.parseDateKey(dateArg);
         }else{
@@ -116,7 +118,7 @@ public class TasksView extends ViewBase {
                 mNewTask.setName(taskNameCtrl.getText().toString());
                 taskNameCtrl.setText("");
 
-                AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, mNewTask.getDataMap());
+                AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, HelperService.getSinglePairMap("task",mNewTask));
             }
         };
     }

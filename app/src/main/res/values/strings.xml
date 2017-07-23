@@ -9,6 +9,7 @@
     <string name="shell_drawer_close">Close left nav</string>
     <string name="shell_loading">Please wait</string>
     <string name="shell_error_reload_btn_text">Reload</string>
+    <string name="shell_error_emoticon">:(</string>
     <string name="shell_error_connection">Failed to connect to server. Please make sure you are connected to internet.</string>
     <string name="shell_error_unknown">Something went wrong.</string>
     <string name="shell_error_unauthorized">You don\'t have permission to do the requested operation</string>
@@ -20,6 +21,14 @@
     <string name="menu_login">Login</string>
     <string name="menu_logout">Logout</string>
 
+    <string name="dayspicker_sun">S</string>
+    <string name="dayspicker_mon">M</string>
+    <string name="dayspicker_tue">T</string>
+    <string name="dayspicker_wed">W</string>
+    <string name="dayspicker_thu">T</string>
+    <string name="dayspicker_fri">F</string>
+    <string name="dayspicker_sat">S</string>
+
     <string name="login_intro_text">Welcome! Please login to continue.</string>
     <string name="login_facebook_app_id">1323560431073064</string>
     <string name="login_facebook_login_text">Log in with Facebook</string>
@@ -27,6 +36,9 @@
     <string name="login_error_invalid_login">Invalid login</string>
 
     <string name="tasks_add_hint">Add new task</string>
+
+    <string name="taskcontrol_postpone_alttext">Postpone</string>
+    <string name="taskcontrol_complete_alttext">Complete</string>
 
     <string name="taskdetail_title">Task detail</string>
     <string name="taskdetail_complete_btn_text">Mark as completed</string>
@@ -67,11 +79,21 @@
     <string name="plans_created_null">You have not created any plan. Click the add button below to create one.</string>
     <string name="plans_browse_null">No plan found with the given criteria.</string>
 
+    <string name="plancontrol_img_alttext">Plan image</string>
+    <string name="planitemcontrol_label_format">Day #{day}</string>
+
     <string name="plancreate_title">Create plan</string>
     <string name="planupdate_title">Update plan</string>
     <string name="planupdate_name_label">Plan name</string>
     <string name="planupdate_name_hint">Name for your plan</string>
     <string name="planupdate_desc_label">Plan description</string>
     <string name="planupdate_desc_hint">Short description of your plan</string>
+    <string name="planupdate_schedule_label">Plan schedule</string>
+    <string name="planupdate_add_label">Add new task</string>
+
+    <string name="planitemupdate_name_label">Task name</string>
+    <string name="planitemupdate_name_hint">Name for this task</string>
+    <string name="planitemupdate_desc_label">Task description</string>
+    <string name="planitemupdate_desc_hint">Short description for this task</string>
 
 </resources>

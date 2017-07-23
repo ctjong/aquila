@@ -53,7 +53,7 @@ public class TaskUpdateView extends ViewBase {
      */
     @Override
     protected int getTitleBarStringId(){
-        if(getNavArg("id") != null){
+        if(getNavArgStr("id") != null){
             return R.string.taskupdate_title;
         }
         return R.string.taskcreate_title;
@@ -74,7 +74,7 @@ public class TaskUpdateView extends ViewBase {
      * Initialize task model based on whether we are on update/create mode
      */
     private void initializeTaskModel(){
-        String taskId = getNavArg("id");
+        String taskId = getNavArgStr("id");
         if(taskId != null){
             System.out.println("[TaskUpdateView.initializeView] mode=update, id=" + taskId);
             if(!AppContext.getCurrent().getData().getTasks().getItems().containsKey(taskId)) {
@@ -82,13 +82,13 @@ public class TaskUpdateView extends ViewBase {
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
                 return;
             }
-            mActiveDate = TaskDate.parseDateKey(getNavArg("activedatekey"));
+            mActiveDate = TaskDate.parseDateKey(getNavArgStr("activedatekey"));
             Task originalTask = AppContext.getCurrent().getData().getTasks().getItems().get(taskId);
             mTask = new Task(originalTask.getId(), originalTask.getDate(), originalTask.getName(), originalTask.getRecurrence());
         }else{
             System.out.println("[TaskUpdateView.initializeView] mode=create");
-            String taskName = getNavArg("taskname");
-            mActiveDate = TaskDate.parseDateKey(getNavArg("taskdate"));
+            String taskName = ((Task)getNavArgObj("task")).getName();
+            mActiveDate = TaskDate.parseDateKey(getNavArgStr("date"));
             if(taskName == null || mActiveDate == null) {
                 System.err.println("[TaskUpdateView.initializeView] missing task name/date");
                 AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
@@ -180,7 +180,7 @@ public class TaskUpdateView extends ViewBase {
                     @Override
                     public void execute(CallbackParams params) {
                         String returnDateKey = mTask.getRecurrence() != null ? mActiveDate.toDateKey() : mTask.getDateKey();
-                        AppContext.getCurrent().getNavigationService().navigate(TasksView.class, HelperService.getOnePairMap("date", returnDateKey));
+                        AppContext.getCurrent().getNavigationService().navigate(TasksView.class, HelperService.getSinglePairMap("date", returnDateKey));
                     }
                 });
             }

@@ -12,6 +12,7 @@
             android:id="@+id/plancontrol_img"
             android:layout_width="100dp"
             android:layout_height="match_parent"
+            android:contentDescription="@string/plancontrol_img_alttext"
             android:src="@android:drawable/ic_menu_gallery" />
 
         <LinearLayout

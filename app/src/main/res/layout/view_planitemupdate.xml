@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_planupdate"
+    android:id="@+id/view_planitemupdate"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -22,12 +22,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/planupdate_name_label"/>
+                    android:text="@string/planitemupdate_name_label"/>
                 <EditText
+                    android:id="@+id/planitemupdate_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
-                    android:hint="@string/planupdate_name_hint"/>
+                    android:hint="@string/planitemupdate_name_hint"/>
             </LinearLayout>
 
             <LinearLayout
@@ -38,45 +39,15 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/planupdate_desc_label"/>
+                    android:text="@string/planitemupdate_desc_label"/>
                 <EditText
+                    android:id="@+id/planitemupdate_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLength="500"
                     android:textSize="16sp"
-                    android:hint="@string/planupdate_desc_hint"
+                    android:hint="@string/planitemupdate_desc_hint"
                     android:inputType="textMultiLine"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/planupdate_schedule_label"/>
-                <LinearLayout
-                    android:id="@+id/planupdate_schedule"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"/>
-                <LinearLayout
-                    android:id="@+id/planupdate_add_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/planupdate_add_label"
-                        android:src="@android:drawable/ic_input_add" />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/planupdate_add_label"
-                        android:layout_gravity="center"/>
-                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
@@ -95,7 +66,7 @@
 
         <Button
             style="?android:buttonStyle"
-            android:id="@+id/planupdate_save_btn"
+            android:id="@+id/planitemupdate_save_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:background="@color/colorPrimary"
@@ -104,7 +75,7 @@
 
         <Button
             style="?android:buttonStyle"
-            android:id="@+id/planupdate_cancel_btn"
+            android:id="@+id/planitemupdate_cancel_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_marginStart="10dp"

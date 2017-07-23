@@ -15,15 +15,15 @@ import java.util.List;
 public class Plan extends CollectionModelBase<PlanItem> {
     private String mAuthorId;
     private boolean mIsPublic;
-    private String mTitle;
+    private String mName;
     private String mDescription;
     private String mImageUrl;
 
-    public Plan(String id, String authorId, boolean isPublic, String title, String description, String imageUrl){
+    public Plan(String id, String authorId, boolean isPublic, String name, String description, String imageUrl){
         super(id);
         mAuthorId = authorId;
         mIsPublic = isPublic;
-        mTitle = title;
+        mName = name;
         mDescription = description;
         mImageUrl = imageUrl;
     }
@@ -37,14 +37,14 @@ public class Plan extends CollectionModelBase<PlanItem> {
             String id = json.getString("id");
             String authorId = json.getString("authorId");
             boolean isPublic = json.getBoolean("ispublic");
-            String title = json.getString("title");
+            String name = json.getString("name");
             String description = json.getString("description");
             String imageUrl = json.getString("imageurl");
-            if(id == null || authorId == null || title == null){
+            if(id == null || authorId == null || name == null){
                 System.err.println("[Plan.parse] failed to parse plan");
                 return null;
             }
-            return new Plan(id, authorId, isPublic, title, description, imageUrl);
+            return new Plan(id, authorId, isPublic, name, description, imageUrl);
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
@@ -52,8 +52,8 @@ public class Plan extends CollectionModelBase<PlanItem> {
         }
     }
 
-    public String getTitle(){
-        return mTitle;
+    public String getName(){
+        return mName;
     }
 
     public String getDescription(){
@@ -68,9 +68,9 @@ public class Plan extends CollectionModelBase<PlanItem> {
         return mIsPublic;
     }
 
-    public void setTitle(String title){
+    public void setName(String name){
         if(AppContext.getCurrent().getActiveUser().getId().equals(mAuthorId)){
-            mTitle = title;
+            mName = name;
         }
     }
 
@@ -95,7 +95,7 @@ public class Plan extends CollectionModelBase<PlanItem> {
     @Override
     protected HashMap<String, String> getDataMap() {
         HashMap<String, String> data = new HashMap<>();
-        data.put("title", mTitle);
+        data.put("name", mName);
         data.put("description", mDescription);
         data.put("imageurl", mImageUrl);
         return data;

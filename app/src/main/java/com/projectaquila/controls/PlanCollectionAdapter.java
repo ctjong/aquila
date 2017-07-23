@@ -89,7 +89,7 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
             System.err.println("[PlanCollectionAdapter.getView] failed to get plan at position " + position);
             return new TextView(getContext());
         }
-        ((TextView)convertView.findViewById(R.id.plancontrol_title)).setText(plan.getTitle());
+        ((TextView)convertView.findViewById(R.id.plancontrol_title)).setText(plan.getName());
         ((TextView)convertView.findViewById(R.id.plancontrol_description)).setText(plan.getDescription());
         if(plan.getImageUrl() != null) {
             ImageView planImg = (ImageView) convertView.findViewById(R.id.plancontrol_img);

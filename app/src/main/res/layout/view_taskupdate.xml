@@ -201,14 +201,16 @@
         android:layout_marginTop="40dp">
 
         <Button
+            style="?android:buttonStyle"
             android:id="@+id/taskupdate_save_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:background="@color/colorPrimary"
             android:text="@string/common_save"
-            android:textColor="@color/cardview_light_background" />
+            android:textColor="@color/white" />
 
         <Button
+            style="?android:buttonStyle"
             android:id="@+id/taskupdate_cancel_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
@@ -216,7 +218,7 @@
             android:layout_marginLeft="10dp"
             android:background="@color/colorPrimary"
             android:text="@string/common_cancel"
-            android:textColor="@color/cardview_light_background" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </LinearLayout>

@@ -29,13 +29,13 @@ public class Task extends DataModelBase {
         JSONObject json = (JSONObject)object;
         try{
             String id = json.getString("id");
-            String dateString = json.getString("taskdate");
+            String dateString = json.getString("date");
             TaskDate date = TaskDate.parseDateKey(dateString);
             if(date == null){
                 System.err.println("[Task.parse] failed to parse date: " + dateString);
                 return null;
             }
-            String name = json.getString("taskname");
+            String name = json.getString("name");
 
             Task task = new Task(id, date, name, null);
             if(!json.isNull("recmode")) {
@@ -124,10 +124,10 @@ public class Task extends DataModelBase {
     }
 
     @Override
-    public HashMap<String, String> getDataMap(){
+    protected HashMap<String, String> getDataMap(){
         HashMap<String, String> data = new HashMap<>();
-        data.put("taskdate", mDate.toDateKey());
-        data.put("taskname", mName);
+        data.put("date", mDate.toDateKey());
+        data.put("name", mName);
         if(mRecurrence == null){
             data.put("recmode", null);
             data.put("recdays", null);

@@ -33,8 +33,8 @@ public class TaskDetailView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        String taskId = getNavArg("id");
-        final String activeDateKey = getNavArg("activedatekey");
+        String taskId = getNavArgStr("id");
+        final String activeDateKey = getNavArgStr("activedatekey");
         if(taskId == null || activeDateKey == null || !AppContext.getCurrent().getData().getTasks().getItems().containsKey(taskId)) {
             System.err.println("[TaskDetailView.initializeView] invalid task id found in nav params");
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
@@ -109,7 +109,7 @@ public class TaskDetailView extends ViewBase {
         findViewById(R.id.taskdetail_edit_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> navParams = new HashMap<>();
+                HashMap<String, Object> navParams = new HashMap<>();
                 navParams.put("id", task.getId());
                 navParams.put("activedatekey", activeDateKey);
                 AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, navParams);
@@ -134,7 +134,7 @@ public class TaskDetailView extends ViewBase {
         final Callback cb = new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                AppContext.getCurrent().getNavigationService().navigate(TasksView.class, HelperService.getOnePairMap("date", activeDateKey));
+                AppContext.getCurrent().getNavigationService().navigate(TasksView.class, HelperService.getSinglePairMap("date", activeDateKey));
             }
         };
         return new View.OnClickListener() {

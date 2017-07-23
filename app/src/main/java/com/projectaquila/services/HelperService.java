@@ -26,13 +26,13 @@ public class HelperService {
     }
 
     /**
-     * Create a map with one pair content
+     * Create a map with one string-object pair
      * @param key pair key
      * @param val pair value
      * @return map
      */
-    public static HashMap<String, String> getOnePairMap(String key, String val){
-        HashMap<String, String> map = new HashMap<>();
+    public static HashMap<String, Object> getSinglePairMap(String key, Object val){
+        HashMap<String, Object> map = new HashMap<>();
         map.put(key, val);
         return map;
     }

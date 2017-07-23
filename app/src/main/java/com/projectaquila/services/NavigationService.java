@@ -2,7 +2,6 @@ package com.projectaquila.services;
 
 
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
@@ -20,8 +19,8 @@ import java.util.Stack;
  */
 public class NavigationService {
     private HashMap<String, ViewBase> mViews;
-    private Bundle mCurrentViewParams;
-    private ViewBase mCurrentView;
+    private Map<String, Object> mParamsPendingLoad;
+    private ViewBase mViewPendingLoad;
     private Stack<ChildActivity> mChildStack;
 
     /**
@@ -37,9 +36,11 @@ public class NavigationService {
      * @param viewClass class of the view to navigate to
      * @param parameters navigation parameters
      */
-    public void navigate(Class viewClass, Map<String, String> parameters){
+    public void navigate(Class viewClass, Map<String, Object> parameters){
         updateCurrentView(viewClass, parameters);
-        mCurrentView.onStart(mCurrentViewParams);
+        mViewPendingLoad.onStart(mParamsPendingLoad);
+        mViewPendingLoad = null;
+        mParamsPendingLoad = null;
     }
 
     /**
@@ -47,7 +48,7 @@ public class NavigationService {
      * @param viewClass class of the view to navigate to
      * @param parameters navigation parameters
      */
-    public void navigateChild(Class viewClass, Map<String, String> parameters){
+    public void navigateChild(Class viewClass, Map<String, Object> parameters){
         updateCurrentView(viewClass, parameters);
         Intent intent = new Intent(AppContext.getCurrent().getActivity(), ChildActivity.class);
         AppContext.getCurrent().getActivity().startActivity(intent);
@@ -59,7 +60,9 @@ public class NavigationService {
      */
     public void onChildActivityLoad(ChildActivity activity){
         mChildStack.push(activity);
-        mCurrentView.onStart(mCurrentViewParams);
+        mViewPendingLoad.onStart(mParamsPendingLoad);
+        mViewPendingLoad = null;
+        mParamsPendingLoad = null;
         activity.addBackPressedHandler(new Callback() {
             @Override
             public void execute(CallbackParams params) {
@@ -105,7 +108,7 @@ public class NavigationService {
      * @param viewClass class of the view to navigate to
      * @param parameters navigation parameters
      */
-    private void updateCurrentView(Class viewClass, Map<String, String> parameters){
+    private void updateCurrentView(Class viewClass, Map<String, Object> parameters){
         System.out.println("[NavigationService.updateCurrentView] " + viewClass.getName());
         ViewBase view;
         if(mViews.containsKey(viewClass.getName())){
@@ -120,16 +123,7 @@ public class NavigationService {
                 return;
             }
         }
-        Bundle bundle = new Bundle();
-        if(parameters != null){
-            for (Map.Entry pair : parameters.entrySet()) {
-                Object key = pair.getKey();
-                Object value = pair.getValue();
-                if (!(key instanceof String) || !(value instanceof String)) continue;
-                bundle.putString((String) key, (String) value);
-            }
-        }
-        mCurrentView = view;
-        mCurrentViewParams = bundle;
+        mViewPendingLoad = view;
+        mParamsPendingLoad = parameters;
     }
 }

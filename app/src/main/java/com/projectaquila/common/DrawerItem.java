@@ -8,9 +8,9 @@ public class DrawerItem {
     private String mTitle;
     private Class mTarget;
     private boolean mIsLogoutMenu;
-    private HashMap<String, String> mNavParams;
+    private HashMap<String, Object> mNavParams;
 
-    public DrawerItem(String title, Class target, boolean isLogoutMenu, HashMap<String, String> navParams){
+    public DrawerItem(String title, Class target, boolean isLogoutMenu, HashMap<String, Object> navParams){
         mTitle = title;
         mTarget = target;
         mIsLogoutMenu = isLogoutMenu;
@@ -21,7 +21,7 @@ public class DrawerItem {
         return mTitle;
     }
 
-    public HashMap<String, String> getNavParams(){
+    public HashMap<String, Object> getNavParams(){
         return mNavParams;
     }
 

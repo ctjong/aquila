@@ -4,7 +4,7 @@
     android:id="@+id/shell"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_light_background">
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,13 +48,7 @@
             android:id="@+id/shell_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="content frame" />
-        </FrameLayout>
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/shell_error"
@@ -69,9 +63,9 @@
                 android:layout_above="@+id/shell_error_text"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:text=":("
+                android:text="@string/shell_error_emoticon"
                 android:textAlignment="center"
-                android:textSize="30dp" />
+                android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/shell_error_text"

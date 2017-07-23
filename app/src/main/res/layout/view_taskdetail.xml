@@ -187,7 +187,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimary"
-        android:textColor="@color/cardview_light_background"
+        android:textColor="@color/white"
         android:text="@string/common_edit"
         android:textAllCaps="false"/>
 
@@ -197,8 +197,8 @@
         android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
-        android:background="@color/colorPrimaryAltDark"
-        android:textColor="@color/cardview_light_background"
+        android:background="@color/darkgreen"
+        android:textColor="@color/white"
         android:text="@string/taskdetail_completeocc_btn_text"
         android:textAllCaps="false"
         android:visibility="gone" />
@@ -209,8 +209,8 @@
         android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="5dp"
-        android:background="@color/colorPrimaryAltDark"
-        android:textColor="@color/cardview_light_background"
+        android:background="@color/darkgreen"
+        android:textColor="@color/white"
         android:text="@string/taskdetail_complete_btn_text"
         android:textAllCaps="false" />
 
