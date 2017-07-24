@@ -33,17 +33,11 @@ public class TaskDetailView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        String taskId = getNavArgStr("id");
+        final Task task = (Task)getNavArgObj("task");
         final String activeDateKey = getNavArgStr("activedatekey");
-        if(taskId == null || activeDateKey == null || !AppContext.getCurrent().getData().getTasks().getItems().containsKey(taskId)) {
-            System.err.println("[TaskDetailView.initializeView] invalid task id found in nav params");
-            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
-            return;
-        }
 
         // task details
         final TaskDate activeDate = TaskDate.parseDateKey(activeDateKey);
-        final Task task = AppContext.getCurrent().getData().getTasks().getItems().get(taskId);
         ((TextView)findViewById(R.id.taskdetail_taskname)).setText(task.getName());
         ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(activeDate.getFriendlyString());
 
@@ -110,7 +104,7 @@ public class TaskDetailView extends ViewBase {
             @Override
             public void onClick(View v) {
                 HashMap<String, Object> navParams = new HashMap<>();
-                navParams.put("id", task.getId());
+                navParams.put("task", task);
                 navParams.put("activedatekey", activeDateKey);
                 AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, navParams);
             }
@@ -134,7 +128,7 @@ public class TaskDetailView extends ViewBase {
         final Callback cb = new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                AppContext.getCurrent().getNavigationService().navigate(TasksView.class, HelperService.getSinglePairMap("date", activeDateKey));
+                AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, HelperService.getSinglePairMap("date", activeDateKey));
             }
         };
         return new View.OnClickListener() {

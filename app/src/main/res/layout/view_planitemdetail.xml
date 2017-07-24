@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_planitemdetail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+            
+            <TextView
+                android:id="@+id/planitemdetail_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/planitemdetail_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textSize="14sp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        style="?android:buttonBarStyle"
+        android:id="@+id/planitemdetail_editbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bottomoverlaybg"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:gravity="center"
+        android:elevation="20dp">
+
+        <Button
+            style="?android:buttonStyle"
+            android:id="@+id/planitemdetail_edit_btn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:background="@color/green"
+            android:text="@string/common_edit"
+            android:textColor="@color/white" />
+
+        <Button
+            style="?android:buttonStyle"
+            android:id="@+id/planitemdetail_delete_btn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/red"
+            android:text="@string/common_delete"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</RelativeLayout>
+

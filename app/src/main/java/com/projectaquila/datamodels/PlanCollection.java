@@ -19,11 +19,11 @@ public class PlanCollection extends CollectionModelBase<Plan> {
     @Override
     protected String getItemsUrlFormat() {
         if(mType == PlanCollectionType.ENROLLED){
-            return "/data/planenrollment/private/findall/id/%d/%d";
+            return "/data/planenrollment/private/findall/id/{skip}/{take}";
         }else if(mType == PlanCollectionType.CREATED){
-            return "/data/plan/private/findall/id/%d/%d";
+            return "/data/plan/private/findall/id/{skip}/{take}";
         }else{
-            return "/data/plan/public/findall/id/%d/%d";
+            return "/data/plan/public/findall/id/{skip}/{take}";
         }
     }
 
@@ -38,7 +38,8 @@ public class PlanCollection extends CollectionModelBase<Plan> {
             for(int i=0; i<plans.length(); i++){
                 try {
                     Plan plan = Plan.parse(plans.get(i));
-                    getItems().put(plan.getId(), plan);
+                    if(plan != null)
+                        getItems().add(plan);
                 }catch(JSONException e){
                     System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);
                     e.printStackTrace();

@@ -14,15 +14,13 @@ import java.util.List;
 
 public class Plan extends CollectionModelBase<PlanItem> {
     private String mOwnerId;
-    private boolean mIsPublic;
     private String mName;
     private String mDescription;
     private String mImageUrl;
 
-    public Plan(String id, String ownerId, boolean isPublic, String name, String description, String imageUrl){
+    public Plan(String id, String ownerId, String name, String description, String imageUrl){
         super(id);
         mOwnerId = ownerId;
-        mIsPublic = isPublic;
         mName = name;
         mDescription = description;
         mImageUrl = imageUrl;
@@ -36,7 +34,6 @@ public class Plan extends CollectionModelBase<PlanItem> {
         try{
             String id = json.getString("id");
             String ownerId = json.getString("ownerid");
-            boolean isPublic = json.getBoolean("ispublic");
             String name = json.getString("name");
             String description = json.getString("description");
             String imageUrl = json.getString("imageurl");
@@ -44,12 +41,16 @@ public class Plan extends CollectionModelBase<PlanItem> {
                 System.err.println("[Plan.parse] failed to parse plan");
                 return null;
             }
-            return new Plan(id, ownerId, isPublic, name, description, imageUrl);
+            return new Plan(id, ownerId, name, description, imageUrl);
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getOwnerId(){
+        return mOwnerId;
     }
 
     public String getName(){
@@ -62,10 +63,6 @@ public class Plan extends CollectionModelBase<PlanItem> {
 
     public String getImageUrl(){
         return mImageUrl;
-    }
-
-    public boolean isPublic(){
-        return mIsPublic;
     }
 
     public void setName(String name){
@@ -86,14 +83,8 @@ public class Plan extends CollectionModelBase<PlanItem> {
         }
     }
 
-    public void setIsPublic(boolean isPublic){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
-            mIsPublic = isPublic;
-        }
-    }
-
     @Override
-    protected HashMap<String, String> getDataMap() {
+    protected HashMap<String, String> getCreateDataMap() {
         HashMap<String, String> data = new HashMap<>();
         data.put("name", mName);
         data.put("description", mDescription);
@@ -104,10 +95,7 @@ public class Plan extends CollectionModelBase<PlanItem> {
     @Override
     protected String getItemsUrlFormat() {
         try {
-            if (mIsPublic)
-                return "/data/planitem/public/findbyconditions/id/%d/%d/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
-            else
-                return "/data/planitem/private/findbyconditions/id/%d/%d/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
+            return "/data/planitem/private/findbyconditions/id/{skip}/{take}/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
         }catch(UnsupportedEncodingException e){
             System.err.println("[Plan.getItemsUrlFormat] encoding error");
             e.printStackTrace();
@@ -126,7 +114,7 @@ public class Plan extends CollectionModelBase<PlanItem> {
             for(int i=0; i<planItems.length(); i++){
                 try {
                     PlanItem planItem = PlanItem.parse(this, planItems.get(i));
-                    getItems().put(planItem.getId(), planItem);
+                    getItems().add(planItem);
                 }catch(JSONException e){
                     System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);
                     e.printStackTrace();

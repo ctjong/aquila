@@ -1,45 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="90dp">
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/plancontrol_img"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:contentDescription="@string/plancontrol_img_alttext"
+        android:scaleType="fitXY"
+        android:src="@android:drawable/ic_menu_gallery"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp">
+        android:layout_height="match_parent"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:paddingRight="0dp"
+        android:paddingEnd="0dp"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/plancontrol_img"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/plancontrol_img_alttext"
-            android:scaleType="fitXY"
-            android:src="@android:drawable/ic_menu_gallery" />
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/plancontrol_name"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:orientation="vertical">
+            android:layout_height="25dp"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"
+            android:textColor="@color/black" />
 
-            <TextView
-                android:id="@+id/plancontrol_title"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black" />
-
-            <TextView
-                android:id="@+id/plancontrol_description"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:textColor="@color/black" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/plancontrol_description"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:textSize="14sp"
+            android:textColor="@color/gray" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
+

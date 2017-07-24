@@ -42,11 +42,12 @@ public class PlanCollectionView extends ViewBase {
             addBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Plan plan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), false, null, null, null);
+                    Plan plan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), null, null, null);
                     AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
                     plan.addChangedHandler(new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
+                            AppContext.getCurrent().getActivity().showLoadingScreen();
                             mAdapter.load(loadCallback);
                         }
                     });
@@ -73,6 +74,9 @@ public class PlanCollectionView extends ViewBase {
                         nullText.setText(R.string.plans_browse_null);
                     }
                     findViewById(R.id.view_plans_null).setVisibility(View.VISIBLE);
+                }else{
+                    mList.setVisibility(View.VISIBLE);
+                    findViewById(R.id.view_plans_null).setVisibility(View.GONE);
                 }
             }
         };

@@ -47,7 +47,7 @@ public class LoginView extends ViewBase {
 
         // check if logged in on launch
         if(authService.isUserLoggedIn()){
-            AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);
+            AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, null);
             return;
         }
 
@@ -79,7 +79,7 @@ public class LoginView extends ViewBase {
                             AppContext.getCurrent().getActivity().showContentScreen();
                         }else{
                             System.out.println("[LoginView.setupFbLoginButton] FB token conversion successful.");
-                            AppContext.getCurrent().getNavigationService().navigate(TasksView.class, null);
+                            AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, null);
                         }
                     }
                 });

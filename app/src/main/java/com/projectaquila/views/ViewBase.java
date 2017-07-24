@@ -37,11 +37,11 @@ public abstract class ViewBase {
     public void onStart(Map<String, Object> navArgs) {
         mNavArgs = navArgs;
         AppContext.getCurrent().getActivity().loadView(getLayoutId());
+        initializeView();
         int titleBarStringId = getTitleBarStringId();
         if(titleBarStringId >= 0) {
             AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
         }
-        initializeView();
     }
 
     /**

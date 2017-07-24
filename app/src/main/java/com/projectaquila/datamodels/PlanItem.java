@@ -11,48 +11,48 @@ import java.util.HashMap;
  * A single task in a plan
  */
 public class PlanItem extends DataModelBase {
-    private Plan mPlan;
-    private int mOrder;
+    private Plan mParent;
+    private int mDay;
     private String mName;
     private String mDescription;
 
     /**
      * Construct a new plan item
-     * @param plan parent plan
+     * @param parent parent plan
      * @param id plan item id
-     * @param order plan item order in the plan
+     * @param day plan item day in the plan
      * @param name plan item name
      * @param description plan item description
      */
-    public PlanItem(Plan plan, String id, int order, String name, String description){
+    public PlanItem(Plan parent, String id, int day, String name, String description){
         super(id);
-        mPlan = plan;
-        mOrder = order;
+        mParent = parent;
+        mDay = day;
         mName = name;
         mDescription = description;
     }
 
     /**
      * Parse the given object and try to create a plan item object
-     * @param plan parent plan
+     * @param parent parent plan
      * @param object input object
      * @return plan item object, or null on failure
      */
-    public static PlanItem parse(Plan plan, Object object){
+    public static PlanItem parse(Plan parent, Object object){
         if(!(object instanceof JSONObject)){
             return null;
         }
         JSONObject json = (JSONObject)object;
         try{
             String id = json.getString("id");
-            int order = json.getInt("order");
+            int day = json.getInt("day");
             String name = json.getString("name");
             String description = json.getString("description");
             if(id == null || name == null){
                 System.err.println("[PlanItem.parse] failed to parse plan item");
                 return null;
             }
-            return new PlanItem(plan, id, order, name, description);
+            return new PlanItem(parent, id, day, name, description);
         }catch(JSONException e){
             System.err.println("[PlanItem.parse] received JSONException.");
             e.printStackTrace();
@@ -61,11 +61,19 @@ public class PlanItem extends DataModelBase {
     }
 
     /**
-     * Get the plan item order
-     * @return plan item order
+     * Get the parent plan of this item
+     * @return parent plan
      */
-    public int getOrder(){
-        return mOrder;
+    public Plan getParent(){
+        return mParent;
+    }
+
+    /**
+     * Get the plan item day
+     * @return plan item day
+     */
+    public int getDay(){
+        return mDay;
     }
 
     /**
@@ -85,11 +93,11 @@ public class PlanItem extends DataModelBase {
     }
 
     /**
-     * Set the order of this plan item
-     * @param order new order
+     * Set the day of this plan item
+     * @param day new day
      */
-    public void setOrder(int order){
-        mOrder = order;
+    public void setDay(int day){
+        mDay = day;
     }
 
     /**
@@ -109,10 +117,19 @@ public class PlanItem extends DataModelBase {
     }
 
     @Override
-    protected HashMap<String, String> getDataMap() {
+    protected HashMap<String, String> getCreateDataMap() {
         HashMap<String, String> data = new HashMap<>();
-        data.put("planid", mPlan.getId());
-        data.put("order", HelperService.toString(mOrder));
+        data.put("planid", mParent.getId());
+        data.put("day", HelperService.toString(mDay));
+        data.put("name", mName);
+        data.put("description", mDescription);
+        return data;
+    }
+
+    @Override
+    protected HashMap<String, String> getUpdateDataMap() {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("day", HelperService.toString(mDay));
         data.put("name", mName);
         data.put("description", mDescription);
         return data;

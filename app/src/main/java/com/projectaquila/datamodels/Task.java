@@ -14,12 +14,14 @@ public class Task extends DataModelBase {
     private TaskDate mDate;
     private String mName;
     private TaskRecurrence mRecurrence;
+    private boolean mIsDeleted;
 
     public Task(String id, TaskDate date, String name, TaskRecurrence recurrence){
         super(id);
         mDate = date;
         mName = name;
         mRecurrence = recurrence;
+        mIsDeleted = false;
     }
 
     public static Task parse(Object object){
@@ -72,6 +74,10 @@ public class Task extends DataModelBase {
         return mRecurrence;
     }
 
+    public boolean isDeleted(){
+        return mIsDeleted;
+    }
+
     public void setDate(TaskDate date){
         if(date != null && !mDate.toDateKey().equals(date.toDateKey())) {
             mDate = date;
@@ -95,7 +101,6 @@ public class Task extends DataModelBase {
 
     public void complete(Callback cb){
         System.out.println("[Task.complete] completing task " + getId());
-        AppContext.getCurrent().getData().getTasks().remove(getId());
         submitDelete(cb);
         notifyListeners();
     }
@@ -109,7 +114,6 @@ public class Task extends DataModelBase {
                 submitUpdate(cb);
             }else{
                 System.out.println("[Task.completeOccurrence] completing recurrence series " + getId());
-                AppContext.getCurrent().getData().getTasks().remove(getId());
                 submitDelete(cb);
             }
         }else{
@@ -120,7 +124,7 @@ public class Task extends DataModelBase {
     }
 
     @Override
-    protected HashMap<String, String> getDataMap(){
+    protected HashMap<String, String> getCreateDataMap(){
         HashMap<String, String> data = new HashMap<>();
         data.put("date", mDate.toDateKey());
         data.put("name", mName);

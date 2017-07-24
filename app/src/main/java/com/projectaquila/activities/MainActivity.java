@@ -20,7 +20,7 @@ import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.services.HelperService;
 import com.projectaquila.views.LoginView;
 import com.projectaquila.views.PlanCollectionView;
-import com.projectaquila.views.TasksView;
+import com.projectaquila.views.TaskCollectionView;
 
 public class MainActivity extends ShellActivity {
     private DrawerLayout mDrawerLayout;
@@ -104,7 +104,7 @@ public class MainActivity extends ShellActivity {
         }
         mDrawerAdapter.clear();
         if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
-            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TasksView.class, false, null));
+            mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TaskCollectionView.class, false, null));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_enrolled_plans), PlanCollectionView.class, false,
                     HelperService.getSinglePairMap("mode", PlanCollectionType.ENROLLED.toString())));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_browse_plans), PlanCollectionView.class, false,

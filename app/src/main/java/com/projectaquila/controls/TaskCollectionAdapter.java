@@ -12,11 +12,11 @@ import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.datamodels.Task;
 import com.projectaquila.common.TaskDate;
+import com.projectaquila.datamodels.TaskCollection;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Adapter for populating tasks on the tasks view
@@ -25,12 +25,14 @@ public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
     private static final int CACHE_DAYS_SPAN = 3;
     private HashMap<String, List<TaskControl>> mControlsMap;
     private TaskDate mActiveDate;
+    private TaskCollection mTasks;
 
     /**
      * Instantiate a new tasks adapter
      */
     public TaskCollectionAdapter(){
         super(AppContext.getCurrent().getActivity(), R.layout.control_taskcontrol);
+        mTasks = new TaskCollection();
     }
 
     /**
@@ -44,7 +46,7 @@ public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
         if(refreshCache || mControlsMap == null){
             mControlsMap = new HashMap<>();
             AppContext.getCurrent().getActivity().showLoadingScreen();
-            AppContext.getCurrent().getData().getTasks().load(new Callback() {
+            mTasks.load(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     expandControlsMap();
@@ -118,8 +120,7 @@ public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
             clear();
         }
         mControlsMap.put(mapKey, new LinkedList<TaskControl>());
-        for(Map.Entry<String,Task> entry : AppContext.getCurrent().getData().getTasks().getItems().entrySet()){
-            Task task = entry.getValue();
+        for(Task task : mTasks.getItems()){
             String taskKey = task.getDate().toDateKey();
             if(task.getRecurrence() == null && taskKey.equals(mapKey) && mControlsMap.containsKey(taskKey)) {
                 TaskControl control = new TaskControl(task, task.getDate());

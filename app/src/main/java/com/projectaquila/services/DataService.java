@@ -80,7 +80,7 @@ public class DataService {
         private void retrievePart(final int partNum){
             // get data URL
             int skip = partNum * ITEMS_PER_PART;
-            String dataUrl = String.format(mUrlFormat, skip, ITEMS_PER_PART);
+            String dataUrl = mUrlFormat.replace("{skip}", HelperService.toString(skip)).replace("{take}", HelperService.toString(ITEMS_PER_PART));
 
             // request data
             request(ApiTaskMethod.GET, dataUrl, null, new Callback() {

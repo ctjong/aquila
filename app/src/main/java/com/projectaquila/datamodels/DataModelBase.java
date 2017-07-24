@@ -45,9 +45,9 @@ public abstract class DataModelBase {
      */
     public void submitUpdate(Callback cb){
         if(mId == null)
-            write(ApiTaskMethod.POST, getCreateUrl(), getDataMap(), cb);
+            write(ApiTaskMethod.POST, getCreateUrl(), getCreateDataMap(), cb);
         else
-            write(ApiTaskMethod.PUT, getUpdateUrl(), getDataMap(), cb);
+            write(ApiTaskMethod.PUT, getUpdateUrl(), getUpdateDataMap(), cb);
     }
 
     /**
@@ -88,12 +88,20 @@ public abstract class DataModelBase {
     }
 
     /**
-     * Get a set of key-value pairs of this model's data
+     * Get a set of key-value pairs of this model's data for create request
      * @return data map
      */
-    protected HashMap<String, String> getDataMap() {
-        System.err.println("[DataModelBase.getDataMap] not implemented");
+    protected HashMap<String, String> getCreateDataMap() {
+        System.err.println("[DataModelBase.getCreateDataMap] not implemented");
         return null;
+    }
+
+    /**
+     * Get a set of key-value pairs of this model's data for update request
+     * @return data map
+     */
+    protected HashMap<String, String> getUpdateDataMap() {
+        return getCreateDataMap();
     }
 
     /**

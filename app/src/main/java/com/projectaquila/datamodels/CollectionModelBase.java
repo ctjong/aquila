@@ -7,14 +7,16 @@ import com.projectaquila.contexts.AppContext;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Base class for all collection type data model
  * @param <T> type of item in the collection
  */
 public abstract class CollectionModelBase<T extends DataModelBase> extends DataModelBase {
-    private HashMap<String, T> mItems;
+    private List<T> mItems;
     private int mOngoingRequestCount;
     private boolean mRequestsSubmitted;
 
@@ -24,7 +26,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
      */
     public CollectionModelBase(String id){
         super(id);
-        mItems = new HashMap<>();
+        mItems = new ArrayList<>();
     }
 
     /**
@@ -41,30 +43,51 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
 
     /**
      * Get the items in the collection
-     * @return map of collection items
+     * @return list of collection items
      */
-    public HashMap<String, T> getItems(){
+    public List<T> getItems(){
         return mItems;
     }
 
     /**
-     * Get item with the specified key
-     * @param key item key
-     * @return item object
+     * Get item with the specified id
+     * @param id item id
+     * @return item, or null if not found
      */
-    public Task get(String key){
-        if(mItems.containsKey(key))
-            mItems.get(key);
+    public T get(String id){
+        for(int i=0; i<mItems.size(); i++){
+            if(mItems.get(i).getId().equals(id)) {
+                return mItems.get(i);
+            }
+        }
         return null;
     }
 
     /**
-     * Remove item with the specified key
-     * @param key item key
+     * Remove item with the specified id
+     * @param id item id
      */
-    public void remove(String key){
-        if(mItems.containsKey(key))
-            mItems.remove(key);
+    public void remove(String id){
+        for(int i=0; i<mItems.size(); i++){
+            if(mItems.get(i).getId().equals(id)) {
+                mItems.remove(i);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Check whether or not this collection has an item with the given id
+     * @param id item id
+     * @return true if found, false otherwise
+     */
+    public boolean contains(String id){
+        for(int i=0; i<mItems.size(); i++){
+            if(mItems.get(i).getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -129,17 +152,23 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
             @Override
             public void execute(CallbackParams params) {
                 try {
+                    if(getItems().size() == 0) {
+                        System.out.println("[CollectionModelBase.write] collection has no item. skipping item submits.");
+                        cb.execute(null);
+                        return;
+                    }
                     mRequestsSubmitted = false;
                     mOngoingRequestCount = 0;
                     if(getId() == null){
                         initializeId(params.getApiResult().getObject().getString("value"));
                     }
-                    for(DataModelBase item : getItems().values()){
+                    for(DataModelBase item : getItems()){
                         mOngoingRequestCount++;
                         Callback itemCallback = new Callback(){
                             @Override
                             public void execute(CallbackParams params) {
                                 mOngoingRequestCount--;
+                                System.out.println("[CollectionModelBase.write] one request completed. ongoing=" + mOngoingRequestCount);
                                 if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
                                     System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
                                     cb.execute(null);
@@ -158,6 +187,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
                 } catch (JSONException e) {
                     System.err.println("[CollectionModelBase.write] exception");
                     e.printStackTrace();
+                    cb.execute(null);
                 }
             }
         });

@@ -28,7 +28,10 @@ public class PlanItemUpdateView extends ViewBase {
      */
     @Override
     protected int getTitleBarStringId(){
-        return -1;
+        if(mPlanItem.getParent().getId() != null){
+            return R.string.planupdate_title;
+        }
+        return R.string.plancreate_title;
     }
 
     /**
@@ -58,8 +61,8 @@ public class PlanItemUpdateView extends ViewBase {
                 System.out.println("[PlanItemUpdateView.getSaveButtonClickHandler] saving");
                 mPlanItem.setName(mNameText.getText().toString());
                 mPlanItem.setDescription(mDescText.getText().toString());
-                mPlanItem.notifyListeners();
                 AppContext.getCurrent().getNavigationService().goBack();
+                mPlanItem.notifyListeners();
             }
         };
     }

@@ -4,6 +4,7 @@
     <string name="common_edit">Edit</string>
     <string name="common_save">Save</string>
     <string name="common_cancel">Cancel</string>
+    <string name="common_delete">Delete</string>
 
     <string name="shell_drawer_open">Open left nav</string>
     <string name="shell_drawer_close">Close left nav</string>
@@ -82,6 +83,7 @@
     <string name="plancontrol_img_alttext">Plan image</string>
     <string name="planitemcontrol_label_format">Day #{day}</string>
 
+    <string name="plandetail_title">Plan detail</string>
     <string name="plancreate_title">Create plan</string>
     <string name="planupdate_title">Update plan</string>
     <string name="planupdate_name_label">Plan name</string>

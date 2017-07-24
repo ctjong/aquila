@@ -14,6 +14,8 @@ import com.projectaquila.common.CallbackParams;
 import com.projectaquila.datamodels.Plan;
 import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.datamodels.PlanCollection;
+import com.projectaquila.services.HelperService;
+import com.projectaquila.views.PlanDetailView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -29,9 +31,9 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
     public PlanCollectionAdapter(PlanCollectionType viewMode){
         super(AppContext.getCurrent().getActivity(), R.layout.control_plancontrol);
         if (viewMode == PlanCollectionType.ENROLLED) {
-            mPlans = AppContext.getCurrent().getData().getEnrolledPlans();
+            mPlans = new PlanCollection(PlanCollectionType.ENROLLED);
         } else if (viewMode == PlanCollectionType.BROWSE) {
-            mPlans = AppContext.getCurrent().getData().getCreatedPlans();
+            mPlans = new PlanCollection(PlanCollectionType.BROWSE);
         } else {
             mPlans = new PlanCollection(PlanCollectionType.CREATED);
         }
@@ -45,7 +47,7 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
             @Override
             public void execute(CallbackParams params) {
                 clear();
-                addAll(mPlans.getItems().values());
+                addAll(mPlans.getItems());
                 AppContext.getCurrent().getActivity().showContentScreen();
                 if(cb != null) cb.execute(params);
             }
@@ -62,7 +64,7 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
             @Override
             public void execute(CallbackParams params) {
                 clear();
-                addAll(mPlans.getItems().values());
+                addAll(mPlans.getItems());
                 AppContext.getCurrent().getActivity().showContentScreen();
                 if(cb != null) cb.execute(params);
             }
@@ -91,15 +93,35 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
             System.err.println("[PlanCollectionAdapter.getView] failed to get plan at position " + position);
             return new TextView(getContext());
         }
-        ((TextView)convertView.findViewById(R.id.plancontrol_title)).setText(plan.getName());
-        ((TextView)convertView.findViewById(R.id.plancontrol_description)).setText(plan.getDescription());
-        ImageView planImg = (ImageView) convertView.findViewById(R.id.plancontrol_img);
+
+        final TextView nameText = (TextView)convertView.findViewById(R.id.plancontrol_name);
+        final TextView descText = (TextView)convertView.findViewById(R.id.plancontrol_description);
+        final ImageView planImg = (ImageView)convertView.findViewById(R.id.plancontrol_img);
+        updateView(plan, nameText, descText, planImg);
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppContext.getCurrent().getNavigationService().navigateChild(PlanDetailView.class, HelperService.getSinglePairMap("plan", plan));
+            }
+        });
+        return convertView;
+    }
+
+    /**
+     * Update the values of the view elements
+     * @param plan Plan data
+     * @param nameText name TextView
+     * @param descText description TextView
+     * @param planImg plan image ImageView
+     */
+    private void updateView(Plan plan, TextView nameText, TextView descText, ImageView planImg){
+        nameText.setText(plan.getName());
+        descText.setText(plan.getDescription());
         String imageUrl = plan.getImageUrl();
         if(imageUrl != null && !imageUrl.equals("") && !imageUrl.equals("null")) {
             Picasso.with(getContext()).load(plan.getImageUrl()).into(planImg);
         }else{
             planImg.setImageResource(R.drawable.noimage);
         }
-        return convertView;
     }
 }

@@ -19,7 +19,7 @@ import com.projectaquila.services.HelperService;
 
 import java.util.Calendar;
 
-public class TasksView extends ViewBase {
+public class TaskCollectionView extends ViewBase {
     private Task mNewTask;
     private TextView mCurrentDateText;
     private TextView mCurrentMonthText;
