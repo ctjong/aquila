@@ -57,9 +57,12 @@ public class PlanDetailView extends ViewBase {
         mComparator = new PlanItemComparator();
 
         if(mPlan.getOwnerId().equals(AppContext.getCurrent().getActiveUser().getId())){
-            findViewById(R.id.plandetail_editbar).setVisibility(View.VISIBLE);
-            findViewById(R.id.plandetail_edit_btn).setOnClickListener(getEditButtonClickHandler());
-            findViewById(R.id.plandetail_delete_btn).setOnClickListener(getDeleteButtonClickHandler());
+            View editBtn = findViewById(R.id.plandetail_edit_btn);
+            editBtn.setVisibility(View.VISIBLE);
+            editBtn.setOnClickListener(getEditButtonClickHandler());
+            View deleteBtn = findViewById(R.id.plandetail_delete_btn);
+            deleteBtn.setVisibility(View.VISIBLE);
+            deleteBtn.setOnClickListener(getDeleteButtonClickHandler());
             mPlan.addChangedHandler(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {

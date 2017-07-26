@@ -5,6 +5,7 @@
     <string name="common_save">Save</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_delete">Delete</string>
+    <string name="common_enroll">Enroll</string>
 
     <string name="shell_drawer_open">Open left nav</string>
     <string name="shell_drawer_close">Close left nav</string>

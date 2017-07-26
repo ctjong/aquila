@@ -51,7 +51,7 @@
 
     <LinearLayout
         style="?android:buttonBarStyle"
-        android:id="@+id/plandetail_editbar"
+        android:id="@+id/plandetail_btnbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -59,8 +59,17 @@
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:gravity="center"
-        android:elevation="20dp"
-        android:visibility="gone">
+        android:elevation="20dp">
+
+        <Button
+            style="?android:buttonStyle"
+            android:id="@+id/plandetail_enroll_btn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/common_enroll"
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <Button
             style="?android:buttonStyle"
@@ -69,7 +78,8 @@
             android:layout_height="30dp"
             android:background="@color/green"
             android:text="@string/common_edit"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:visibility="gone" />
 
         <Button
             style="?android:buttonStyle"
@@ -80,7 +90,8 @@
             android:layout_marginLeft="10dp"
             android:background="@color/red"
             android:text="@string/common_delete"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:visibility="gone" />
     </LinearLayout>
 </RelativeLayout>
 
