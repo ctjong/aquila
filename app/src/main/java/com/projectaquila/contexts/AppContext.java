@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.ShellActivity;
+import com.projectaquila.common.PlanCollectionType;
+import com.projectaquila.datamodels.PlanCollection;
 import com.projectaquila.datamodels.User;
 import com.projectaquila.services.AuthService;
 import com.projectaquila.services.DataService;
@@ -52,6 +54,7 @@ public class AppContext {
     private HashMap<String, String> mDebugConfig;
     private MainActivity mMainActivity;
     private User mActiveUser;
+    private PlanCollection mEnrolledPlans;
 
     // services
     private AuthService mAuthService;
@@ -64,6 +67,7 @@ public class AppContext {
 
     private AppContext(MainActivity mainActivity) {
         mMainActivity = mainActivity;
+        mEnrolledPlans = new PlanCollection(PlanCollectionType.ENROLLED);
         initActiveUser();
         initDebugConfig();
 
@@ -93,6 +97,10 @@ public class AppContext {
 
     public User getActiveUser(){
         return mActiveUser;
+    }
+
+    public PlanCollection getEnrolledPlans(){
+        return mEnrolledPlans;
     }
 
     /*----------------------------------

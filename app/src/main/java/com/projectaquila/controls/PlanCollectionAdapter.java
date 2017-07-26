@@ -31,11 +31,9 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
     public PlanCollectionAdapter(PlanCollectionType viewMode){
         super(AppContext.getCurrent().getActivity(), R.layout.control_plancontrol);
         if (viewMode == PlanCollectionType.ENROLLED) {
-            mPlans = new PlanCollection(PlanCollectionType.ENROLLED);
-        } else if (viewMode == PlanCollectionType.BROWSE) {
-            mPlans = new PlanCollection(PlanCollectionType.BROWSE);
+            mPlans = AppContext.getCurrent().getEnrolledPlans();
         } else {
-            mPlans = new PlanCollection(PlanCollectionType.CREATED);
+            mPlans = new PlanCollection(viewMode);
         }
     }
 

@@ -34,29 +34,32 @@ public class PlanCollectionView extends ViewBase {
         mList = (ListView)findViewById(R.id.view_plans_list);
         mList.setAdapter(mAdapter);
         final Callback loadCallback = getLoadCallback();
-        if(mMode == PlanCollectionType.BROWSE){
-            mAdapter.loadPart(0, 20, loadCallback);
-        }else if(mMode == PlanCollectionType.CREATED){
-            Button addBtn = (Button)findViewById(R.id.view_plans_add);
-            addBtn.setVisibility(View.VISIBLE);
-            addBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Plan plan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), null, null, null);
-                    AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
-                    plan.addChangedHandler(new Callback() {
+        AppContext.getCurrent().getEnrolledPlans().load(new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                if (mMode == PlanCollectionType.BROWSE) {
+                    mAdapter.loadPart(0, 20, loadCallback);
+                } else if (mMode == PlanCollectionType.CREATED) {
+                    Button addBtn = (Button)findViewById(R.id.view_plans_add);
+                    addBtn.setVisibility(View.VISIBLE);
+                    addBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void execute(CallbackParams params) {
-                            AppContext.getCurrent().getActivity().showLoadingScreen();
-                            mAdapter.load(loadCallback);
+                        public void onClick(View v) {
+                            Plan plan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), null, null, null);
+                            AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
+                            plan.addChangedHandler(new Callback() {
+                                @Override
+                                public void execute(CallbackParams params) {
+                                    AppContext.getCurrent().getActivity().showLoadingScreen();
+                                    mAdapter.load(loadCallback);
+                                }
+                            });
                         }
                     });
+                    mAdapter.load(loadCallback);
                 }
-            });
-            mAdapter.load(loadCallback);
-        }else{
-            mAdapter.load(loadCallback);
-        }
+            }
+        });
     }
 
     private Callback getLoadCallback(){
