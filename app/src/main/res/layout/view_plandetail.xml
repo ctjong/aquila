@@ -73,6 +73,16 @@
 
         <Button
             style="?android:buttonStyle"
+            android:id="@+id/plandetail_unenroll_btn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/common_unenroll"
+            android:textColor="@color/red"
+            android:visibility="gone" />
+
+        <Button
+            style="?android:buttonStyle"
             android:id="@+id/plandetail_edit_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
