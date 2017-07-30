@@ -27,16 +27,16 @@ public class PlanCollectionView extends ViewBase {
     @Override
     protected void initializeView(){
         AppContext.getCurrent().getActivity().showLoadingScreen();
-        String modeStr = getNavArgStr("mode");
+        final String modeStr = getNavArgStr("mode");
         System.out.println("[PlanCollectionView.initializeView] mode=" + modeStr);
-        mMode = PlanCollectionType.parse(modeStr);
-        mAdapter = new PlanCollectionAdapter(mMode);
-        mList = (ListView)findViewById(R.id.view_plans_list);
-        mList.setAdapter(mAdapter);
-        final Callback loadCallback = getLoadCallback();
-        AppContext.getCurrent().getEnrolledPlans().load(new Callback() {
+        AppContext.getCurrent().getEnrollments().load(new Callback() {
             @Override
             public void execute(CallbackParams params) {
+                mMode = PlanCollectionType.parse(modeStr);
+                mAdapter = new PlanCollectionAdapter(mMode);
+                mList = (ListView)findViewById(R.id.view_plans_list);
+                mList.setAdapter(mAdapter);
+                final Callback loadCallback = getLoadCallback();
                 if (mMode == PlanCollectionType.BROWSE) {
                     mAdapter.loadPart(0, 20, loadCallback);
                 } else if (mMode == PlanCollectionType.CREATED) {
@@ -57,6 +57,8 @@ public class PlanCollectionView extends ViewBase {
                         }
                     });
                     mAdapter.load(loadCallback);
+                } else if (mMode == PlanCollectionType.ENROLLED) {
+                    loadCallback.execute(null);
                 }
             }
         });
@@ -66,6 +68,7 @@ public class PlanCollectionView extends ViewBase {
         return new Callback(){
             @Override
             public void execute(CallbackParams params) {
+                AppContext.getCurrent().getActivity().showContentScreen();
                 if(mAdapter.getCount() == 0) {
                     mList.setVisibility(View.GONE);
                     TextView nullText = (TextView) findViewById(R.id.view_plans_null_text);

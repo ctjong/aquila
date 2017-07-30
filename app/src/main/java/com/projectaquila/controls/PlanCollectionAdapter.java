@@ -22,18 +22,20 @@ import com.squareup.picasso.Picasso;
  * Adapter for listing out plans data on a View
  */
 public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
+    private PlanCollectionType mType;
     private PlanCollection mPlans;
 
     /**
      * Initialize new plans adapter
-     * @param viewMode current view mode
+     * @param type collection type to view
      */
-    public PlanCollectionAdapter(PlanCollectionType viewMode){
+    public PlanCollectionAdapter(PlanCollectionType type){
         super(AppContext.getCurrent().getActivity(), R.layout.control_plancontrol);
-        if (viewMode == PlanCollectionType.ENROLLED) {
-            mPlans = AppContext.getCurrent().getEnrolledPlans();
+        mType = type;
+        if (type == PlanCollectionType.ENROLLED) {
+            mPlans = AppContext.getCurrent().getEnrollments().getPlans();
         } else {
-            mPlans = new PlanCollection(viewMode);
+            mPlans = new PlanCollection(type);
         }
     }
 
@@ -45,8 +47,11 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
             @Override
             public void execute(CallbackParams params) {
                 clear();
+                if(mType == PlanCollectionType.ENROLLED){
+                    if(cb != null) cb.execute(params);
+                    return;
+                }
                 addAll(mPlans.getItems());
-                AppContext.getCurrent().getActivity().showContentScreen();
                 if(cb != null) cb.execute(params);
             }
         });
@@ -62,8 +67,11 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
             @Override
             public void execute(CallbackParams params) {
                 clear();
+                if(mType == PlanCollectionType.ENROLLED){
+                    if(cb != null) cb.execute(params);
+                    return;
+                }
                 addAll(mPlans.getItems());
-                AppContext.getCurrent().getActivity().showContentScreen();
                 if(cb != null) cb.execute(params);
             }
         });

@@ -19,12 +19,12 @@ public class PlanCollection extends CollectionModelBase<Plan> {
 
     @Override
     protected String getItemsUrlFormat() {
-        if(mType == PlanCollectionType.ENROLLED){
+        if(mType == PlanCollectionType.BROWSE){
             return "/data/planenrollment/private/findall/id/{skip}/{take}";
         }else if(mType == PlanCollectionType.CREATED){
             return "/data/plan/private/findall/id/{skip}/{take}";
         }else{
-            return "/data/publicplan/public/findall/id/{skip}/{take}";
+            return null;
         }
     }
 
@@ -46,10 +46,10 @@ public class PlanCollection extends CollectionModelBase<Plan> {
                     if(plan != null){
                         getItems().add(plan);
                     }else{
-                        System.err.println("[PlanCollectionAdapter.processServerResponse] failed to parse plan, null found");
+                        System.err.println("[PlanCollection.setupItems] failed to parse plan, null found");
                     }
                 }catch(JSONException e){
-                    System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plan at index " + i);
+                    System.err.println("[PlanCollection.setupItems] an error occurred while trying to get plan at index " + i);
                     e.printStackTrace();
                 }
             }
