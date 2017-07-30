@@ -4,6 +4,7 @@ import com.projectaquila.common.ApiTaskMethod;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;
 
@@ -125,7 +126,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
             if (cb != null) cb.execute(null);
             return;
         }
-        String url = String.format(urlFormat, partNum * take, take);
+        String url = urlFormat.replace("{skip}", HelperService.toString(partNum * take)).replace("{take}", HelperService.toString(take));
         AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, url, null, new Callback() {
             @Override
             public void execute(CallbackParams params) {

@@ -24,7 +24,7 @@ public class PlanCollection extends CollectionModelBase<Plan> {
         }else if(mType == PlanCollectionType.CREATED){
             return "/data/plan/private/findall/id/{skip}/{take}";
         }else{
-            return "/data/plan/public/findall/id/{skip}/{take}";
+            return "/data/publicplan/public/findall/id/{skip}/{take}";
         }
     }
 
