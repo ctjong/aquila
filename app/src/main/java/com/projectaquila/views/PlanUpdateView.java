@@ -81,12 +81,11 @@ public class PlanUpdateView extends ViewBase {
                 @Override
                 public void execute(CallbackParams params) {
                     updateView();
-                    AppContext.getCurrent().getActivity().showContentScreen();
+                    AppContext.getCurrent().getActivity().hideLoadingScreen();
                 }
             });
         } else {
             updateView();
-            AppContext.getCurrent().getActivity().showContentScreen();
         }
     }
 

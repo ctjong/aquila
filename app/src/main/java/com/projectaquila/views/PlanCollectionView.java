@@ -27,48 +27,51 @@ public class PlanCollectionView extends ViewBase {
     @Override
     protected void initializeView(){
         AppContext.getCurrent().getActivity().showLoadingScreen();
-        final String modeStr = getNavArgStr("mode");
-        System.out.println("[PlanCollectionView.initializeView] mode=" + modeStr);
-        AppContext.getCurrent().getEnrollments().load(new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                mMode = PlanCollectionType.parse(modeStr);
-                mAdapter = new PlanCollectionAdapter(mMode);
-                mList = (ListView)findViewById(R.id.view_plans_list);
-                mList.setAdapter(mAdapter);
-                final Callback loadCallback = getLoadCallback();
-                if (mMode == PlanCollectionType.BROWSE) {
-                    mAdapter.loadPart(0, 20, loadCallback);
-                } else if (mMode == PlanCollectionType.CREATED) {
-                    Button addBtn = (Button)findViewById(R.id.view_plans_add);
-                    addBtn.setVisibility(View.VISIBLE);
-                    addBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Plan plan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), null, null, null);
-                            AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
-                            plan.addChangedHandler(new Callback() {
-                                @Override
-                                public void execute(CallbackParams params) {
-                                    AppContext.getCurrent().getActivity().showLoadingScreen();
-                                    mAdapter.load(loadCallback);
-                                }
-                            });
-                        }
-                    });
-                    mAdapter.load(loadCallback);
-                } else if (mMode == PlanCollectionType.ENROLLED) {
-                    loadCallback.execute(null);
-                }
+        try {
+            final String modeStr = getNavArgStr("mode");
+            System.out.println("[PlanCollectionView.initializeView] mode=" + modeStr);
+            mMode = PlanCollectionType.parse(modeStr);
+            mAdapter = new PlanCollectionAdapter(mMode);
+            mList = (ListView) findViewById(R.id.view_plans_list);
+            mList.setAdapter(mAdapter);
+            final Callback loadCallback = getLoadCallback();
+            if (mMode == PlanCollectionType.BROWSE) {
+                mAdapter.loadPart(0, 20, loadCallback);
+            } else if (mMode == PlanCollectionType.CREATED) {
+                Button addBtn = (Button) findViewById(R.id.view_plans_add);
+                addBtn.setVisibility(View.VISIBLE);
+                addBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Plan plan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), null, null, null, 1);
+                        AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
+                        plan.addChangedHandler(new Callback() {
+                            @Override
+                            public void execute(CallbackParams params) {
+                                AppContext.getCurrent().getActivity().showLoadingScreen();
+                                mAdapter.load(loadCallback);
+                            }
+                        });
+                    }
+                });
+                mAdapter.load(loadCallback);
+            } else {
+                // enrolled collection has already been loaded in app context
+                // so we can execute the callback directly
+                loadCallback.execute(null);
             }
-        });
+        }catch(UnsupportedOperationException e){
+            System.err.println("[PlanCollectionView.initializeView] exception");
+            e.printStackTrace();
+            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
+        }
     }
 
     private Callback getLoadCallback(){
         return new Callback(){
             @Override
             public void execute(CallbackParams params) {
-                AppContext.getCurrent().getActivity().showContentScreen();
+                AppContext.getCurrent().getActivity().hideLoadingScreen();
                 if(mAdapter.getCount() == 0) {
                     mList.setVisibility(View.GONE);
                     TextView nullText = (TextView) findViewById(R.id.view_plans_null_text);

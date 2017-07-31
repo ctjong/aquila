@@ -29,11 +29,23 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
      * Initialize new plans adapter
      * @param type collection type to view
      */
-    public PlanCollectionAdapter(PlanCollectionType type){
+    public PlanCollectionAdapter(PlanCollectionType type) throws UnsupportedOperationException {
         super(AppContext.getCurrent().getActivity(), R.layout.control_plancontrol);
+        if(AppContext.getCurrent().getEnrollments() == null){
+            // the caller must have already initialized enrollments before constructing this adapter
+            throw new UnsupportedOperationException("Enrollments have not been initialized while attempting to construct a plan collection adapter");
+        }
         mType = type;
         if (type == PlanCollectionType.ENROLLED) {
             mPlans = AppContext.getCurrent().getEnrollments().getPlans();
+            AppContext.getCurrent().getEnrollments().addChangedHandler(new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    mPlans = AppContext.getCurrent().getEnrollments().getPlans();
+                    clear();
+                    addAll(mPlans.getItems());
+                }
+            });
         } else {
             mPlans = new PlanCollection(type);
         }
@@ -43,18 +55,22 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
      * Load the whole plans set for the current view
      */
     public void load(final Callback cb){
-        mPlans.load(new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                clear();
-                if(mType == PlanCollectionType.ENROLLED){
-                    if(cb != null) cb.execute(params);
-                    return;
+        if(mType == PlanCollectionType.ENROLLED){
+            // if load is called on an adapter that is viewing enrolled collection,
+            // we can directly load the items to the array because data has been loaded in the context
+            clear();
+            addAll(mPlans.getItems());
+            if(cb != null) cb.execute(null);
+        }else {
+            mPlans.load(new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    clear();
+                    addAll(mPlans.getItems());
+                    if (cb != null) cb.execute(params);
                 }
-                addAll(mPlans.getItems());
-                if(cb != null) cb.execute(params);
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -63,18 +79,22 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
      * @param take number of plans to take
      */
     public void loadPart(int partNum, int take, final Callback cb){
-        mPlans.loadPart(partNum * take, take, new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                clear();
-                if(mType == PlanCollectionType.ENROLLED){
-                    if(cb != null) cb.execute(params);
-                    return;
+        if(mType == PlanCollectionType.ENROLLED){
+            // if load is called on an adapter that is viewing enrolled collection,
+            // we can directly load the items to the array because data has been loaded in the context
+            clear();
+            addAll(mPlans.getItems());
+            if(cb != null) cb.execute(null);
+        }else {
+            mPlans.loadPart(partNum * take, take, new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    clear();
+                    addAll(mPlans.getItems());
+                    if (cb != null) cb.execute(params);
                 }
-                addAll(mPlans.getItems());
-                if(cb != null) cb.execute(params);
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -103,7 +123,7 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
         final TextView nameText = (TextView)convertView.findViewById(R.id.plancontrol_name);
         final TextView descText = (TextView)convertView.findViewById(R.id.plancontrol_description);
         final ImageView planImg = (ImageView)convertView.findViewById(R.id.plancontrol_img);
-        updateView(plan, nameText, descText, planImg);
+        updateCardView(plan, nameText, descText, planImg);
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +140,7 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
      * @param descText description TextView
      * @param planImg plan image ImageView
      */
-    private void updateView(Plan plan, TextView nameText, TextView descText, ImageView planImg){
+    private void updateCardView(Plan plan, TextView nameText, TextView descText, ImageView planImg){
         nameText.setText(plan.getName());
         descText.setText(plan.getDescription());
         String imageUrl = plan.getImageUrl();

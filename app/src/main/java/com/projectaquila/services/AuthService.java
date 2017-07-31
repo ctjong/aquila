@@ -64,7 +64,6 @@ public class AuthService {
         fbLoginButton.registerCallback(mFbCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                setActiveUser(null);
                 String fbToken = loginResult.getAccessToken().getToken();
                 callback.execute(new CallbackParams("fbToken", fbToken));
             }
@@ -95,13 +94,21 @@ public class AuthService {
         apiParams.put("fbtoken", fbToken);
         AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/auth/token/fb", apiParams, new Callback() {
             @Override
-            public void execute(CallbackParams params) {
-                    if(setActiveUser(params.getApiResult().getObject())){
-                        callback.execute(params);
-                    }else{
-                        logOut();
-                        callback.execute(null);
-                    }
+            public void execute(final CallbackParams params) {
+                JSONObject userObj = params.getApiResult().getObject();
+                try {
+                    User user = new User(userObj.getString("id"), userObj.getString("firstname"),
+                            userObj.getString("lastname"), userObj.getString("token"));
+                    AppContext.getCurrent().setActiveUser(user);
+                    mAuthStateChange.invoke(null);
+                    // pass back an empty callback params, as a sign that the conversion succeeded
+                    callback.execute(new CallbackParams());
+                } catch (JSONException e) {
+                    System.err.println("[AuthService.convertFbToken] exception");
+                    e.printStackTrace();
+                    logOut();
+                    callback.execute(null);
+                }
             }
         });
     }
@@ -111,7 +118,7 @@ public class AuthService {
      */
     public void logOut(){
         LoginManager.getInstance().logOut();
-        setActiveUser(null);
+        mAuthStateChange.invoke(null);
         AppContext.getCurrent().setActiveUser(null);
     }
 
@@ -121,29 +128,5 @@ public class AuthService {
      */
     public void addAuthStateChangeHandler(Callback handler){
         mAuthStateChange.addHandler(handler);
-    }
-
-    /**
-     * Set the active user in app context
-     * @param userObj user JSON
-     * @return true on success, false otherwise
-     */
-    private boolean setActiveUser(JSONObject userObj){
-        if(userObj == null){
-            AppContext.getCurrent().setActiveUser(null);
-            return true;
-        }
-
-        try {
-            User activeUser = new User(userObj.getString("id"), userObj.getString("firstname"),
-                    userObj.getString("lastname"), userObj.getString("token"));
-            AppContext.getCurrent().setActiveUser(activeUser);
-            mAuthStateChange.invoke(null);
-            return true;
-        } catch (JSONException e) {
-            System.err.println("[AuthService.convertFbToken] exception");
-            e.printStackTrace();
-        }
-        return false;
     }
 }

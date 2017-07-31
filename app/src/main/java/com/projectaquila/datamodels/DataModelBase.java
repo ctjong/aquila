@@ -6,6 +6,8 @@ import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.common.Event;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 
 /**
@@ -73,7 +75,7 @@ public abstract class DataModelBase {
      * @param data data to submit
      * @param cb callback to execute after it's done
      */
-    protected void write(ApiTaskMethod method, String url, HashMap<String, String> data, final Callback cb){
+    protected void write(final ApiTaskMethod method, String url, HashMap<String, String> data, final Callback cb){
         if(url == null) {
             if (cb != null) cb.execute(null);
             return;
@@ -81,6 +83,14 @@ public abstract class DataModelBase {
         AppContext.getCurrent().getDataService().request(method, url, data, new Callback() {
             @Override
             public void execute(CallbackParams params) {
+                if(method == ApiTaskMethod.POST && mId == null && params != null){
+                    try {
+                        mId = params.getApiResult().getObject().getString("value");
+                    } catch (JSONException e) {
+                        System.err.println("[DataModelBase.write] failed to init model id");
+                        e.printStackTrace();
+                    }
+                }
                 if(cb != null)
                     cb.execute(params);
             }
@@ -129,15 +139,5 @@ public abstract class DataModelBase {
     protected String getDeleteUrl() {
         System.err.println("[DataModelBase.getDeleteUrl] not implemented");
         return null;
-    }
-
-    /**
-     * Initialize ID of this model
-     * @param id model ID
-     */
-    protected void initializeId(String id){
-        if(mId != null)
-            return;
-        mId = id;
     }
 }

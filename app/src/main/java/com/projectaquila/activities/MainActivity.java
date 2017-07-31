@@ -55,12 +55,11 @@ public class MainActivity extends ShellActivity {
             @Override
             public void execute(CallbackParams params) {
                 setupDrawer();
-}
+            }
         });
 
-                showLoadingScreen();
-                AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
-        }
+        AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
+    }
 
     /**
      * To be executed before loading a view

@@ -17,13 +17,15 @@ public class Plan extends CollectionModelBase<PlanItem> {
     private String mName;
     private String mDescription;
     private String mImageUrl;
+    private int mVersion;
 
-    public Plan(String id, String ownerId, String name, String description, String imageUrl){
+    public Plan(String id, String ownerId, String name, String description, String imageUrl, int version){
         super(id);
         mOwnerId = ownerId;
         mName = name;
         mDescription = description;
         mImageUrl = imageUrl;
+        mVersion = version;
     }
 
     public static Plan parse(Object object){
@@ -37,11 +39,12 @@ public class Plan extends CollectionModelBase<PlanItem> {
             String name = json.getString("name");
             String description = json.getString("description");
             String imageUrl = json.getString("imageurl");
+            int version = json.getInt("version");
             if(id == null || ownerId == null || name == null){
                 System.err.println("[Plan.parse] failed to parse plan");
                 return null;
             }
-            return new Plan(id, ownerId, name, description, imageUrl);
+            return new Plan(id, ownerId, name, description, imageUrl, version);
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
@@ -63,6 +66,10 @@ public class Plan extends CollectionModelBase<PlanItem> {
 
     public String getImageUrl(){
         return mImageUrl;
+    }
+
+    public int getVersion(){
+        return mVersion;
     }
 
     public void setName(String name){

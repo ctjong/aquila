@@ -8,17 +8,39 @@ import org.json.JSONException;
 
 import java.util.List;
 
+/**
+ * A collection of plan enrollments
+ */
 public class PlanEnrollmentCollection extends CollectionModelBase<PlanEnrollment> {
+    /**
+     * Construct a new collection of plan enrollments
+     */
     public PlanEnrollmentCollection(){
         super(null);
     }
 
+    /**
+     * Get a collection of enrolled plans from the enrollments
+     * @return enrolled plans collection
+     */
     public PlanCollection getPlans(){
         PlanCollection plans = new PlanCollection(PlanCollectionType.ENROLLED);
         for(PlanEnrollment enrollment : getItems()){
             plans.getItems().add(enrollment.getPlan());
         }
         return plans;
+    }
+
+    /**
+     * Check whether a plan with the specified id is enrolled
+     * @param planId plan ID
+     * @return true if the plan is enrolled, false otherwise
+     */
+    public boolean containsPlan(String planId){
+        for(PlanEnrollment enrollment : getItems()){
+            if(enrollment.getPlan().getId().equals(planId)) return true;
+        }
+        return false;
     }
 
     @Override

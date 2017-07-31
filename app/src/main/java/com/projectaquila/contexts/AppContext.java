@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.ShellActivity;
+import com.projectaquila.common.Callback;
 import com.projectaquila.datamodels.PlanEnrollmentCollection;
 import com.projectaquila.datamodels.User;
 import com.projectaquila.services.AuthService;
@@ -53,6 +54,10 @@ public class AppContext {
     private HashMap<String, String> mDebugConfig;
     private MainActivity mMainActivity;
     private User mActiveUser;
+
+    // list of plan enrollments
+    // this is initialized when view changes (see ViewBase.onStart())
+    // and nullified when active user is set to null (see setActiveUser())
     private PlanEnrollmentCollection mEnrollments;
 
     // services
@@ -66,7 +71,6 @@ public class AppContext {
 
     private AppContext(MainActivity mainActivity) {
         mMainActivity = mainActivity;
-        mEnrollments = new PlanEnrollmentCollection();
         initActiveUser();
         initDebugConfig();
 
@@ -116,6 +120,7 @@ public class AppContext {
             settingsEditor.remove("userlastname");
             settingsEditor.remove("usertoken");
             System.out.println("[AppContext.setActiveUser] active user cleared");
+            mEnrollments = null;
         }else {
             mActiveUser = user;
             settingsEditor.putString("userid", user.getId());
@@ -145,8 +150,13 @@ public class AppContext {
     }
 
     /*----------------------------------
-        Other public accessors
+        Other public methods
     ----------------------------------*/
+
+    public void loadEnrollments(Callback cb){
+        mEnrollments = new PlanEnrollmentCollection();
+        mEnrollments.load(cb);
+    }
 
     public SharedPreferences getLocalSettings(){
         return mMainActivity.getPreferences(0);

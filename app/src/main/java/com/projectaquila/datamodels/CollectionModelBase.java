@@ -6,8 +6,6 @@ import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.services.HelperService;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -152,44 +150,35 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
         super.write(method, url, data, new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                try {
-                    if(getItems().size() == 0) {
-                        System.out.println("[CollectionModelBase.write] collection has no item. skipping item submits.");
-                        cb.execute(null);
-                        return;
-                    }
-                    mRequestsSubmitted = false;
-                    mOngoingRequestCount = 0;
-                    if(getId() == null){
-                        initializeId(params.getApiResult().getObject().getString("value"));
-                    }
-                    for(DataModelBase item : getItems()){
-                        mOngoingRequestCount++;
-                        Callback itemCallback = new Callback(){
-                            @Override
-                            public void execute(CallbackParams params) {
-                                mOngoingRequestCount--;
-                                System.out.println("[CollectionModelBase.write] one request completed. ongoing=" + mOngoingRequestCount);
-                                if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
-                                    System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
-                                    cb.execute(null);
-                                    mRequestsSubmitted = false;
-                                }
-                            }
-                        };
-                        if(method == ApiTaskMethod.DELETE){
-                            item.submitDelete(itemCallback);
-                        }else{
-                            item.submitUpdate(itemCallback);
-                        }
-                    }
-                    mRequestsSubmitted = true;
-                    System.out.println("[CollectionModelBase.write] all requests submitted");
-                } catch (JSONException e) {
-                    System.err.println("[CollectionModelBase.write] exception");
-                    e.printStackTrace();
+                if(getItems().size() == 0) {
+                    System.out.println("[CollectionModelBase.write] collection has no item. skipping item submits.");
                     cb.execute(null);
+                    return;
                 }
+                mRequestsSubmitted = false;
+                mOngoingRequestCount = 0;
+                for(DataModelBase item : getItems()){
+                    mOngoingRequestCount++;
+                    Callback itemCallback = new Callback(){
+                        @Override
+                        public void execute(CallbackParams params) {
+                            mOngoingRequestCount--;
+                            System.out.println("[CollectionModelBase.write] one request completed. ongoing=" + mOngoingRequestCount);
+                            if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
+                                System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
+                                cb.execute(null);
+                                mRequestsSubmitted = false;
+                            }
+                        }
+                    };
+                    if(method == ApiTaskMethod.DELETE){
+                        item.submitDelete(itemCallback);
+                    }else{
+                        item.submitUpdate(itemCallback);
+                    }
+                }
+                mRequestsSubmitted = true;
+                System.out.println("[CollectionModelBase.write] all requests submitted");
             }
         });
     }

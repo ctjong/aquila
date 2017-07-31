@@ -57,8 +57,6 @@ public class PlanItemDetailView extends ViewBase {
                 }
             });
         }
-
-        AppContext.getCurrent().getActivity().showContentScreen();
     }
 
     /**

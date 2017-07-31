@@ -50,7 +50,7 @@ public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
                 @Override
                 public void execute(CallbackParams params) {
                     expandControlsMap();
-                    AppContext.getCurrent().getActivity().showContentScreen();
+                    AppContext.getCurrent().getActivity().hideLoadingScreen();
                 }
             });
         }else {

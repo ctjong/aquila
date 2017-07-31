@@ -120,8 +120,6 @@ public class TaskDetailView extends ViewBase {
         }
         completeBtn.setOnClickListener(getCompleteTaskAction(task, null, activeDateKey));
         completeOccBtn.setOnClickListener(getCompleteTaskAction(task, activeDate, activeDateKey));
-
-        AppContext.getCurrent().getActivity().showContentScreen();
     }
 
     private View.OnClickListener getCompleteTaskAction(final Task task, final TaskDate occurrenceDate, final String activeDateKey){

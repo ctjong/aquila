@@ -3,6 +3,8 @@ package com.projectaquila.views;
 import android.os.Bundle;
 import android.view.View;
 
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
 
 import java.util.Map;
@@ -34,13 +36,23 @@ public abstract class ViewBase {
      * Invoked when this view is started
      * @param navArgs navigation arguments
      */
-    public void onStart(Map<String, Object> navArgs) {
-        mNavArgs = navArgs;
-        AppContext.getCurrent().getActivity().loadView(getLayoutId());
-        initializeView();
-        int titleBarStringId = getTitleBarStringId();
-        if(titleBarStringId >= 0) {
-            AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
+    public void onStart(final Map<String, Object> navArgs) {
+        Callback cb = new Callback(){
+            @Override
+            public void execute(CallbackParams params) {
+                mNavArgs = navArgs;
+                AppContext.getCurrent().getActivity().loadView(getLayoutId());
+                initializeView();
+                int titleBarStringId = getTitleBarStringId();
+                if(titleBarStringId >= 0) {
+                    AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
+                }
+            }
+        };
+        if(AppContext.getCurrent().getActiveUser() != null && AppContext.getCurrent().getEnrollments() == null){
+            AppContext.getCurrent().loadEnrollments(cb);
+        }else{
+            cb.execute(null);
         }
     }
 

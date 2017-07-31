@@ -47,7 +47,6 @@ public class PlanItemUpdateView extends ViewBase {
         mDescText.setText(mPlanItem.getDescription());
         findViewById(R.id.planitemupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
         findViewById(R.id.planitemupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
-        AppContext.getCurrent().getActivity().showContentScreen();
     }
 
     /**

@@ -109,8 +109,8 @@ public abstract class ShellActivity extends AppCompatActivity {
     /**
      * Show the content screen
      */
-    public void showContentScreen(){
-        System.out.println("[ShellActivity.showContentScreen]");
+    public void hideLoadingScreen(){
+        System.out.println("[ShellActivity.hideLoadingScreen]");
         mErrorScreen.setVisibility(View.GONE);
         mLoadingScreen.setVisibility(View.GONE);
         mContentScreen.setVisibility(View.VISIBLE);

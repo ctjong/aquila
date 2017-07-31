@@ -76,7 +76,7 @@ public class LoginView extends ViewBase {
                         if(params == null) {
                             System.out.println("[LoginView.setupFbLoginButton] failed to convert FB token. null response params.");
                             setAuthErrorText(AppContext.getCurrent().getActivity().getString(R.string.login_error_invalid_login));
-                            AppContext.getCurrent().getActivity().showContentScreen();
+                            AppContext.getCurrent().getActivity().hideLoadingScreen();
                         }else{
                             System.out.println("[LoginView.setupFbLoginButton] FB token conversion successful.");
                             AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, null);
@@ -85,9 +85,6 @@ public class LoginView extends ViewBase {
                 });
             }
         });
-
-        // show content
-        AppContext.getCurrent().getActivity().showContentScreen();
     }
 
     /**

@@ -67,7 +67,6 @@ public class TaskUpdateView extends ViewBase {
         initializeTaskModel();
         initializeCommonControls();
         initializeRecControls();
-        AppContext.getCurrent().getActivity().showContentScreen();
     }
 
     /**
