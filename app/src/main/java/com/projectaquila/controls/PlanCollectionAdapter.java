@@ -36,17 +36,7 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
             throw new UnsupportedOperationException("Enrollments have not been initialized while attempting to construct a plan collection adapter");
         }
         mType = type;
-        if (type == PlanCollectionType.ENROLLED) {
-            mPlans = AppContext.getCurrent().getEnrollments().getPlans();
-            AppContext.getCurrent().getEnrollments().addChangedHandler(new Callback() {
-                @Override
-                public void execute(CallbackParams params) {
-                    mPlans = AppContext.getCurrent().getEnrollments().getPlans();
-                    clear();
-                    addAll(mPlans.getItems());
-                }
-            });
-        } else {
+        if (type != PlanCollectionType.ENROLLED) {
             mPlans = new PlanCollection(type);
         }
     }
@@ -58,16 +48,19 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
         if(mType == PlanCollectionType.ENROLLED){
             // if load is called on an adapter that is viewing enrolled collection,
             // we can directly load the items to the array because data has been loaded in the context
+            mPlans = AppContext.getCurrent().getEnrollments().getPlans();
             clear();
             addAll(mPlans.getItems());
             if(cb != null) cb.execute(null);
         }else {
+            AppContext.getCurrent().getActivity().showLoadingScreen();
             mPlans.load(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     clear();
                     addAll(mPlans.getItems());
                     if (cb != null) cb.execute(params);
+                    AppContext.getCurrent().getActivity().hideLoadingScreen();
                 }
             });
         }
@@ -81,17 +74,20 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
     public void loadPart(int partNum, int take, final Callback cb){
         if(mType == PlanCollectionType.ENROLLED){
             // if load is called on an adapter that is viewing enrolled collection,
-            // we can directly load the items to the array because data has been loaded in the context
+            // we get the data from the app context instead of from a server request
+            mPlans = AppContext.getCurrent().getEnrollments().getPlans();
             clear();
             addAll(mPlans.getItems());
             if(cb != null) cb.execute(null);
         }else {
+            AppContext.getCurrent().getActivity().showLoadingScreen();
             mPlans.loadPart(partNum * take, take, new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     clear();
                     addAll(mPlans.getItems());
                     if (cb != null) cb.execute(params);
+                    AppContext.getCurrent().getActivity().hideLoadingScreen();
                 }
             });
         }

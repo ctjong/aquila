@@ -18,6 +18,8 @@ public class PlanCollectionView extends ViewBase {
     private ListView mList;
     private PlanCollectionAdapter mAdapter;
     private PlanCollectionType mMode;
+    private TextView mNullText;
+    private View mNullView;
 
     @Override
     protected int getLayoutId() {
@@ -26,13 +28,14 @@ public class PlanCollectionView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        AppContext.getCurrent().getActivity().showLoadingScreen();
         try {
             final String modeStr = getNavArgStr("mode");
             System.out.println("[PlanCollectionView.initializeView] mode=" + modeStr);
             mMode = PlanCollectionType.parse(modeStr);
             mAdapter = new PlanCollectionAdapter(mMode);
             mList = (ListView) findViewById(R.id.view_plans_list);
+            mNullText = (TextView) findViewById(R.id.view_plans_null_text);
+            mNullView = findViewById(R.id.view_plans_null);
             mList.setAdapter(mAdapter);
             final Callback loadCallback = getLoadCallback();
             if (mMode == PlanCollectionType.BROWSE) {
@@ -48,7 +51,6 @@ public class PlanCollectionView extends ViewBase {
                         plan.addChangedHandler(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
-                                AppContext.getCurrent().getActivity().showLoadingScreen();
                                 mAdapter.load(loadCallback);
                             }
                         });
@@ -56,9 +58,13 @@ public class PlanCollectionView extends ViewBase {
                 });
                 mAdapter.load(loadCallback);
             } else {
-                // enrolled collection has already been loaded in app context
-                // so we can execute the callback directly
-                loadCallback.execute(null);
+                mAdapter.load(loadCallback);
+                AppContext.getCurrent().getEnrollments().addChangedHandler(new Callback() {
+                    @Override
+                    public void execute(CallbackParams params) {
+                        mAdapter.load(loadCallback);
+                    }
+                });
             }
         }catch(UnsupportedOperationException e){
             System.err.println("[PlanCollectionView.initializeView] exception");
@@ -71,21 +77,19 @@ public class PlanCollectionView extends ViewBase {
         return new Callback(){
             @Override
             public void execute(CallbackParams params) {
-                AppContext.getCurrent().getActivity().hideLoadingScreen();
                 if(mAdapter.getCount() == 0) {
                     mList.setVisibility(View.GONE);
-                    TextView nullText = (TextView) findViewById(R.id.view_plans_null_text);
                     if(mMode == PlanCollectionType.ENROLLED) {
-                        nullText.setText(R.string.plans_enrolled_null);
+                        mNullText.setText(R.string.plans_enrolled_null);
                     }else if(mMode == PlanCollectionType.CREATED) {
-                        nullText.setText(R.string.plans_created_null);
+                        mNullText.setText(R.string.plans_created_null);
                     }else{
-                        nullText.setText(R.string.plans_browse_null);
+                        mNullText.setText(R.string.plans_browse_null);
                     }
-                    findViewById(R.id.view_plans_null).setVisibility(View.VISIBLE);
+                    mNullView.setVisibility(View.VISIBLE);
                 }else{
                     mList.setVisibility(View.VISIBLE);
-                    findViewById(R.id.view_plans_null).setVisibility(View.GONE);
+                    mNullView.setVisibility(View.GONE);
                 }
             }
         };
