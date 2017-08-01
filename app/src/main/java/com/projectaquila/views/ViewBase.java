@@ -42,6 +42,7 @@ public abstract class ViewBase {
             public void execute(CallbackParams params) {
                 mNavArgs = navArgs;
                 AppContext.getCurrent().getActivity().loadView(getLayoutId());
+                AppContext.getCurrent().getActivity().hideLoadingScreen();
                 initializeView();
                 int titleBarStringId = getTitleBarStringId();
                 if(titleBarStringId >= 0) {
@@ -50,6 +51,7 @@ public abstract class ViewBase {
             }
         };
         if(AppContext.getCurrent().getActiveUser() != null && AppContext.getCurrent().getEnrollments() == null){
+            AppContext.getCurrent().getActivity().showLoadingScreen();
             AppContext.getCurrent().loadEnrollments(cb);
         }else{
             cb.execute(null);
