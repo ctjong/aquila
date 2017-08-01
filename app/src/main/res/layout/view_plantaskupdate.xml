@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_planitemdetail"
+    android:id="@+id/view_plantaskupdate"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,27 +14,47 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="20dp">
-            
-            <TextView
-                android:id="@+id/planitemdetail_name"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="18sp"/>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/plantaskupdate_name_label"/>
+                <EditText
+                    android:id="@+id/plantaskupdate_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:hint="@string/plantaskupdate_name_hint"/>
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/planitemdetail_desc"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textSize="14sp"/>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/plantaskupdate_desc_label"/>
+                <EditText
+                    android:id="@+id/plantaskupdate_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="500"
+                    android:textSize="16sp"
+                    android:hint="@string/plantaskupdate_desc_hint"
+                    android:inputType="textMultiLine"/>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
     <LinearLayout
         style="?android:buttonBarStyle"
-        android:id="@+id/planitemdetail_editbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -46,22 +66,22 @@
 
         <Button
             style="?android:buttonStyle"
-            android:id="@+id/planitemdetail_edit_btn"
+            android:id="@+id/plantaskupdate_save_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
-            android:background="@color/green"
-            android:text="@string/common_edit"
+            android:background="@color/colorPrimary"
+            android:text="@string/common_save"
             android:textColor="@color/white" />
 
         <Button
             style="?android:buttonStyle"
-            android:id="@+id/planitemdetail_delete_btn"
+            android:id="@+id/plantaskupdate_cancel_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:background="@color/red"
-            android:text="@string/common_delete"
+            android:background="@color/colorPrimary"
+            android:text="@string/common_cancel"
             android:textColor="@color/white" />
     </LinearLayout>
 </RelativeLayout>

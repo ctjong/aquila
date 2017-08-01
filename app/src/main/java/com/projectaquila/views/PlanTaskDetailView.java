@@ -1,18 +1,17 @@
 package com.projectaquila.views;
 
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
-import com.projectaquila.datamodels.PlanItem;
+import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.services.HelperService;
 
-public class PlanItemDetailView extends ViewBase {
-    private PlanItem mPlanItem;
+public class PlanTaskDetailView extends ViewBase {
+    private PlanTask mPlanTask;
     private TextView mNameText;
     private TextView mDescText;
 
@@ -22,7 +21,7 @@ public class PlanItemDetailView extends ViewBase {
      */
     @Override
     protected int getLayoutId() {
-        return R.layout.view_planitemdetail;
+        return R.layout.view_plantaskdetail;
     }
 
     /**
@@ -39,18 +38,18 @@ public class PlanItemDetailView extends ViewBase {
      */
     @Override
     protected void initializeView(){
-        mPlanItem = (PlanItem)getNavArgObj("planitem");
-        System.out.println("[PlanItemDetailView.initializeView] starting. planItemId=" + HelperService.safePrint(mPlanItem.getId()));
+        mPlanTask = (PlanTask)getNavArgObj("plantask");
+        System.out.println("[PlanTaskDetailView.initializeView] starting. planTaskId=" + HelperService.safePrint(mPlanTask.getId()));
 
-        mNameText = (TextView)findViewById(R.id.planitemdetail_name);
-        mDescText = (TextView)findViewById(R.id.planitemdetail_desc);
+        mNameText = (TextView)findViewById(R.id.plantaskdetail_name);
+        mDescText = (TextView)findViewById(R.id.plantaskdetail_desc);
         updateView();
 
-        if(mPlanItem.getParent().getOwnerId().equals(AppContext.getCurrent().getActiveUser().getId())){
-            findViewById(R.id.planitemdetail_editbar).setVisibility(View.VISIBLE);
-            findViewById(R.id.planitemdetail_edit_btn).setOnClickListener(getEditButtonClickHandler());
-            findViewById(R.id.planitemdetail_delete_btn).setOnClickListener(getDeleteButtonClickHandler());
-            mPlanItem.addChangedHandler(new Callback() {
+        if(mPlanTask.getParent().getOwnerId().equals(AppContext.getCurrent().getActiveUser().getId())){
+            findViewById(R.id.plantaskdetail_editbar).setVisibility(View.VISIBLE);
+            findViewById(R.id.plantaskdetail_edit_btn).setOnClickListener(getEditButtonClickHandler());
+            findViewById(R.id.plantaskdetail_delete_btn).setOnClickListener(getDeleteButtonClickHandler());
+            mPlanTask.addChangedHandler(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     updateView();
@@ -60,11 +59,11 @@ public class PlanItemDetailView extends ViewBase {
     }
 
     /**
-     * Update the view elements based on current plan item data
+     * Update the view elements based on current plan task data
      */
     private void updateView(){
-        mNameText.setText(mPlanItem.getName());
-        mDescText.setText(mPlanItem.getName());
+        mNameText.setText(mPlanTask.getName());
+        mDescText.setText(mPlanTask.getName());
     }
 
     /**
@@ -75,8 +74,8 @@ public class PlanItemDetailView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[PlanItemDetailView.getEditButtonClickHandler] opening edit page");
-                AppContext.getCurrent().getNavigationService().navigateChild(PlanItemUpdateView.class, HelperService.getSinglePairMap("planitem", mPlanItem));
+                System.out.println("[PlanTaskDetailView.getEditButtonClickHandler] opening edit page");
+                AppContext.getCurrent().getNavigationService().navigateChild(PlanTaskUpdateView.class, HelperService.getSinglePairMap("plantask", mPlanTask));
             }
         };
     }
@@ -89,7 +88,7 @@ public class PlanItemDetailView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[PlanItemDetailView.getDeleteButtonClickHandler] deleting");
+                System.out.println("[PlanTaskDetailView.getDeleteButtonClickHandler] deleting");
                 //TODO
             }
         };

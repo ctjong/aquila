@@ -12,7 +12,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
-public class Plan extends CollectionModelBase<PlanItem> {
+public class Plan extends CollectionModelBase<PlanTask> {
     private String mOwnerId;
     private String mName;
     private String mDescription;
@@ -102,7 +102,7 @@ public class Plan extends CollectionModelBase<PlanItem> {
     @Override
     protected String getItemsUrlFormat() {
         try {
-            return "/data/planitem/private/findbyconditions/id/{skip}/{take}/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
+            return "/data/plantask/private/findbyconditions/id/{skip}/{take}/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
         }catch(UnsupportedEncodingException e){
             System.err.println("[Plan.getItemsUrlFormat] encoding error");
             e.printStackTrace();
@@ -116,12 +116,12 @@ public class Plan extends CollectionModelBase<PlanItem> {
         getItems().clear();
         if(result == null)
             return;
-        for(Object planItemsObj : result){
-            JSONArray planItems = (JSONArray)planItemsObj;
-            for(int i=0; i<planItems.length(); i++){
+        for(Object planTasksObj : result){
+            JSONArray planTasks = (JSONArray)planTasksObj;
+            for(int i=0; i<planTasks.length(); i++){
                 try {
-                    PlanItem planItem = PlanItem.parse(this, planItems.get(i));
-                    getItems().add(planItem);
+                    PlanTask planTask = PlanTask.parse(this, planTasks.get(i));
+                    getItems().add(planTask);
                 }catch(JSONException e){
                     System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);
                     e.printStackTrace();

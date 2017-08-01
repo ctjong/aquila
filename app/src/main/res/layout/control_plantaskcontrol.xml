@@ -10,14 +10,14 @@
     android:background="@drawable/bottomborderlight">
 
     <TextView
-        android:id="@+id/planitemcontrol_label"
+        android:id="@+id/plantaskcontrol_label"
         android:layout_width="match_parent"
         android:layout_height="15dp"
         android:layout_marginTop="10dp"
         android:textSize="12sp"/>
 
     <TextView
-        android:id="@+id/planitemcontrol_name"
+        android:id="@+id/plantaskcontrol_name"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_marginTop="5dp"

@@ -10,21 +10,21 @@ import java.util.HashMap;
 /**
  * A single task in a plan
  */
-public class PlanItem extends DataModelBase {
+public class PlanTask extends DataModelBase {
     private Plan mParent;
     private int mDay;
     private String mName;
     private String mDescription;
 
     /**
-     * Construct a new plan item
+     * Construct a new plan task
      * @param parent parent plan
-     * @param id plan item id
-     * @param day plan item day in the plan
-     * @param name plan item name
-     * @param description plan item description
+     * @param id plan task id
+     * @param day plan task day in the plan
+     * @param name plan task name
+     * @param description plan task description
      */
-    public PlanItem(Plan parent, String id, int day, String name, String description){
+    public PlanTask(Plan parent, String id, int day, String name, String description){
         super(id);
         mParent = parent;
         mDay = day;
@@ -33,12 +33,12 @@ public class PlanItem extends DataModelBase {
     }
 
     /**
-     * Parse the given object and try to create a plan item object
+     * Parse the given object and try to create a plan task object
      * @param parent parent plan
      * @param object input object
-     * @return plan item object, or null on failure
+     * @return plan task object, or null on failure
      */
-    public static PlanItem parse(Plan parent, Object object){
+    public static PlanTask parse(Plan parent, Object object){
         if(!(object instanceof JSONObject)){
             return null;
         }
@@ -49,12 +49,12 @@ public class PlanItem extends DataModelBase {
             String name = json.getString("name");
             String description = json.getString("description");
             if(id == null || name == null){
-                System.err.println("[PlanItem.parse] failed to parse plan item");
+                System.err.println("[PlanTask.parse] failed to parse plan task");
                 return null;
             }
-            return new PlanItem(parent, id, day, name, description);
+            return new PlanTask(parent, id, day, name, description);
         }catch(JSONException e){
-            System.err.println("[PlanItem.parse] received JSONException.");
+            System.err.println("[PlanTask.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }
@@ -69,31 +69,31 @@ public class PlanItem extends DataModelBase {
     }
 
     /**
-     * Get the plan item day
-     * @return plan item day
+     * Get the plan task day
+     * @return plan task day
      */
     public int getDay(){
         return mDay;
     }
 
     /**
-     * Get the plan item name
-     * @return plan item name
+     * Get the plan task name
+     * @return plan task name
      */
     public String getName(){
         return mName;
     }
 
     /**
-     * Get the plan item description
-     * @return plan item description
+     * Get the plan task description
+     * @return plan task description
      */
     public String getDescription(){
         return mDescription;
     }
 
     /**
-     * Set the day of this plan item
+     * Set the day of this plan task
      * @param day new day
      */
     public void setDay(int day){
@@ -101,7 +101,7 @@ public class PlanItem extends DataModelBase {
     }
 
     /**
-     * Set the name of this plan item
+     * Set the name of this plan task
      * @param name new name
      */
     public void setName(String name){
@@ -109,7 +109,7 @@ public class PlanItem extends DataModelBase {
     }
 
     /**
-     * Set the description of this plan item
+     * Set the description of this plan task
      * @param description new description
      */
     public void setDescription(String description){
@@ -137,16 +137,16 @@ public class PlanItem extends DataModelBase {
 
     @Override
     protected String getCreateUrl() {
-        return "/data/planitem";
+        return "/data/plantask";
     }
 
     @Override
     protected String getUpdateUrl() {
-        return "/data/planitem/" + getId();
+        return "/data/plantask/" + getId();
     }
 
     @Override
     protected String getDeleteUrl() {
-        return "/data/planitem/" + getId();
+        return "/data/plantask/" + getId();
     }
 }

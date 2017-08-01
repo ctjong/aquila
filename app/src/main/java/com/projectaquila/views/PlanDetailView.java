@@ -7,13 +7,13 @@ import android.widget.TextView;
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.common.PlanItemComparator;
+import com.projectaquila.common.PlanTaskComparator;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.contexts.AppContext;
-import com.projectaquila.controls.PlanItemControl;
+import com.projectaquila.controls.PlanTaskControl;
 import com.projectaquila.datamodels.Plan;
 import com.projectaquila.datamodels.PlanEnrollment;
-import com.projectaquila.datamodels.PlanItem;
+import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.services.HelperService;
 
 import java.util.Collections;
@@ -24,7 +24,7 @@ public class PlanDetailView extends ViewBase {
     private LinearLayout mItemsParent;
     private TextView mNameText;
     private TextView mDescText;
-    private PlanItemComparator mComparator;
+    private PlanTaskComparator mComparator;
     private View mEnrollBtn;
     private View mUnenrollBtn;
 
@@ -58,7 +58,7 @@ public class PlanDetailView extends ViewBase {
         mItemsParent = (LinearLayout)findViewById(R.id.plandetail_itemsparent);
         mNameText = (TextView)findViewById(R.id.plandetail_name);
         mDescText = (TextView)findViewById(R.id.plandetail_desc);
-        mComparator = new PlanItemComparator();
+        mComparator = new PlanTaskComparator();
         mEnrollBtn = findViewById(R.id.plandetail_enroll_btn);
         mUnenrollBtn = findViewById(R.id.plandetail_unenroll_btn);
         mEnrollBtn.setOnClickListener(getEnrollButtonClickHandler());
@@ -113,8 +113,8 @@ public class PlanDetailView extends ViewBase {
         }else{
             mItemsParent.setVisibility(View.VISIBLE);
             mItemsList.removeAllViews();
-            for(PlanItem planItem : mPlan.getItems()){
-                mItemsList.addView(new PlanItemControl(planItem, PlanItemDetailView.class));
+            for(PlanTask planTask : mPlan.getItems()){
+                mItemsList.addView(new PlanTaskControl(planTask, PlanTaskDetailView.class));
             }
         }
     }

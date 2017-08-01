@@ -5,11 +5,11 @@ import android.widget.EditText;
 
 import com.projectaquila.R;
 import com.projectaquila.contexts.AppContext;
-import com.projectaquila.datamodels.PlanItem;
+import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.services.HelperService;
 
-public class PlanItemUpdateView extends ViewBase {
-    private PlanItem mPlanItem;
+public class PlanTaskUpdateView extends ViewBase {
+    private PlanTask mPlanTask;
     private EditText mNameText;
     private EditText mDescText;
 
@@ -19,7 +19,7 @@ public class PlanItemUpdateView extends ViewBase {
      */
     @Override
     protected int getLayoutId() {
-        return R.layout.view_planitemupdate;
+        return R.layout.view_plantaskupdate;
     }
 
     /**
@@ -28,7 +28,7 @@ public class PlanItemUpdateView extends ViewBase {
      */
     @Override
     protected int getTitleBarStringId(){
-        if(mPlanItem.getParent().getId() != null){
+        if(mPlanTask.getParent().getId() != null){
             return R.string.planupdate_title;
         }
         return R.string.plancreate_title;
@@ -39,14 +39,14 @@ public class PlanItemUpdateView extends ViewBase {
      */
     @Override
     protected void initializeView(){
-        mPlanItem = (PlanItem)getNavArgObj("planitem");
-        System.out.println("[PlanItemUpdateView.initializeView] starting. planItemId=" + HelperService.safePrint(mPlanItem.getId()));
-        mNameText = (EditText)findViewById(R.id.planitemupdate_name);
-        mDescText = (EditText)findViewById(R.id.planitemupdate_desc);
-        mNameText.setText(mPlanItem.getName());
-        mDescText.setText(mPlanItem.getDescription());
-        findViewById(R.id.planitemupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
-        findViewById(R.id.planitemupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
+        mPlanTask = (PlanTask)getNavArgObj("plantask");
+        System.out.println("[PlanTaskUpdateView.initializeView] starting. planTaskId=" + HelperService.safePrint(mPlanTask.getId()));
+        mNameText = (EditText)findViewById(R.id.plantaskupdate_name);
+        mDescText = (EditText)findViewById(R.id.plantaskupdate_desc);
+        mNameText.setText(mPlanTask.getName());
+        mDescText.setText(mPlanTask.getDescription());
+        findViewById(R.id.plantaskupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
+        findViewById(R.id.plantaskupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
     }
 
     /**
@@ -57,11 +57,11 @@ public class PlanItemUpdateView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[PlanItemUpdateView.getSaveButtonClickHandler] saving");
-                mPlanItem.setName(mNameText.getText().toString());
-                mPlanItem.setDescription(mDescText.getText().toString());
+                System.out.println("[PlanTaskUpdateView.getSaveButtonClickHandler] saving");
+                mPlanTask.setName(mNameText.getText().toString());
+                mPlanTask.setDescription(mDescText.getText().toString());
                 AppContext.getCurrent().getNavigationService().goBack();
-                mPlanItem.notifyListeners();
+                mPlanTask.notifyListeners();
             }
         };
     }
@@ -74,7 +74,7 @@ public class PlanItemUpdateView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[PlanItemUpdateView.getCancelButtonClickHandler] cancelling");
+                System.out.println("[PlanTaskUpdateView.getCancelButtonClickHandler] cancelling");
                 AppContext.getCurrent().getNavigationService().goBack();
             }
         };

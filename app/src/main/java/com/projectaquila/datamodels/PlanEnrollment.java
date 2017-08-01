@@ -30,9 +30,9 @@ public class PlanEnrollment extends DataModelBase {
     }
 
     /**
-     * Parse the given object and try to create a plan item object
+     * Parse the given object and try to create a plan task object
      * @param object input object
-     * @return plan item object, or null on failure
+     * @return plan task object, or null on failure
      */
     public static PlanEnrollment parse(Object object){
         if(!(object instanceof JSONObject)){
@@ -52,7 +52,7 @@ public class PlanEnrollment extends DataModelBase {
             }
             return new PlanEnrollment(id, plan, version, startDate, completedDays);
         }catch(JSONException e){
-            System.err.println("[PlanItem.parse] received JSONException.");
+            System.err.println("[PlanTask.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }

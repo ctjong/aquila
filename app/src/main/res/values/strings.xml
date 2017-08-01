@@ -83,7 +83,7 @@
     <string name="plans_browse_null">No plan found with the given criteria.</string>
 
     <string name="plancontrol_img_alttext">Plan image</string>
-    <string name="planitemcontrol_label_format">Day #{day}</string>
+    <string name="plantaskcontrol_label_format">Day #{day}</string>
 
     <string name="plandetail_title">Plan detail</string>
     <string name="plancreate_title">Create plan</string>
@@ -95,9 +95,9 @@
     <string name="planupdate_schedule_label">Plan schedule</string>
     <string name="planupdate_add_label">Add new task</string>
 
-    <string name="planitemupdate_name_label">Task name</string>
-    <string name="planitemupdate_name_hint">Name for this task</string>
-    <string name="planitemupdate_desc_label">Task description</string>
-    <string name="planitemupdate_desc_hint">Short description for this task</string>
+    <string name="plantaskupdate_name_label">Task name</string>
+    <string name="plantaskupdate_name_hint">Name for this task</string>
+    <string name="plantaskupdate_desc_label">Task description</string>
+    <string name="plantaskupdate_desc_hint">Short description for this task</string>
 
 </resources>

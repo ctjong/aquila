@@ -6,12 +6,12 @@ import android.widget.LinearLayout;
 
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.common.PlanItemComparator;
+import com.projectaquila.common.PlanTaskComparator;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.controls.PlanItemControl;
+import com.projectaquila.controls.PlanTaskControl;
 import com.projectaquila.datamodels.Plan;
-import com.projectaquila.datamodels.PlanItem;
+import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.services.HelperService;
 
 import java.util.Collections;
@@ -21,7 +21,7 @@ public class PlanUpdateView extends ViewBase {
     private LinearLayout mItemsView;
     private EditText mNameText;
     private EditText mDescText;
-    private PlanItemComparator mComparator;
+    private PlanTaskComparator mComparator;
 
     /**
      * Get layout id
@@ -54,22 +54,22 @@ public class PlanUpdateView extends ViewBase {
         mNameText = (EditText)findViewById(R.id.planupdate_name);
         mDescText = (EditText)findViewById(R.id.planupdate_desc);
         mItemsView = (LinearLayout)findViewById(R.id.planupdate_schedule);
-        mComparator = new PlanItemComparator();
+        mComparator = new PlanTaskComparator();
 
         findViewById(R.id.planupdate_add_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final PlanItem planItem = new PlanItem(mPlan, null, mPlan.getItems().size() + 1, "", "");
-                planItem.addChangedHandler(new Callback() {
+                final PlanTask planTask = new PlanTask(mPlan, null, mPlan.getItems().size() + 1, "", "");
+                planTask.addChangedHandler(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        String name = planItem.getName();
+                        String name = planTask.getName();
                         if(name == null || name.equals("")) return;
-                        mPlan.getItems().add(planItem);
+                        mPlan.getItems().add(planTask);
                         updateView();
                     }
                 });
-                AppContext.getCurrent().getNavigationService().navigateChild(PlanItemUpdateView.class, HelperService.getSinglePairMap("planitem", planItem));
+                AppContext.getCurrent().getNavigationService().navigateChild(PlanTaskUpdateView.class, HelperService.getSinglePairMap("plantask", planTask));
             }
         });
         findViewById(R.id.planupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
@@ -97,8 +97,8 @@ public class PlanUpdateView extends ViewBase {
         mDescText.setText(mPlan.getDescription());
         mItemsView.removeAllViews();
         Collections.sort(mPlan.getItems(), mComparator);
-        for(PlanItem planItem : mPlan.getItems()){
-            mItemsView.addView(new PlanItemControl(planItem, PlanItemUpdateView.class));
+        for(PlanTask planTask : mPlan.getItems()){
+            mItemsView.addView(new PlanTaskControl(planTask, PlanTaskUpdateView.class));
         }
     }
 
