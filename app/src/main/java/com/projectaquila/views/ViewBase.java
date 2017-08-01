@@ -1,6 +1,5 @@
 package com.projectaquila.views;
 
-import android.os.Bundle;
 import android.view.View;
 
 import com.projectaquila.common.Callback;

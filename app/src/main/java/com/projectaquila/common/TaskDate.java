@@ -3,6 +3,7 @@ package com.projectaquila.common;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class TaskDate extends java.util.Date {
     public static final TaskDate MAX = TaskDate.parseDateKey("99991231");
@@ -67,7 +68,7 @@ public class TaskDate extends java.util.Date {
      * @return string representation of the date
      */
     public static String format(String format, TaskDate date){
-        return new SimpleDateFormat(format).format(date);
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
     /**
@@ -78,11 +79,16 @@ public class TaskDate extends java.util.Date {
     public static TaskDate parseDateKey(String dateKey){
         if(dateKey == null) return null;
         try {
-            return new TaskDate(new SimpleDateFormat(DateKeyFormat).parse(dateKey));
+            return new TaskDate(new SimpleDateFormat(DateKeyFormat, Locale.getDefault()).parse(dateKey));
         } catch (ParseException e) {
             System.err.println("[TaskDate.parseDateKey] exception");
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public boolean equals(Object other){
+        return other instanceof TaskDate && toDateKey().equals(((TaskDate)other).toDateKey());
     }
 }

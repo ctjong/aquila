@@ -1,15 +1,19 @@
-package com.projectaquila.controls;
+package com.projectaquila.adapters;
 
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.controls.TaskControl;
+import com.projectaquila.datamodels.DataModelBase;
+import com.projectaquila.datamodels.Plan;
+import com.projectaquila.datamodels.PlanEnrollment;
+import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.datamodels.Task;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.datamodels.TaskCollection;
@@ -21,7 +25,7 @@ import java.util.List;
 /**
  * Adapter for populating tasks on the tasks view
  */
-public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
+public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
     private static final int CACHE_DAYS_SPAN = 3;
     private HashMap<String, List<TaskControl>> mControlsMap;
     private TaskDate mActiveDate;
@@ -31,7 +35,7 @@ public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
      * Instantiate a new tasks adapter
      */
     public TaskCollectionAdapter(){
-        super(AppContext.getCurrent().getActivity(), R.layout.control_taskcontrol);
+        super(R.layout.control_taskcontrol);
         mTasks = new TaskCollection();
     }
 
@@ -86,14 +90,17 @@ public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
             System.err.println("[TaskCollectionAdapter.getView] failed to get task control at position " + position);
             return new TextView(getContext());
         }
-        final String taskKey = taskControl.getTask().getDateKey();
-        taskControl.getTask().addChangedHandler(new Callback() {
+        final DataModelBase data = taskControl.getData();
+        data.addChangedHandler(new Callback() {
             @Override
             public void execute(CallbackParams params) {
                 updateControlsMap(mActiveDate);
-                String currentKey = mActiveDate.toDateKey();
-                if(!taskKey.equals(currentKey)){
-                    updateControlsMap(taskControl.getTask().getDate());
+                if(data instanceof Task){
+                    String currentKey = mActiveDate.toDateKey();
+                    Task task = (Task)data;
+                    if(!task.getDateKey().equals(currentKey)) {
+                        updateControlsMap(task.getDate());
+                    }
                 }
             }
         });
@@ -123,19 +130,35 @@ public class TaskCollectionAdapter extends ArrayAdapter<TaskControl>{
         for(Task task : mTasks.getItems()){
             String taskKey = task.getDate().toDateKey();
             if(task.getRecurrence() == null && taskKey.equals(mapKey) && mControlsMap.containsKey(taskKey)) {
+                // add regular (non-recurred) tasks to active array
                 TaskControl control = new TaskControl(task, task.getDate());
                 mControlsMap.get(taskKey).add(control);
                 if(taskKey.equals(activeKey)) {
                     add(control);
                 }
             } else if(task.getRecurrence() != null && task.getRecurrence().isIncluded(mapDate)){
+                // add recurred tasks to active array
                 TaskControl control = new TaskControl(task, mapDate);
                 mControlsMap.get(mapKey).add(control);
                 if(mapKey.equals(activeKey) && task.getRecurrence().isIncluded(mActiveDate)) {
                     add(control);
                 }
             }
-
+        }
+        // add tasks that are a part of enrolled plans to active array
+        for(PlanEnrollment enrollment : AppContext.getCurrent().getEnrollments().getItems()) {
+            Plan plan = enrollment.getPlan();
+            TaskDate startDate = TaskDate.parseDateKey(enrollment.getEnrollmentStartDate());
+            for(PlanTask planTask : plan.getItems()){
+                TaskDate planTaskDate = startDate.getModified(planTask.getDay() - 1);
+                if(planTaskDate.equals(mapDate)){
+                    TaskControl control = new TaskControl(planTask, enrollment);
+                    mControlsMap.get(mapKey).add(control);
+                    if(mapKey.equals(activeKey)) {
+                        add(control);
+                    }
+                }
+            }
         }
         notifyDataSetChanged();
     }

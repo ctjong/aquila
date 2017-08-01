@@ -1,9 +1,8 @@
-package com.projectaquila.controls;
+package com.projectaquila.adapters;
 
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +20,7 @@ import com.squareup.picasso.Picasso;
 /**
  * Adapter for listing out plans data on a View
  */
-public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
+public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
     private PlanCollectionType mType;
     private PlanCollection mPlans;
 
@@ -30,11 +29,7 @@ public class PlanCollectionAdapter extends ArrayAdapter<Plan>{
      * @param type collection type to view
      */
     public PlanCollectionAdapter(PlanCollectionType type) throws UnsupportedOperationException {
-        super(AppContext.getCurrent().getActivity(), R.layout.control_plancontrol);
-        if(AppContext.getCurrent().getEnrollments() == null){
-            // the caller must have already initialized enrollments before constructing this adapter
-            throw new UnsupportedOperationException("Enrollments have not been initialized while attempting to construct a plan collection adapter");
-        }
+        super(R.layout.control_plancontrol);
         mType = type;
         if (type != PlanCollectionType.ENROLLED) {
             mPlans = new PlanCollection(type);

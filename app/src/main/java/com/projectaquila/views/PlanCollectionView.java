@@ -9,7 +9,7 @@ import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
-import com.projectaquila.controls.PlanCollectionAdapter;
+import com.projectaquila.adapters.PlanCollectionAdapter;
 import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.datamodels.Plan;
 import com.projectaquila.services.HelperService;

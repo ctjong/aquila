@@ -1,7 +1,5 @@
 package com.projectaquila.datamodels;
 
-import android.support.annotation.NonNull;
-
 import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;

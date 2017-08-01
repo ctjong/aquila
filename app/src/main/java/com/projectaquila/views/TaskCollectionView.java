@@ -1,6 +1,5 @@
 package com.projectaquila.views;
 
-import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -9,7 +8,7 @@ import android.widget.TextView;
 import com.projectaquila.R;
 import com.projectaquila.controls.DatePickerClickListener;
 import com.projectaquila.controls.SwipeListener;
-import com.projectaquila.controls.TaskCollectionAdapter;
+import com.projectaquila.adapters.TaskCollectionAdapter;
 import com.projectaquila.common.Callback;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.common.CallbackParams;
