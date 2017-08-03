@@ -29,7 +29,7 @@ public class ChildActivity extends ShellActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().getNavigationService().goBack();
+                onBackPressed();
             }
         });
         AppContext.getCurrent().getNavigationService().onChildActivityLoad(this);

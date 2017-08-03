@@ -94,6 +94,7 @@ public class PlanUpdateView extends ViewBase {
                 public void execute(CallbackParams params) {
                     planTask.removeChangedHandler(this);
                     updateView();
+                    //TODO reorder plan task days
                 }
             });
             mItemsView.addView(new PlanTaskControl(planTask, mPlan.getState() == 0 ? PlanTaskUpdateView.class : PlanTaskDetailView.class));
@@ -141,14 +142,16 @@ public class PlanUpdateView extends ViewBase {
                     mPlan.submitUpdate(new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
-                            System.out.println("[PlanUpdateView.getSaveButtonClickHandler] saving done. exiting.");
-                            AppContext.getCurrent().getNavigationService().goBack();
+                            System.out.println("[PlanUpdateView.getSaveButtonClickHandler] saving done. exiting.");                AppContext.getCurrent().getActivity().hideLoadingScreen();
+                            AppContext.getCurrent().getActivity().hideLoadingScreen();
+                            AppContext.getCurrent().getActivity().onBackPressed();
                             mPlan.notifyListeners();
                         }
                     });
                 }else{
                     System.out.println("[PlanUpdateView.getSaveButtonClickHandler] missing name. exiting without saving.");
-                    AppContext.getCurrent().getNavigationService().goBack();
+                    AppContext.getCurrent().getActivity().hideLoadingScreen();
+                    AppContext.getCurrent().getActivity().onBackPressed();
                 }
             }
         };
@@ -163,7 +166,7 @@ public class PlanUpdateView extends ViewBase {
             @Override
             public void onClick(View v) {
                 System.out.println("[PlanUpdateView.getCancelButtonClickHandler] cancelling");
-                AppContext.getCurrent().getNavigationService().goBack();
+                AppContext.getCurrent().getActivity().onBackPressed();
             }
         };
     }

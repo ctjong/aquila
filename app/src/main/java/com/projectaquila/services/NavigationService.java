@@ -1,7 +1,5 @@
 package com.projectaquila.services;
 
-
-import android.app.Activity;
 import android.content.Intent;
 
 import com.projectaquila.contexts.AppContext;
@@ -75,22 +73,11 @@ public class NavigationService {
     }
 
     /**
-     * Go up one level in the back stack programmatically
-     */
-    public void goBack() {
-        System.out.println("[NavigationService.goBack] initiated");
-        if(mChildStack.isEmpty())
-            return;
-        ChildActivity activity = mChildStack.peek();
-        activity.hideLoadingScreen();
-        activity.onBackPressed();
-    }
-
-    /**
      * Exit all child activities and go to main
      */
     public void goToMainActivity(){
-        goBack();
+        if(mChildStack.isEmpty()) return;
+        mChildStack.peek().onBackPressed();
         while(!mChildStack.isEmpty()){
             mChildStack.pop().finish();
         }

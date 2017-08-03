@@ -181,7 +181,7 @@ public class TaskUpdateView extends ViewBase {
             @Override
             public void onClick(View v) {
                 System.out.println("[TaskUpdateView.getCancelButtonClickHandler] cancelling");
-                AppContext.getCurrent().getNavigationService().goBack();
+                AppContext.getCurrent().getActivity().onBackPressed();
             }
         };
     }

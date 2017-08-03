@@ -49,7 +49,7 @@ public class PlanTaskUpdateView extends ViewBase {
         // setup event handlers
         View deleteBtn = findViewById(R.id.plantaskupdate_delete_btn);
         deleteBtn.setOnClickListener(getDeleteButtonClickHandler());
-        findViewById(R.id.plantaskupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
+        findViewById(R.id.plantaskupdate_done_btn).setOnClickListener(getDoneButtonClickHandler());
         findViewById(R.id.plantaskupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
 
         // show/hide controls based on plan state
@@ -64,26 +64,26 @@ public class PlanTaskUpdateView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[PlanTaskUpdateView.getDeleteButtonClickHandler] deleting");
+                System.out.println("[PlanTaskUpdateView.getDeleteButtonClickHandler] deleting. going back.");
                 mPlanTask.getParent().remove(mPlanTask);
-                AppContext.getCurrent().getNavigationService().goBack();
+                AppContext.getCurrent().getActivity().onBackPressed();
                 mPlanTask.notifyListeners();
             }
         };
     }
 
     /**
-     * Get click handler for the save button
+     * Get click handler for the done button
      * @return click handler
      */
-    private View.OnClickListener getSaveButtonClickHandler(){
+    private View.OnClickListener getDoneButtonClickHandler(){
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[PlanTaskUpdateView.getSaveButtonClickHandler] saving");
+                System.out.println("[PlanTaskUpdateView.getDoneButtonClickHandler] done editing. going back.");
                 mPlanTask.setName(mNameText.getText().toString());
                 mPlanTask.setDescription(mDescText.getText().toString());
-                AppContext.getCurrent().getNavigationService().goBack();
+                AppContext.getCurrent().getActivity().onBackPressed();
                 mPlanTask.notifyListeners();
             }
         };
@@ -97,8 +97,8 @@ public class PlanTaskUpdateView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("[PlanTaskUpdateView.getCancelButtonClickHandler] cancelling");
-                AppContext.getCurrent().getNavigationService().goBack();
+                System.out.println("[PlanTaskUpdateView.getCancelButtonClickHandler] cancelling. going back.");
+                AppContext.getCurrent().getActivity().onBackPressed();
             }
         };
     }
