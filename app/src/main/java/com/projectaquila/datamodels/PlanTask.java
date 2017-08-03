@@ -65,6 +65,15 @@ public class PlanTask extends DataModelBase {
     }
 
     /**
+     * Check whether or not this task is ready to complete based on the given enrollment info
+     * @param enrollment enrollment info
+     * @return true if ready to complete, false otherwise
+     */
+    public boolean isReadyToComplete(PlanEnrollment enrollment){
+        return mDay == enrollment.getCompletedDays() + 1;
+    }
+
+    /**
      * Get the parent plan of this item
      * @return parent plan
      */

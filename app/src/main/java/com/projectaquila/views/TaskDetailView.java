@@ -132,12 +132,24 @@ public class TaskDetailView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().getNavigationService().goToMainActivity();
-                AppContext.getCurrent().getActivity().showLoadingScreen();
                 if(occurrenceDate == null){
-                    task.complete(cb);
+                    HelperService.showAlert(R.string.prompt_completetask_series_title, R.string.prompt_completetask_series_msg, new Callback() {
+                        @Override
+                        public void execute(CallbackParams params) {
+                            AppContext.getCurrent().getNavigationService().goToMainActivity();
+                            AppContext.getCurrent().getActivity().showLoadingScreen();
+                            task.complete(cb);
+                        }
+                    }, null);
                 }else{
-                    task.completeOccurrence(occurrenceDate, cb);
+                    HelperService.showAlert(R.string.prompt_completetask_title, R.string.prompt_completetask_msg, new Callback() {
+                        @Override
+                        public void execute(CallbackParams params) {
+                            AppContext.getCurrent().getNavigationService().goToMainActivity();
+                            AppContext.getCurrent().getActivity().showLoadingScreen();
+                            task.completeOccurrence(occurrenceDate, cb);
+                        }
+                    }, null);
                 }
             }
         };

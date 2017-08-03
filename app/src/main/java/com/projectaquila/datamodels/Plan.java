@@ -14,6 +14,9 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * A plan object, which is also a collection of plan tasks.
+ */
 public class Plan extends CollectionModelBase<PlanTask> {
     private String mOwnerId;
     private int mState;
@@ -22,6 +25,9 @@ public class Plan extends CollectionModelBase<PlanTask> {
     private String mImageUrl;
     private TaskDate mCreatedTime;
 
+    /**
+     * Instantiate a new plan
+     */
     public Plan(String id, String ownerId, int state, String name, String description, String imageUrl, TaskDate createdTime){
         super(id);
         mOwnerId = ownerId;
@@ -32,6 +38,11 @@ public class Plan extends CollectionModelBase<PlanTask> {
         mCreatedTime = createdTime;
     }
 
+    /**
+     * Try parsing the given object to get a plan
+     * @param object input object
+     * @return plan, or null on failure
+     */
     public static Plan parse(Object object){
         if(!(object instanceof JSONObject)){
             return null;
@@ -57,45 +68,75 @@ public class Plan extends CollectionModelBase<PlanTask> {
         }
     }
 
+    /**
+     * Get the plan creator user id
+     * @return creator user id
+     */
     public String getOwnerId(){
         return mOwnerId;
     }
 
+    /**
+     * Get the plan state (0-3)
+     * @return plan state (0-3)
+     */
     public int getState(){
         return mState;
     }
 
+    /**
+     * Get the plan name
+     * @return plan name
+     */
     public String getName(){
         return mName;
     }
 
+    /**
+     * Get the plan description
+     * @return plan description
+     */
     public String getDescription(){
         return mDescription;
     }
 
+    /**
+     * Get the plan image url
+     * @return plan image url
+     */
     public String getImageUrl(){
         return mImageUrl;
     }
 
-    public TaskDate getCreatedTime(){
-        return mCreatedTime;
+    /**
+     * Set the plan state. It has to greater or equal to the current one.
+     * @param state new state (0-3)
+     */
+    public void setState(int state){
+        if(state < mState) {
+            System.err.println("[Plan.setState] new state " + state + " is smaller than current " + mState + ". abort.");
+            return;
+        }
+        mState = state;
     }
 
+    /**
+     * Set the plan name
+     * @param name new name
+     */
     public void setName(String name){
         if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
             mName = name;
         }
     }
 
+    /**
+     * Set the plan description
+     * @param description new description
+     */
     public void setDescription(String description){
         if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
             mDescription = description;
-        }
-    }
-
-    public void setImageUrl(String imageUrl){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
-            mImageUrl = imageUrl;
         }
     }
 

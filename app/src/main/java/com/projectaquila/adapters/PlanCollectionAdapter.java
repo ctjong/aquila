@@ -111,6 +111,8 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
             return new TextView(getContext());
         }
 
+        convertView.findViewById(R.id.plancontrol_draft_label).setVisibility(plan.getState() == 0 ? View.VISIBLE : View.GONE);
+        convertView.findViewById(R.id.plancontrol_private_label).setVisibility(plan.getState() == 1 ? View.VISIBLE : View.GONE);
         final TextView nameText = (TextView)convertView.findViewById(R.id.plancontrol_name);
         final TextView descText = (TextView)convertView.findViewById(R.id.plancontrol_description);
         final ImageView planImg = (ImageView)convertView.findViewById(R.id.plancontrol_img);

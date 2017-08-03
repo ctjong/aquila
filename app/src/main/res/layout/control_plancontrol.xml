@@ -22,20 +22,54 @@
         android:paddingEnd="0dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/plancontrol_name"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:layout_marginTop="5dp"
-            android:textSize="18sp"
-            android:textColor="@color/black" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp">
+            <TextView
+                android:id="@+id/plancontrol_draft_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="14sp"
+                android:textColor="@color/red"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:text="@string/plandetail_draft"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/plancontrol_private_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="14sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:text="@string/plandetail_private"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/plancontrol_name"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="test"/>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/plancontrol_description"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:textSize="14sp"
-            android:textColor="@color/gray" />
+            android:textColor="@color/gray"
+            android:text="test"/>
 
     </LinearLayout>
 

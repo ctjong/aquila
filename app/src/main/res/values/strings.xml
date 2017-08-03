@@ -7,6 +7,7 @@
     <string name="common_delete">Delete</string>
     <string name="common_enroll">Enroll</string>
     <string name="common_unenroll">Un-enroll</string>
+    <string name="common_description">Description</string>
 
     <string name="shell_drawer_open">Open left nav</string>
     <string name="shell_drawer_close">Close left nav</string>
@@ -16,6 +17,23 @@
     <string name="shell_error_connection">Failed to connect to server. Please make sure you are connected to internet.</string>
     <string name="shell_error_unknown">Something went wrong.</string>
     <string name="shell_error_unauthorized">You don\'t have permission to do the requested operation</string>
+
+    <string name="prompt_completetask_title">Mark task as complete?</string>
+    <string name="prompt_completetask_msg">This action cannot be undone.</string>
+    <string name="prompt_completetask_series_title">Mark series as complete?</string>
+    <string name="prompt_completetask_series_msg">This action cannot be undone.</string>
+    <string name="prompt_postponetask_title">Postpone task?</string>
+    <string name="prompt_postponetask_msg">This will move the task to the next day.</string>
+    <string name="prompt_deleteplan_title">Delete plan draft?</string>
+    <string name="prompt_deleteplan_msg">This action cannot be undone.</string>
+    <string name="prompt_submitplan_title">Submit plan?</string>
+    <string name="prompt_submitplan_msg">This action cannot be undone. You will not be able to delete this plan, or add/remove/modify tasks in this plan. However you will still be able to update the plan name and description.</string>
+    <string name="prompt_publishplan_title">Make plan public?</string>
+    <string name="prompt_publishplan_msg">This action cannot be undone, this plan will be available for all users to enroll.</string>
+    <string name="prompt_enrollplan_title">Enroll to this plan?</string>
+    <string name="prompt_enrollplan_msg">This will be added to your daily tasks starting from today.</string>
+    <string name="prompt_unenrollplan_title">Un-enroll from this plan?</string>
+    <string name="prompt_unenrollplan_msg">You can enroll back later, but you will lose the completion record.</string>
 
     <string name="menu_tasks">Tasks</string>
     <string name="menu_enrolled_plans">Enrolled plans</string>
@@ -86,6 +104,11 @@
     <string name="plantaskcontrol_label_format">Day #{day}</string>
 
     <string name="plandetail_title">Plan detail</string>
+    <string name="plandetail_draft">DRAFT</string>
+    <string name="plandetail_private">PRIVATE</string>
+    <string name="plandetail_submit">Submit draft</string>
+    <string name="plandetail_publish">Make public</string>
+
     <string name="plancreate_title">Create plan</string>
     <string name="planupdate_title">Update plan</string>
     <string name="planupdate_name_label">Plan name</string>

@@ -44,6 +44,13 @@ public class PlanTaskControl extends LinearLayout {
     }
 
     /**
+     * Show the task represented by this control as completed
+     */
+    public void markAsCompleted(){
+        findViewById(R.id.plantaskcontrol_check).setVisibility(VISIBLE);
+    }
+
+    /**
      * Get click event handler
      * @return click event handler
      */

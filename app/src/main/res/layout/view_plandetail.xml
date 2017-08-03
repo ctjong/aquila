@@ -16,18 +16,48 @@
             android:padding="20dp">
 
             <TextView
+                android:id="@+id/plandetail_private_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:text="@string/plandetail_private"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/plandetail_draft_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                android:textSize="14sp"
+                android:text="@string/plandetail_draft"
+                android:visibility="gone"/>
+
+            <TextView
                 android:id="@+id/plandetail_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:textSize="18sp"/>
+                android:textSize="22sp"/>
 
-            <TextView
-                android:id="@+id/plandetail_desc"
+            <LinearLayout
+                android:id="@+id/plandetail_descparent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textSize="14sp"/>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:text="@string/common_description"/>
+
+                <TextView
+                    android:id="@+id/plandetail_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/plandetail_itemsparent"
@@ -85,6 +115,26 @@
                 android:text="@string/common_unenroll"
                 android:textColor="@color/white"
                 android:visibility="gone" />
+            <Button
+                style="?android:buttonStyle"
+                android:id="@+id/plandetail_submit_btn"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="@string/plandetail_submit"
+                android:textColor="@color/white"
+                android:visibility="gone"/>
+            <Button
+                style="?android:buttonStyle"
+                android:id="@+id/plandetail_publish_btn"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/colorPrimary"
+                android:text="@string/plandetail_publish"
+                android:textColor="@color/white"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout

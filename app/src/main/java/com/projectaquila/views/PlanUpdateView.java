@@ -55,23 +55,14 @@ public class PlanUpdateView extends ViewBase {
         mDescText = (EditText)findViewById(R.id.planupdate_desc);
         mItemsView = (LinearLayout)findViewById(R.id.planupdate_schedule);
         mComparator = new PlanTaskComparator();
+        View addButton = findViewById(R.id.planupdate_add_btn);
 
-        findViewById(R.id.planupdate_add_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final PlanTask planTask = new PlanTask(mPlan, null, 0, mPlan.getItems().size() + 1, "", "");
-                planTask.addChangedHandler(new Callback() {
-                    @Override
-                    public void execute(CallbackParams params) {
-                        String name = planTask.getName();
-                        if(name == null || name.equals("")) return;
-                        mPlan.getItems().add(planTask);
-                        updateView();
-                    }
-                });
-                AppContext.getCurrent().getNavigationService().navigateChild(PlanTaskUpdateView.class, HelperService.getSinglePairMap("plantask", planTask));
-            }
-        });
+        if(mPlan.getState() == 0) {
+            addButton.setVisibility(View.VISIBLE);
+            addButton.setOnClickListener(getAddButtonClickHandler());
+        }else{
+            addButton.setVisibility(View.GONE);
+        }
         findViewById(R.id.planupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
         findViewById(R.id.planupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
 
@@ -98,8 +89,31 @@ public class PlanUpdateView extends ViewBase {
         mItemsView.removeAllViews();
         Collections.sort(mPlan.getItems(), mComparator);
         for(PlanTask planTask : mPlan.getItems()){
-            mItemsView.addView(new PlanTaskControl(planTask, PlanTaskUpdateView.class));
+            mItemsView.addView(new PlanTaskControl(planTask, mPlan.getState() == 0 ? PlanTaskUpdateView.class : PlanTaskDetailView.class));
         }
+    }
+
+    /**
+     * Get click handler for the add task button
+     * @return click handler
+     */
+    public View.OnClickListener getAddButtonClickHandler(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final PlanTask planTask = new PlanTask(mPlan, null, 0, mPlan.getItems().size() + 1, "", "");
+                planTask.addChangedHandler(new Callback() {
+                    @Override
+                    public void execute(CallbackParams params) {
+                        String name = planTask.getName();
+                        if (name == null || name.equals("")) return;
+                        mPlan.getItems().add(planTask);
+                        updateView();
+                    }
+                });
+                AppContext.getCurrent().getNavigationService().navigateChild(PlanTaskUpdateView.class, HelperService.getSinglePairMap("plantask", planTask));
+            }
+        };
     }
 
     /**

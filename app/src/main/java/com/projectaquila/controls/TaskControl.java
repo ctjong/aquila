@@ -12,6 +12,8 @@ import com.projectaquila.datamodels.PlanEnrollment;
 import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.datamodels.Task;
 import com.projectaquila.common.TaskDate;
+import com.projectaquila.services.HelperService;
+import com.projectaquila.views.PlanTaskDetailView;
 import com.projectaquila.views.TaskDetailView;
 
 import java.util.HashMap;
@@ -84,10 +86,22 @@ public class TaskControl {
         }
 
         // setup swipe/click handlers
-        if (mTask != null && mTask.getRecurrence() == null) {
-            SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
-        } else {
-            SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction);
+        if (mTask != null) {
+            if(mTask.getRecurrence() == null) {
+                // non-plan task, non recurred
+                SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
+            }else{
+                // non-plan task, recurred
+                SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction);
+            }
+        } else  {
+            if(mPlanTask.isReadyToComplete(mEnrollment)){
+                // plan task, previous tasks completed
+                SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction);
+            }else{
+                // plan task, previous tasks not completed
+                SwipeListener.listen(slider, slider, null, null, openTaskAction);
+            }
         }
     }
 
@@ -99,19 +113,24 @@ public class TaskControl {
         return new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                if(mTask == null) {
-                    System.err.println("[TaskListItem.getPostponeTaskAction] postponing a plan task is unsupported. aborting.");
-                    return;
-                }
-                System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
-                if(mTask.getRecurrence() != null){
-                    System.err.println("[TaskListItem.getPostponeTaskAction] task is recurred. aborting.");
-                    return;
-                }
-                TaskDate postponedDate = mTask.getDate().getModified(1);
-                mTask.setDate(postponedDate);
-                mTask.submitUpdate(null);
-                mTask.notifyListeners();
+                HelperService.showAlert(R.string.prompt_postponetask_title, R.string.prompt_postponetask_msg, new Callback() {
+                    @Override
+                    public void execute(CallbackParams params) {
+                        if(mTask == null) {
+                            System.err.println("[TaskListItem.getPostponeTaskAction] postponing a plan task is unsupported. aborting.");
+                            return;
+                        }
+                        System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
+                        if(mTask.getRecurrence() != null){
+                            System.err.println("[TaskListItem.getPostponeTaskAction] task is recurred. aborting.");
+                            return;
+                        }
+                        TaskDate postponedDate = mTask.getDate().getModified(1);
+                        mTask.setDate(postponedDate);
+                        mTask.submitUpdate(null);
+                        mTask.notifyListeners();
+                    }
+                }, null);
             }
         };
     }
@@ -124,17 +143,29 @@ public class TaskControl {
         return new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                if(mTask != null) {
-                    System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
-                    if (mTask.getRecurrence() == null) {
-                        mTask.complete(null);
-                    } else {
-                        mTask.completeOccurrence(mDate, null);
+                HelperService.showAlert(R.string.prompt_completetask_title, R.string.prompt_completetask_msg, new Callback() {
+                    @Override
+                    public void execute(CallbackParams params) {
+                        if(mTask != null) {
+                            System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
+                            if (mTask.getRecurrence() == null) {
+                                mTask.complete(null);
+                            } else {
+                                mTask.completeOccurrence(mDate, null);
+                            }
+                        }else{
+                            System.out.println("[TaskListItem.getCompleteTaskAction] completing plan task " + mPlanTask.getId());
+                            mEnrollment.setCompletedDays(mPlanTask.getDay());
+                            AppContext.getCurrent().getActivity().showLoadingScreen();
+                            mEnrollment.submitUpdate(new Callback() {
+                                @Override
+                                public void execute(CallbackParams params) {
+                                    AppContext.getCurrent().getActivity().hideLoadingScreen();
+                                }
+                            });
+                        }
                     }
-                }else{
-                    System.out.println("[TaskListItem.getCompleteTaskAction] completing plan task " + mPlanTask.getId());
-                    //TODO
-                }
+                }, null);
             }
         };
     }
@@ -155,7 +186,10 @@ public class TaskControl {
                     AppContext.getCurrent().getNavigationService().navigateChild(TaskDetailView.class, navParams);
                 }else{
                     System.out.println("[TaskListItem.getOpenTaskAction] opening plan task " + mPlanTask.getId());
-                    //TODO
+                    HashMap<String, Object> navParams = new HashMap<>();
+                    navParams.put("plantask", mPlanTask);
+                    navParams.put("enrollment", mEnrollment);
+                    AppContext.getCurrent().getNavigationService().navigateChild(PlanTaskDetailView.class, navParams);
                 }
             }
         };

@@ -42,7 +42,6 @@ public class PlanEnrollment extends DataModelBase {
             String id = json.getString("id");
             JSONObject obj = json.getJSONObject("plan");
             Plan plan = Plan.parse(obj);
-            int version = json.getInt("version");
             String startDate = json.getString("startdate");
             int completedDays = json.getInt("completeddays");
             TaskDate createdTime = new TaskDate(json.getLong("createdtime"));
@@ -80,6 +79,14 @@ public class PlanEnrollment extends DataModelBase {
      */
     public int getCompletedDays(){
         return mCompletedDays;
+    }
+
+    /**
+     * Set the number of completed days
+     * @param completedDays number of completed days
+     */
+    public void setCompletedDays(int completedDays){
+        mCompletedDays = completedDays;
     }
 
     @Override

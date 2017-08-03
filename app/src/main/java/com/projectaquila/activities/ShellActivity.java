@@ -20,8 +20,8 @@ import com.projectaquila.common.Event;
 import com.projectaquila.views.LoginView;
 
 public abstract class ShellActivity extends AppCompatActivity {
+    protected View mLoadingScreen;
     private FrameLayout mContentScreen;
-    private View mLoadingScreen;
     private View mErrorScreen;
     private Event mActivityResultEvent;
     private View mCurrentView;
