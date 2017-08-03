@@ -1,6 +1,7 @@
 package com.projectaquila.services;
 
 
+import android.app.Activity;
 import android.content.Intent;
 
 import com.projectaquila.contexts.AppContext;
@@ -80,7 +81,9 @@ public class NavigationService {
         System.out.println("[NavigationService.goBack] initiated");
         if(mChildStack.isEmpty())
             return;
-        mChildStack.peek().onBackPressed();
+        ChildActivity activity = mChildStack.peek();
+        activity.hideLoadingScreen();
+        activity.onBackPressed();
     }
 
     /**

@@ -45,8 +45,31 @@ public class PlanTaskUpdateView extends ViewBase {
         mDescText = (EditText)findViewById(R.id.plantaskupdate_desc);
         mNameText.setText(mPlanTask.getName());
         mDescText.setText(mPlanTask.getDescription());
+
+        // setup event handlers
+        View deleteBtn = findViewById(R.id.plantaskupdate_delete_btn);
+        deleteBtn.setOnClickListener(getDeleteButtonClickHandler());
         findViewById(R.id.plantaskupdate_save_btn).setOnClickListener(getSaveButtonClickHandler());
         findViewById(R.id.plantaskupdate_cancel_btn).setOnClickListener(getCancelButtonClickHandler());
+
+        // show/hide controls based on plan state
+        deleteBtn.setVisibility(mPlanTask.getParent().getState() == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Get click handler for the delete button
+     * @return click handler
+     */
+    private View.OnClickListener getDeleteButtonClickHandler(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("[PlanTaskUpdateView.getDeleteButtonClickHandler] deleting");
+                mPlanTask.getParent().remove(mPlanTask);
+                AppContext.getCurrent().getNavigationService().goBack();
+                mPlanTask.notifyListeners();
+            }
+        };
     }
 
     /**

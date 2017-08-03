@@ -138,12 +138,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/plandetail_ownerbtns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="3dp"
-            android:gravity="center"
-            android:visibility="gone">
+            android:gravity="center">
             <Button
                 style="?android:buttonStyle"
                 android:id="@+id/plandetail_edit_btn"
@@ -151,7 +149,8 @@
                 android:layout_height="30dp"
                 android:background="@color/green"
                 android:text="@string/common_edit"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:visibility="gone"/>
             <Button
                 style="?android:buttonStyle"
                 android:id="@+id/plandetail_delete_btn"
@@ -161,7 +160,8 @@
                 android:layout_marginLeft="10dp"
                 android:background="@color/red"
                 android:text="@string/common_delete"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

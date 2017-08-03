@@ -16,8 +16,8 @@ import java.util.List;
  */
 public abstract class CollectionModelBase<T extends DataModelBase> extends DataModelBase {
     private List<T> mItems;
+    private List<T> mRemoveList;
     private int mOngoingRequestCount;
-    private boolean mRequestsSubmitted;
 
     /**
      * Construct a new collection data model
@@ -26,6 +26,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
     public CollectionModelBase(String id){
         super(id);
         mItems = new ArrayList<>();
+        mRemoveList = new ArrayList<>();
     }
 
     /**
@@ -63,15 +64,14 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
     }
 
     /**
-     * Remove item with the specified id
-     * @param id item id
+     * Remove the given object from the collection
+     * @param item item to remove
      */
-    public void remove(String id){
-        for(int i=0; i<mItems.size(); i++){
-            if(mItems.get(i).getId().equals(id)) {
-                mItems.remove(i);
-                return;
-            }
+    public void remove(T item){
+        if(!mItems.contains(item)) return;
+        mItems.remove(item);
+        if(item.getId() != null) {
+            mRemoveList.add(item);
         }
     }
 
@@ -155,30 +155,31 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
                     cb.execute(null);
                     return;
                 }
-                mRequestsSubmitted = false;
-                mOngoingRequestCount = 0;
-                for(DataModelBase item : getItems()){
-                    mOngoingRequestCount++;
-                    Callback itemCallback = new Callback(){
-                        @Override
-                        public void execute(CallbackParams params) {
-                            mOngoingRequestCount--;
-                            System.out.println("[CollectionModelBase.write] one request completed. ongoing=" + mOngoingRequestCount);
-                            if(mRequestsSubmitted && mOngoingRequestCount <= 0) {
-                                System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
-                                cb.execute(null);
-                                mRequestsSubmitted = false;
-                            }
+                Callback itemCallback = new Callback(){
+                    @Override
+                    public void execute(CallbackParams params) {
+                        mOngoingRequestCount--;
+                        System.out.println("[CollectionModelBase.write] one request completed. ongoing=" + mOngoingRequestCount);
+                        if(mOngoingRequestCount <= 0) {
+                            System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
+                            cb.execute(null);
                         }
-                    };
+                    }
+                };
+                mOngoingRequestCount = 0;
+                for(T item : getItems()){
+                    mOngoingRequestCount++;
                     if(method == ApiTaskMethod.DELETE){
                         item.submitDelete(itemCallback);
                     }else{
                         item.submitUpdate(itemCallback);
                     }
                 }
-                mRequestsSubmitted = true;
-                System.out.println("[CollectionModelBase.write] all requests submitted");
+                for(T item : mRemoveList){
+                    mOngoingRequestCount++;
+                    item.submitDelete(itemCallback);
+                }
+                System.out.println("[CollectionModelBase.write] all requests submitted, total=" + mOngoingRequestCount);
             }
         });
     }

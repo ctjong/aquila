@@ -111,12 +111,14 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
             return new TextView(getContext());
         }
 
-        convertView.findViewById(R.id.plancontrol_draft_label).setVisibility(plan.getState() == 0 ? View.VISIBLE : View.GONE);
-        convertView.findViewById(R.id.plancontrol_private_label).setVisibility(plan.getState() == 1 ? View.VISIBLE : View.GONE);
-        final TextView nameText = (TextView)convertView.findViewById(R.id.plancontrol_name);
-        final TextView descText = (TextView)convertView.findViewById(R.id.plancontrol_description);
-        final ImageView planImg = (ImageView)convertView.findViewById(R.id.plancontrol_img);
-        updateCardView(plan, nameText, descText, planImg);
+        updateCardView(plan, convertView);
+        final View controlView = convertView;
+        plan.addChangedHandler(new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                updateCardView(plan, controlView);
+            }
+        });
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,14 +131,17 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
     /**
      * Update the values of the view elements
      * @param plan Plan data
-     * @param nameText name TextView
-     * @param descText description TextView
-     * @param planImg plan image ImageView
+     * @param convertView control view
      */
-    private void updateCardView(Plan plan, TextView nameText, TextView descText, ImageView planImg){
-        nameText.setText(plan.getName());
-        descText.setText(plan.getDescription());
+    private void updateCardView(Plan plan, View convertView){
+        ((TextView)convertView.findViewById(R.id.plancontrol_name)).setText(plan.getName());
+        ((TextView)convertView.findViewById(R.id.plancontrol_description)).setText(plan.getDescription());
+        convertView.findViewById(R.id.plancontrol_draft_label).setVisibility(plan.getState() == 0 ? View.VISIBLE : View.GONE);
+        convertView.findViewById(R.id.plancontrol_private_label).setVisibility(plan.getState() == 1 ? View.VISIBLE : View.GONE);
+
+        // update image
         String imageUrl = plan.getImageUrl();
+        ImageView planImg = ((ImageView)convertView.findViewById(R.id.plancontrol_img));
         if(imageUrl != null && !imageUrl.equals("") && !imageUrl.equals("null")) {
             Picasso.with(getContext()).load(plan.getImageUrl()).into(planImg);
         }else{

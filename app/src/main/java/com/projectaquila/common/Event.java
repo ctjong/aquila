@@ -14,6 +14,10 @@ public class Event{
         handlers.add(cb);
     }
 
+    public void removeHandler(Callback cb){
+        handlers.remove(cb);
+    }
+
     public void removeAllHandlers(){
         handlers.clear();
     }

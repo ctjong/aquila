@@ -10,6 +10,7 @@ import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.datamodels.PlanEnrollment;
 import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.services.HelperService;
 
@@ -27,27 +28,26 @@ public class PlanTaskControl extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.control_plantaskcontrol, this);
 
+        // get UI elements and bind event handlers
         mPlanTask = planTask;
         mClickTarget = clickTarget;
-        String label = AppContext.getCurrent().getActivity().getString(R.string.plantaskcontrol_label_format).replace("{day}", HelperService.toString(planTask.getDay()));
-        ((TextView)findViewById(R.id.plantaskcontrol_label)).setText(label);
-        ((TextView)findViewById(R.id.plantaskcontrol_name)).setText(planTask.getName());
         setOnClickListener(getClickHandler());
-        mPlanTask.addChangedHandler(new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                String name = mPlanTask.getName();
-                if(name == null || name.equals("")) return;
-                ((TextView)findViewById(R.id.plantaskcontrol_name)).setText(mPlanTask.getName());
-            }
-        });
-    }
 
-    /**
-     * Show the task represented by this control as completed
-     */
-    public void markAsCompleted(){
-        findViewById(R.id.plantaskcontrol_check).setVisibility(VISIBLE);
+        // initialize view
+        String label = AppContext.getCurrent().getActivity().getString(R.string.plantaskcontrol_label_format).replace("{day}", HelperService.toString(mPlanTask.getDay()));
+        ((TextView)findViewById(R.id.plantaskcontrol_label)).setText(label);
+        String name = mPlanTask.getName();
+        if(name != null && !name.equals("")) {
+            ((TextView) findViewById(R.id.plantaskcontrol_name)).setText(mPlanTask.getName());
+        }
+
+        // show/hide completion check mark
+        for(PlanEnrollment e : AppContext.getCurrent().getEnrollments().getItems()){
+            if(e.getPlan().getId().equals(mPlanTask.getParent().getId()) && mPlanTask.getDay() <= e.getCompletedDays()){
+                findViewById(R.id.plantaskcontrol_check).setVisibility(VISIBLE);
+                break;
+            }
+        }
     }
 
     /**

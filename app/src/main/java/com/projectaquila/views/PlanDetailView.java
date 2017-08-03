@@ -31,6 +31,10 @@ public class PlanDetailView extends ViewBase {
     private PlanTaskComparator mComparator;
     private View mEnrollBtn;
     private View mUnenrollBtn;
+    private View mSubmitBtn;
+    private View mPublishBtn;
+    private View mEditBtn;
+    private View mDeleteBtn;
 
     /**
      * Get layout id
@@ -72,46 +76,24 @@ public class PlanDetailView extends ViewBase {
         mComparator = new PlanTaskComparator();
         mEnrollBtn = findViewById(R.id.plandetail_enroll_btn);
         mUnenrollBtn = findViewById(R.id.plandetail_unenroll_btn);
+        mEditBtn = findViewById(R.id.plandetail_edit_btn);
+        mDeleteBtn= findViewById(R.id.plandetail_delete_btn);
+        mSubmitBtn = findViewById(R.id.plandetail_submit_btn);
+        mPublishBtn = findViewById(R.id.plandetail_publish_btn);
 
-        // initialize buttons if this is not in enrollment view mode
-        if(mEnrollment == null) {
-            if (mPlan.getOwnerId().equals(AppContext.getCurrent().getActiveUser().getId())) {
-                findViewById(R.id.plandetail_ownerbtns).setVisibility(View.VISIBLE);
-                View editBtn = findViewById(R.id.plandetail_edit_btn);
-                editBtn.setVisibility(View.VISIBLE);
-                editBtn.setOnClickListener(getEditButtonClickHandler());
-                // if not in draft state, delete is disabled
-                if (mPlan.getState() == 0) {
-                    View deleteBtn = findViewById(R.id.plandetail_delete_btn);
-                    deleteBtn.setVisibility(View.VISIBLE);
-                    deleteBtn.setOnClickListener(getDeleteButtonClickHandler());
-                }
-                mPlan.addChangedHandler(new Callback() {
-                    @Override
-                    public void execute(CallbackParams params) {
-                        updateView();
-                    }
-                });
+        // setup event handlers
+        mEditBtn.setOnClickListener(getEditButtonClickHandler());
+        mDeleteBtn.setOnClickListener(getDeleteButtonClickHandler());
+        mSubmitBtn.setOnClickListener(getSubmitButtonClickHandler());
+        mPublishBtn.setOnClickListener(getPublishButtonClickHandler());
+        mUnenrollBtn.setOnClickListener(getUnenrollButtonClickHandler());
+        mEnrollBtn.setOnClickListener(getEnrollButtonClickHandler());
+        mPlan.addChangedHandler(new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                updateView();
             }
-            if (mPlan.getState() == 0) {
-                View submitBtn = findViewById(R.id.plandetail_submit_btn);
-                submitBtn.setVisibility(View.VISIBLE);
-                submitBtn.setOnClickListener(getSubmitButtonClickHandler());
-            } else {
-                if (mPlan.getState() == 1) {
-                    View publishBtn = findViewById(R.id.plandetail_publish_btn);
-                    publishBtn.setVisibility(View.VISIBLE);
-                    publishBtn.setOnClickListener(getPublishButtonClickHandler());
-                }
-                if (AppContext.getCurrent().getEnrollments().containsPlan(mPlan.getId())) {
-                    mUnenrollBtn.setVisibility(View.VISIBLE);
-                    mUnenrollBtn.setOnClickListener(getUnenrollButtonClickHandler());
-                } else {
-                    mEnrollBtn.setVisibility(View.VISIBLE);
-                    mEnrollBtn.setOnClickListener(getEnrollButtonClickHandler());
-                }
-            }
-        }
+        });
 
         // load plan tasks and update view after that
         mPlan.load(new Callback() {
@@ -127,8 +109,37 @@ public class PlanDetailView extends ViewBase {
      * Update the view elements based on current plan data
      */
     private void updateView(){
+        // initialize buttons if this is not in enrollment view mode
+        mEditBtn.setVisibility(View.GONE);
+        mDeleteBtn.setVisibility(View.GONE);
+        mSubmitBtn.setVisibility(View.GONE);
+        mPublishBtn.setVisibility(View.GONE);
+        mUnenrollBtn.setVisibility(View.GONE);
+        mEnrollBtn.setVisibility(View.GONE);
+        if(mEnrollment == null) {
+            if (mPlan.getOwnerId().equals(AppContext.getCurrent().getActiveUser().getId())) {
+                mEditBtn.setVisibility(View.VISIBLE);
+                if (mPlan.getState() == 0) {
+                    mDeleteBtn.setVisibility(View.VISIBLE);
+                    mSubmitBtn.setVisibility(View.VISIBLE);
+                } else if (mPlan.getState() == 1) {
+                    mPublishBtn.setVisibility(View.VISIBLE);
+                }
+            }
+            if (mPlan.getState() > 0) {
+                if (AppContext.getCurrent().getEnrollments().containsPlan(mPlan.getId())) {
+                    mUnenrollBtn.setVisibility(View.VISIBLE);
+                } else {
+                    mEnrollBtn.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+        // update state labels
         mDraftText.setVisibility(mPlan.getState() == 0 ? View.VISIBLE : View.GONE);
         mPrivateText.setVisibility(mPlan.getState() == 1 ? View.VISIBLE : View.GONE);
+
+        // update name and descriptions
         mNameText.setText(mPlan.getName());
         if(mPlan.getDescription() != null && !mPlan.getDescription().equals("")){
             mDescText.setText(mPlan.getDescription());
@@ -136,18 +147,16 @@ public class PlanDetailView extends ViewBase {
         }else{
             mDescParent.setVisibility(View.GONE);
         }
-        Collections.sort(mPlan.getItems(), mComparator);
+
+        // update plan tasks
         if(mPlan.getItems().size() == 0){
             mItemsParent.setVisibility(View.GONE);
         }else{
+            Collections.sort(mPlan.getItems(), mComparator);
             mItemsParent.setVisibility(View.VISIBLE);
             mItemsList.removeAllViews();
             for(PlanTask planTask : mPlan.getItems()){
-                PlanTaskControl control = new PlanTaskControl(planTask, PlanTaskDetailView.class);
-                if(mEnrollment != null && planTask.getDay() <= mEnrollment.getCompletedDays()){
-                    control.markAsCompleted();
-                }
-                mItemsList.addView(control);
+                mItemsList.addView(new PlanTaskControl(planTask, PlanTaskDetailView.class));
             }
         }
     }
@@ -163,6 +172,7 @@ public class PlanDetailView extends ViewBase {
                 HelperService.showAlert(R.string.prompt_submitplan_title, R.string.prompt_submitplan_msg, new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
+                        System.out.println("[PlanDetailView.getSubmitButtonClickHandler] submitting plan " + mPlan.getId());
                         mPlan.setState(1);
                         AppContext.getCurrent().getActivity().showLoadingScreen();
                         mPlan.submitUpdate(new Callback() {
@@ -189,6 +199,7 @@ public class PlanDetailView extends ViewBase {
                 HelperService.showAlert(R.string.prompt_publishplan_title, R.string.prompt_publishplan_msg, new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
+                        System.out.println("[PlanDetailView.getPublishButtonClickHandler] publishing plan " + mPlan.getId());
                         mPlan.setState(2);
                         AppContext.getCurrent().getActivity().showLoadingScreen();
                         mPlan.submitUpdate(new Callback() {

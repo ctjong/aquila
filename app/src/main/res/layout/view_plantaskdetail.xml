@@ -31,38 +31,5 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        style="?android:buttonBarStyle"
-        android:id="@+id/plantaskdetail_editbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/bottomoverlaybg"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:gravity="center"
-        android:elevation="20dp">
-
-        <Button
-            style="?android:buttonStyle"
-            android:id="@+id/plantaskdetail_edit_btn"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:background="@color/green"
-            android:text="@string/common_edit"
-            android:textColor="@color/white" />
-
-        <Button
-            style="?android:buttonStyle"
-            android:id="@+id/plantaskdetail_delete_btn"
-            android:layout_width="100dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:background="@color/red"
-            android:text="@string/common_delete"
-            android:textColor="@color/white" />
-    </LinearLayout>
 </RelativeLayout>
 

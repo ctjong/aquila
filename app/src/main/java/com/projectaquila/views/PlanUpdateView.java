@@ -88,7 +88,14 @@ public class PlanUpdateView extends ViewBase {
         mDescText.setText(mPlan.getDescription());
         mItemsView.removeAllViews();
         Collections.sort(mPlan.getItems(), mComparator);
-        for(PlanTask planTask : mPlan.getItems()){
+        for(final PlanTask planTask : mPlan.getItems()){
+            planTask.addChangedHandler(new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    planTask.removeChangedHandler(this);
+                    updateView();
+                }
+            });
             mItemsView.addView(new PlanTaskControl(planTask, mPlan.getState() == 0 ? PlanTaskUpdateView.class : PlanTaskDetailView.class));
         }
     }
@@ -105,6 +112,7 @@ public class PlanUpdateView extends ViewBase {
                 planTask.addChangedHandler(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
+                        planTask.removeChangedHandler(this);
                         String name = planTask.getName();
                         if (name == null || name.equals("")) return;
                         mPlan.getItems().add(planTask);

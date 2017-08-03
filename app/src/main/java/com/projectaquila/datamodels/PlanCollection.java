@@ -20,7 +20,7 @@ public class PlanCollection extends CollectionModelBase<Plan> {
     @Override
     protected String getItemsUrlFormat() {
         if(mType == PlanCollectionType.BROWSE){
-            return "/data/planenrollment/private/findall/id/{skip}/{take}";
+            return "/data/plan/public/findall/id/{skip}/{take}";
         }else if(mType == PlanCollectionType.CREATED){
             return "/data/plan/private/findall/id/{skip}/{take}";
         }else{

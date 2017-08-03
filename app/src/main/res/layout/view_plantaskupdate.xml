@@ -66,10 +66,22 @@
 
         <Button
             style="?android:buttonStyle"
+            android:id="@+id/plantaskupdate_delete_btn"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:background="@color/red"
+            android:text="@string/common_delete"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
+
+        <Button
+            style="?android:buttonStyle"
             android:id="@+id/plantaskupdate_save_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
-            android:background="@color/colorPrimary"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/green"
             android:text="@string/common_save"
             android:textColor="@color/white" />
 
