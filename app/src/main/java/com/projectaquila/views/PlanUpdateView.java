@@ -59,7 +59,7 @@ public class PlanUpdateView extends ViewBase {
         findViewById(R.id.planupdate_add_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final PlanTask planTask = new PlanTask(mPlan, null, mPlan.getItems().size() + 1, "", "");
+                final PlanTask planTask = new PlanTask(mPlan, null, 0, mPlan.getItems().size() + 1, "", "");
                 planTask.addChangedHandler(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {

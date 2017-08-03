@@ -119,6 +119,7 @@ public class AppContext {
             settingsEditor.remove("userfirstname");
             settingsEditor.remove("userlastname");
             settingsEditor.remove("usertoken");
+            settingsEditor.apply();
             System.out.println("[AppContext.setActiveUser] active user cleared");
             mEnrollments = null;
         }else {

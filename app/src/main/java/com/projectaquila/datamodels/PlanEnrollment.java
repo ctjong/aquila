@@ -1,5 +1,6 @@
 package com.projectaquila.datamodels;
 
+import com.projectaquila.common.TaskDate;
 import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;
@@ -12,19 +13,19 @@ import java.util.HashMap;
  */
 public class PlanEnrollment extends DataModelBase {
     private Plan mPlan;
-    private int mVersion;
     private String mStartDate;
     private int mCompletedDays;
+    private TaskDate mCreatedTime;
 
     /**
      * Construct a new plan enrollment
      */
-    public PlanEnrollment(String id, Plan plan, int version, String startDate, int completedDays){
+    public PlanEnrollment(String id, Plan plan, String startDate, int completedDays, TaskDate createdTime){
         super(id);
         mPlan = plan;
-        mVersion = version;
         mStartDate = startDate;
         mCompletedDays = completedDays;
+        mCreatedTime = createdTime;
     }
 
     /**
@@ -44,11 +45,12 @@ public class PlanEnrollment extends DataModelBase {
             int version = json.getInt("version");
             String startDate = json.getString("startdate");
             int completedDays = json.getInt("completeddays");
+            TaskDate createdTime = new TaskDate(json.getLong("createdtime"));
             if(id == null || plan == null){
                 System.err.println("[PlanEnrollment.parse] failed to parse plan enrollment");
                 return null;
             }
-            return new PlanEnrollment(id, plan, version, startDate, completedDays);
+            return new PlanEnrollment(id, plan, startDate, completedDays, createdTime);
         }catch(JSONException e){
             System.err.println("[PlanTask.parse] received JSONException.");
             e.printStackTrace();
@@ -62,14 +64,6 @@ public class PlanEnrollment extends DataModelBase {
      */
     public Plan getPlan(){
         return mPlan;
-    }
-
-    /**
-     * Get the plan version
-     * @return plan version
-     */
-    public int getVersion(){
-        return mVersion;
     }
 
     /**
@@ -92,7 +86,6 @@ public class PlanEnrollment extends DataModelBase {
     protected HashMap<String, String> getCreateDataMap() {
         HashMap<String, String> data = new HashMap<>();
         data.put("planid", mPlan.getId());
-        data.put("version", HelperService.toString(mVersion));
         data.put("startdate", mStartDate);
         return data;
     }
@@ -100,7 +93,6 @@ public class PlanEnrollment extends DataModelBase {
     @Override
     protected HashMap<String, String> getUpdateDataMap() {
         HashMap<String, String> data = new HashMap<>();
-        data.put("version", HelperService.toString(mVersion));
         data.put("startdate", mStartDate);
         data.put("completeddays", HelperService.toString(mCompletedDays));
         return data;

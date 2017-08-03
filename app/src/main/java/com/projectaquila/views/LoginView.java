@@ -52,7 +52,9 @@ public class LoginView extends ViewBase {
         }
 
         // clear any existing login session and setup login button
-        AppContext.getCurrent().getAuthService().logOut();
+        if(AppContext.getCurrent().getActiveUser() != null) {
+            AppContext.getCurrent().getAuthService().logOut();
+        }
         LoginButton fbLoginButton = (LoginButton) findViewById(R.id.view_login_loginbutton);
         authService.setupFbLoginButton(fbLoginButton, new Callback(){
             @Override

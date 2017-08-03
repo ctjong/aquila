@@ -1,7 +1,9 @@
 package com.projectaquila.datamodels;
 
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.TaskDate;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,18 +16,20 @@ import java.util.List;
 
 public class Plan extends CollectionModelBase<PlanTask> {
     private String mOwnerId;
+    private int mState;
     private String mName;
     private String mDescription;
     private String mImageUrl;
-    private int mVersion;
+    private TaskDate mCreatedTime;
 
-    public Plan(String id, String ownerId, String name, String description, String imageUrl, int version){
+    public Plan(String id, String ownerId, int state, String name, String description, String imageUrl, TaskDate createdTime){
         super(id);
         mOwnerId = ownerId;
+        mState = state;
         mName = name;
         mDescription = description;
         mImageUrl = imageUrl;
-        mVersion = version;
+        mCreatedTime = createdTime;
     }
 
     public static Plan parse(Object object){
@@ -36,15 +40,16 @@ public class Plan extends CollectionModelBase<PlanTask> {
         try{
             String id = json.getString("id");
             String ownerId = json.getString("ownerid");
+            int state = json.getInt("state");
             String name = json.getString("name");
             String description = json.getString("description");
             String imageUrl = json.getString("imageurl");
-            int version = json.getInt("version");
+            TaskDate createdTime = new TaskDate(json.getLong("createdtime"));
             if(id == null || ownerId == null || name == null){
                 System.err.println("[Plan.parse] failed to parse plan");
                 return null;
             }
-            return new Plan(id, ownerId, name, description, imageUrl, version);
+            return new Plan(id, ownerId, state, name, description, imageUrl, createdTime);
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
@@ -54,6 +59,10 @@ public class Plan extends CollectionModelBase<PlanTask> {
 
     public String getOwnerId(){
         return mOwnerId;
+    }
+
+    public int getState(){
+        return mState;
     }
 
     public String getName(){
@@ -68,8 +77,8 @@ public class Plan extends CollectionModelBase<PlanTask> {
         return mImageUrl;
     }
 
-    public int getVersion(){
-        return mVersion;
+    public TaskDate getCreatedTime(){
+        return mCreatedTime;
     }
 
     public void setName(String name){
@@ -94,6 +103,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
     protected HashMap<String, String> getCreateDataMap() {
         HashMap<String, String> data = new HashMap<>();
         data.put("name", mName);
+        data.put("state", HelperService.toString(mState));
         data.put("description", mDescription);
         data.put("imageurl", mImageUrl);
         return data;

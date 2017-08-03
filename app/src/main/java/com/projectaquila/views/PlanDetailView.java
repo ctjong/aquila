@@ -165,7 +165,7 @@ public class PlanDetailView extends ViewBase {
             public void onClick(View v) {
                 System.out.println("[PlanDetailView.getEnrollButtonClickHandler] enrolling plan " + mPlan.getId());
                 AppContext.getCurrent().getActivity().showLoadingScreen();
-                final PlanEnrollment enrollment = new PlanEnrollment(null, mPlan, mPlan.getVersion(), (new TaskDate()).toDateKey(), 0);
+                final PlanEnrollment enrollment = new PlanEnrollment(null, mPlan, (new TaskDate()).toDateKey(), 0, null);
                 enrollment.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
