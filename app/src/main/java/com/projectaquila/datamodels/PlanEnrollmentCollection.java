@@ -50,24 +50,19 @@ public class PlanEnrollmentCollection extends CollectionModelBase<PlanEnrollment
 
     @Override
     protected void setupItems(CallbackParams params) {
-        List result = (List)params.get("result");
+        JSONArray items = params.getApiResult().getItems();
         getItems().clear();
-        if(result == null)
-            return;
-        for(Object enrollmentsObj : result){
-            JSONArray enrollments = (JSONArray)enrollmentsObj;
-            for(int i=0; i<enrollments.length(); i++){
-                try {
-                    PlanEnrollment enrollment = PlanEnrollment.parse(enrollments.get(i));
-                    if(enrollment != null){
-                        getItems().add(enrollment);
-                    }else{
-                        System.err.println("[PlanEnrollmentCollections.setupItems] failed to parse plan enrollment");
-                    }
-                }catch(JSONException e){
-                    System.err.println("[PlanEnrollmentCollections.setupItems] an error occurred while trying to get plan at index " + i);
-                    e.printStackTrace();
+        for(int i=0; i<items.length(); i++){
+            try {
+                PlanEnrollment enrollment = PlanEnrollment.parse(items.get(i));
+                if(enrollment != null){
+                    getItems().add(enrollment);
+                }else{
+                    System.err.println("[PlanEnrollmentCollections.setupItems] failed to parse plan enrollment");
                 }
+            }catch(JSONException e){
+                System.err.println("[PlanEnrollmentCollections.setupItems] an error occurred while trying to get plan at index " + i);
+                e.printStackTrace();
             }
         }
     }

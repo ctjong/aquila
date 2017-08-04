@@ -20,14 +20,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:textSize="18sp"/>
+                android:textSize="18sp"
+                android:text="test"/>
 
             <TextView
                 android:id="@+id/plantaskdetail_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:text="test"/>
 
         </LinearLayout>
     </ScrollView>

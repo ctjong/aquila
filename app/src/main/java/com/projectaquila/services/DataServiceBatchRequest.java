@@ -6,6 +6,7 @@ import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,18 @@ public class DataServiceBatchRequest {
                 if(mDownloadCount < count){
                     retrievePart(partNum + 1);
                 }else{
-                    mCallback.execute(new CallbackParams("result", mResult));
+                    JSONArray allitems = new JSONArray();
+                    for(JSONArray arr : mResult) {
+                        for (int i = 0; i < arr.length(); i++) {
+                            try {
+                                allitems.put(arr.get(i));
+                            } catch (JSONException e) {
+                                System.err.println("[DataServiceBatchRequest.retrievePart] exception");
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    mCallback.execute(new CallbackParams(new ApiResult(200, allitems.length(), allitems)));
                 }
             }
         });

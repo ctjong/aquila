@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
 public class PlanCollection extends CollectionModelBase<Plan> {
     private PlanCollectionType mType;
 
@@ -30,28 +28,23 @@ public class PlanCollection extends CollectionModelBase<Plan> {
 
     @Override
     protected void setupItems(CallbackParams params) {
-        List result = (List)params.get("result");
+        JSONArray items = params.getApiResult().getItems();
         getItems().clear();
-        if(result == null)
-            return;
-        for(Object plansObj : result){
-            JSONArray plans = (JSONArray)plansObj;
-            for(int i=0; i<plans.length(); i++){
-                try {
-                    Object planJson = plans.get(i);
-                    if(mType == PlanCollectionType.ENROLLED && planJson instanceof JSONObject){
-                        planJson = ((JSONObject)planJson).getJSONObject("plan");
-                    }
-                    Plan plan = Plan.parse(planJson);
-                    if(plan != null){
-                        getItems().add(plan);
-                    }else{
-                        System.err.println("[PlanCollection.setupItems] failed to parse plan, null found");
-                    }
-                }catch(JSONException e){
-                    System.err.println("[PlanCollection.setupItems] an error occurred while trying to get plan at index " + i);
-                    e.printStackTrace();
+        for(int i=0; i<items.length(); i++){
+            try {
+                Object planJson = items.get(i);
+                if(mType == PlanCollectionType.ENROLLED && planJson instanceof JSONObject){
+                    planJson = ((JSONObject)planJson).getJSONObject("plan");
                 }
+                Plan plan = Plan.parse(planJson);
+                if(plan != null){
+                    getItems().add(plan);
+                }else{
+                    System.err.println("[PlanCollection.setupItems] failed to parse plan, null found");
+                }
+            } catch (JSONException e) {
+                System.err.println("[PlanCollection.setupItems] an error occurred while trying to get plan at index " + i);
+                e.printStackTrace();
             }
         }
     }
