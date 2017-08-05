@@ -27,6 +27,17 @@ public class PlanCollectionView extends ViewBase {
     }
 
     @Override
+    protected int getTitleBarStringId() {
+        if(mMode == PlanCollectionType.ENROLLED){
+            return R.string.menu_enrolled_plans;
+        }else if(mMode == PlanCollectionType.BROWSE) {
+            return R.string.menu_browse_plans;
+        }else{
+            return R.string.menu_created_plans;
+        }
+    }
+
+    @Override
     protected void initializeView(){
         try {
             final String modeStr = getNavArgStr("mode");

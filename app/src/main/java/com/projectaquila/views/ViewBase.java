@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public abstract class ViewBase {
     private Map<String, Object> mNavArgs;
+    protected boolean mViewLoadAborted;
 
     /**
      * Get layout ID
@@ -29,13 +30,14 @@ public abstract class ViewBase {
      * Get the string ID to be shown on the title bar
      * @return string ID
      */
-    protected int getTitleBarStringId() { return -1; }
+    protected abstract int getTitleBarStringId();
 
     /**
      * Invoked when this view is started
      * @param navArgs navigation arguments
      */
     public void onStart(final Map<String, Object> navArgs) {
+        mViewLoadAborted = false;
         Callback cb = new Callback(){
             @Override
             public void execute(CallbackParams params) {
@@ -43,10 +45,9 @@ public abstract class ViewBase {
                 AppContext.getCurrent().getActivity().loadView(getLayoutId());
                 AppContext.getCurrent().getActivity().hideLoadingScreen();
                 initializeView();
+                if(mViewLoadAborted) return;
                 int titleBarStringId = getTitleBarStringId();
-                if(titleBarStringId >= 0) {
-                    AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
-                }
+                AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
             }
         };
         if(AppContext.getCurrent().getActiveUser() != null && AppContext.getCurrent().getEnrollments() == null){

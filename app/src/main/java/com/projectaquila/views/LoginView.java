@@ -26,6 +26,15 @@ public class LoginView extends ViewBase {
     }
 
     /**
+     * Get the string ID to be shown on the title bar
+     * @return string ID
+     */
+    @Override
+    protected int getTitleBarStringId() {
+        return R.string.app_name;
+    }
+
+    /**
      * Initialize the view for the current activity
      */
     @Override
@@ -48,6 +57,7 @@ public class LoginView extends ViewBase {
         // check if logged in on launch
         if(authService.isUserLoggedIn()){
             AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, null);
+            mViewLoadAborted = true;
             return;
         }
 

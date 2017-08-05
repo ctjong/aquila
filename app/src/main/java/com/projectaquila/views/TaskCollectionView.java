@@ -31,6 +31,11 @@ public class TaskCollectionView extends ViewBase {
     }
 
     @Override
+    protected int getTitleBarStringId() {
+        return R.string.menu_tasks;
+    }
+
+    @Override
     protected void initializeView(){
         mNewTask = new Task(null, new TaskDate(), "", null);
         mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
