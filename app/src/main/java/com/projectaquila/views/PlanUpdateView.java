@@ -97,7 +97,7 @@ public class PlanUpdateView extends ViewBase {
                     //TODO reorder plan task days
                 }
             });
-            mItemsView.addView(new PlanTaskControl(planTask, mPlan.getState() == 0 ? PlanTaskUpdateView.class : PlanTaskDetailView.class));
+            mItemsView.addView(PlanTaskControl.create(planTask, null, mPlan.getState() == 0));
         }
     }
 

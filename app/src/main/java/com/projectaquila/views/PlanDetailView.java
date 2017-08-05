@@ -156,7 +156,7 @@ public class PlanDetailView extends ViewBase {
             mItemsParent.setVisibility(View.VISIBLE);
             mItemsList.removeAllViews();
             for(PlanTask planTask : mPlan.getItems()){
-                mItemsList.addView(new PlanTaskControl(planTask, PlanTaskDetailView.class));
+                mItemsList.addView(PlanTaskControl.create(planTask, mEnrollment, false));
             }
         }
     }
