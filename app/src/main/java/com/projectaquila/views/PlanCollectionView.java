@@ -51,7 +51,7 @@ public class PlanCollectionView extends ViewBase {
             final Callback loadCallback = getLoadCallback();
             if (mMode == PlanCollectionType.BROWSE) {
                 //TODO pagination
-                mAdapter.loadPart(0, 20, loadCallback);
+                mAdapter.load(loadCallback);
             } else if (mMode == PlanCollectionType.CREATED) {
                 Button addBtn = (Button) findViewById(R.id.view_plans_add);
                 addBtn.setVisibility(View.VISIBLE);
