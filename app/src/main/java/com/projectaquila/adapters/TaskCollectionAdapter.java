@@ -150,6 +150,7 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
             Plan plan = enrollment.getPlan();
             TaskDate startDate = enrollment.getStartDate();
             for(PlanTask planTask : plan.getItems()){
+                if(planTask.getDay() <= enrollment.getCompletedDays()) continue;
                 TaskDate planTaskDate = startDate.getModified(planTask.getDay() - 1);
                 if(planTaskDate.equals(mapDate)){
                     TaskControl control = new TaskControl(planTask, enrollment);
