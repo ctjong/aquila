@@ -169,11 +169,17 @@ public class AppContext {
                         @Override
                         public void execute(CallbackParams params) {
                             mActiveDataLoadingCount--;
+                            System.out.println("[AppContext.loadEnrollments] active data loading = " + mActiveDataLoadingCount);
                             if(mActiveDataLoadingCount <= 0){
+                                System.out.println("[AppContext.loadEnrollments] executing callback");
                                 cb.execute(null);
                             }
                         }
                     });
+                }
+                System.out.println("[AppContext.loadEnrollments] active data loading = " + mActiveDataLoadingCount);                            if(mActiveDataLoadingCount <= 0){
+                    System.out.println("[AppContext.loadEnrollments] executing callback");
+                    cb.execute(null);
                 }
             }
         });
