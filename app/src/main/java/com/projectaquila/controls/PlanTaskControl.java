@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.projectaquila.R;
+import com.projectaquila.common.Callback;
+import com.projectaquila.common.Event;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.datamodels.PlanEnrollment;
 import com.projectaquila.datamodels.PlanTask;
@@ -17,6 +19,7 @@ import com.projectaquila.views.PlanTaskDetailView;
 import com.projectaquila.views.PlanTaskUpdateView;
 
 public class PlanTaskControl extends LinearLayout {
+    private Event mFocusLostEvent;
     private PlanTask mPlanTask;
     private boolean mIsEditable;
 
@@ -51,6 +54,7 @@ public class PlanTaskControl extends LinearLayout {
         inflater.inflate(R.layout.control_plantaskcontrol, this);
 
         // initialize variables and event handlers
+        mFocusLostEvent = new Event();
         mPlanTask = planTask;
         mIsEditable = isEditable;
         setOnClickListener(getClickHandler());
@@ -68,10 +72,18 @@ public class PlanTaskControl extends LinearLayout {
             //TODO show delete, move up, move down buttons
         }else{
             //TODO hide delete, move up, move down buttons
-            if(enrollment.getPlan().getId().equals(mPlanTask.getParent().getId()) && mPlanTask.getDay() <= enrollment.getCompletedDays()){
+            if(enrollment != null && enrollment.getPlan().getId().equals(mPlanTask.getParent().getId()) && mPlanTask.getDay() <= enrollment.getCompletedDays()){
                 findViewById(R.id.plantaskcontrol_check).setVisibility(VISIBLE);
             }
         }
+    }
+
+    /**
+     * Add a handler to the focus lost event
+     * @param handler event handler
+     */
+    public void addFocusLostHandler(Callback handler){
+        mFocusLostEvent.addHandler(handler);
     }
 
     /**
@@ -82,8 +94,9 @@ public class PlanTaskControl extends LinearLayout {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFocusLostEvent.invoke(null);
                 Class clickTarget = mIsEditable ? PlanTaskUpdateView.class : PlanTaskDetailView.class;
-                System.out.println("[PlanTaskControl.getItemControl] opening " + clickTarget.getName() + " for plan task #" + mPlanTask.getDay());
+                System.out.println("[PlanTaskControl.getClickHandler] opening " + clickTarget.getName() + " for plan task #" + mPlanTask.getDay());
                 AppContext.getCurrent().getNavigationService().navigateChild(clickTarget, HelperService.getSinglePairMap("plantask", mPlanTask));
             }
         };

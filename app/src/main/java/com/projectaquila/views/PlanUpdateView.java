@@ -89,6 +89,14 @@ public class PlanUpdateView extends ViewBase {
         mItemsView.removeAllViews();
         Collections.sort(mPlan.getItems(), mComparator);
         for(final PlanTask planTask : mPlan.getItems()){
+            PlanTaskControl control = PlanTaskControl.create(planTask, null, mPlan.getState() == 0);
+            control.addFocusLostHandler(new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    mPlan.setName(mNameText.getText().toString());
+                    mPlan.setDescription(mDescText.getText().toString());
+                }
+            });
             planTask.addChangedHandler(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
@@ -97,7 +105,7 @@ public class PlanUpdateView extends ViewBase {
                     //TODO reorder plan task days
                 }
             });
-            mItemsView.addView(PlanTaskControl.create(planTask, null, mPlan.getState() == 0));
+            mItemsView.addView(control);
         }
     }
 
@@ -109,6 +117,8 @@ public class PlanUpdateView extends ViewBase {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPlan.setName(mNameText.getText().toString());
+                mPlan.setDescription(mDescText.getText().toString());
                 final PlanTask planTask = new PlanTask(mPlan, null, 0, mPlan.getItems().size() + 1, "", "");
                 planTask.addChangedHandler(new Callback() {
                     @Override
@@ -142,7 +152,7 @@ public class PlanUpdateView extends ViewBase {
                     mPlan.submitUpdate(new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
-                            System.out.println("[PlanUpdateView.getSaveButtonClickHandler] saving done. exiting.");                AppContext.getCurrent().getActivity().hideLoadingScreen();
+                            System.out.println("[PlanUpdateView.getSaveButtonClickHandler] saving done. exiting.");
                             AppContext.getCurrent().getActivity().hideLoadingScreen();
                             AppContext.getCurrent().getActivity().onBackPressed();
                             mPlan.notifyListeners();

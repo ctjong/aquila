@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class PlanEnrollment extends DataModelBase {
     private Plan mPlan;
-    private String mStartDate;
+    private TaskDate mStartDate;
     private int mCompletedDays;
     private TaskDate mCreatedTime;
 
@@ -23,7 +23,7 @@ public class PlanEnrollment extends DataModelBase {
     public PlanEnrollment(String id, Plan plan, String startDate, int completedDays, TaskDate createdTime){
         super(id);
         mPlan = plan;
-        mStartDate = startDate;
+        mStartDate = TaskDate.parseDateKey(startDate);
         mCompletedDays = completedDays;
         mCreatedTime = createdTime;
     }
@@ -69,7 +69,7 @@ public class PlanEnrollment extends DataModelBase {
      * Get the enrollment start date
      * @return enrollment start date
      */
-    public String getEnrollmentStartDate(){
+    public TaskDate getStartDate(){
         return mStartDate;
     }
 
@@ -93,14 +93,14 @@ public class PlanEnrollment extends DataModelBase {
     protected HashMap<String, String> getCreateDataMap() {
         HashMap<String, String> data = new HashMap<>();
         data.put("planid", mPlan.getId());
-        data.put("startdate", mStartDate);
+        data.put("startdate", mStartDate.toDateKey());
         return data;
     }
 
     @Override
     protected HashMap<String, String> getUpdateDataMap() {
         HashMap<String, String> data = new HashMap<>();
-        data.put("startdate", mStartDate);
+        data.put("startdate", mStartDate.toDateKey());
         data.put("completeddays", HelperService.toString(mCompletedDays));
         return data;
     }

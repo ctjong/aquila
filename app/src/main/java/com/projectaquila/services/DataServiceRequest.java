@@ -68,6 +68,7 @@ public class DataServiceRequest extends AsyncTask<Void, Void, ApiResult> {
             if(AppContext.getCurrent().getActiveUser() != null) {
                 String token = AppContext.getCurrent().getActiveUser().getToken();
                 conn.addRequestProperty("Authorization", "Bearer " + token);
+                System.out.println("[DataServiceRequest.doInBackground] header['Authorization'] = " + "Bearer " + token);
             }
 
             // set request method

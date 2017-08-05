@@ -21,15 +21,88 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:text="test"/>
+                android:text="Test Plan Name"/>
 
-            <TextView
+            <LinearLayout
                 android:id="@+id/plantaskdetail_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:text="@string/common_description"/>
+
+                <TextView
+                    android:id="@+id/plantaskdetail_desctext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:text="test"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/plantaskdetail_enrollment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textSize="14sp"
-                android:text="test"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/plantaskdetail_planintro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:text="@string/plantaskdetail_planintro"/>
+
+                <TextView
+                    android:id="@+id/plantaskdetail_planlink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:text="@string/plantaskdetail_planlink"/>
+
+                <LinearLayout
+                    android:id="@+id/plantaskdetail_completedisabled"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textColor="@color/red"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:text="@string/plantaskdetail_completedisabled"/>
+                    <Button
+                        android:layout_width="300dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/gray"
+                        android:textColor="@color/lightgray"
+                        android:text="@string/plantaskdetail_complete"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/plantaskdetail_completebtn"
+                    android:layout_width="300dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorPrimary"
+                    android:textColor="@color/white"
+                    android:text="@string/plantaskdetail_complete"
+                    android:textAllCaps="false" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

@@ -148,7 +148,7 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
         // add tasks that are a part of enrolled plans to active array
         for(PlanEnrollment enrollment : AppContext.getCurrent().getEnrollments().getItems()) {
             Plan plan = enrollment.getPlan();
-            TaskDate startDate = TaskDate.parseDateKey(enrollment.getEnrollmentStartDate());
+            TaskDate startDate = enrollment.getStartDate();
             for(PlanTask planTask : plan.getItems()){
                 TaskDate planTaskDate = startDate.getModified(planTask.getDay() - 1);
                 if(planTaskDate.equals(mapDate)){

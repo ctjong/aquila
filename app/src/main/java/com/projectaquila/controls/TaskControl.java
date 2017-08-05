@@ -94,14 +94,9 @@ public class TaskControl {
                 // non-plan task, recurred
                 SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction);
             }
-        } else  {
-            if(mPlanTask.isReadyToComplete(mEnrollment)){
-                // plan task, previous tasks completed
-                SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction);
-            }else{
-                // plan task, previous tasks not completed
-                SwipeListener.listen(slider, slider, null, null, openTaskAction);
-            }
+        } else {
+            // plan task
+            SwipeListener.listen(slider, slider, null, null, openTaskAction);
         }
     }
 
@@ -146,23 +141,15 @@ public class TaskControl {
                 HelperService.showAlert(R.string.prompt_completetask_title, R.string.prompt_completetask_msg, new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        if(mTask != null) {
-                            System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
-                            if (mTask.getRecurrence() == null) {
-                                mTask.complete(null);
-                            } else {
-                                mTask.completeOccurrence(mDate, null);
-                            }
-                        }else{
-                            System.out.println("[TaskListItem.getCompleteTaskAction] completing plan task " + mPlanTask.getId());
-                            mEnrollment.setCompletedDays(mPlanTask.getDay());
-                            AppContext.getCurrent().getActivity().showLoadingScreen();
-                            mEnrollment.submitUpdate(new Callback() {
-                                @Override
-                                public void execute(CallbackParams params) {
-                                    AppContext.getCurrent().getActivity().hideLoadingScreen();
-                                }
-                            });
+                        if(mTask == null) {
+                            System.err.println("[TaskListItem.getCompleteTaskAction] task=null. abort.");
+                            return;
+                        }
+                        System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
+                        if (mTask.getRecurrence() == null) {
+                            mTask.complete(null);
+                        } else {
+                            mTask.completeOccurrence(mDate, null);
                         }
                     }
                 }, null);

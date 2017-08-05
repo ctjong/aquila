@@ -20,17 +20,17 @@
     <string name="shell_error_unauthorized">You don\'t have permission to do the requested operation</string>
 
     <string name="prompt_completetask_title">Mark task as complete?</string>
-    <string name="prompt_completetask_msg">This action cannot be undone.</string>
+    <string name="prompt_completetask_msg">This task will not be available to view anymore and this action cannot be undone.</string>
     <string name="prompt_completetask_series_title">Mark series as complete?</string>
-    <string name="prompt_completetask_series_msg">This action cannot be undone.</string>
+    <string name="prompt_completetask_series_msg">The series will not be available to view anymore and this action cannot be undone.</string>
     <string name="prompt_postponetask_title">Postpone task?</string>
     <string name="prompt_postponetask_msg">This will move the task to the next day.</string>
     <string name="prompt_deleteplan_title">Delete plan draft?</string>
-    <string name="prompt_deleteplan_msg">This action cannot be undone.</string>
+    <string name="prompt_deleteplan_msg">This draft will not be available to view anymore and this action cannot be undone.</string>
     <string name="prompt_submitplan_title">Submit plan?</string>
-    <string name="prompt_submitplan_msg">This action cannot be undone. You will not be able to delete this plan, or add/remove/modify tasks in this plan. However you will still be able to update the plan name and description.</string>
+    <string name="prompt_submitplan_msg">This will allow you to enroll to this plan, but you will not be able to delete this plan, or modify the tasks in this plan. However you will still be able to update the plan name and description. This action cannot be undone.</string>
     <string name="prompt_publishplan_title">Make plan public?</string>
-    <string name="prompt_publishplan_msg">This action cannot be undone, this plan will be available for all users to enroll.</string>
+    <string name="prompt_publishplan_msg">This will make the plan available for all users to enroll. This action cannot be undone, </string>
     <string name="prompt_enrollplan_title">Enroll to this plan?</string>
     <string name="prompt_enrollplan_msg">This will be added to your daily tasks starting from today.</string>
     <string name="prompt_unenrollplan_title">Un-enroll from this plan?</string>
@@ -124,4 +124,8 @@
     <string name="plantaskupdate_desc_label">Task description</string>
     <string name="plantaskupdate_desc_hint">Short description for this task</string>
 
+    <string name="plantaskdetail_planintro">This is day {day} task in plan:</string>
+    <string name="plantaskdetail_planlink"><u>{planName}</u></string>
+    <string name="plantaskdetail_completedisabled">You must complete the previous tasks in the plan first before you can complete this task.</string>
+    <string name="plantaskdetail_complete">Mark this task as complete</string>
 </resources>
