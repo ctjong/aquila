@@ -64,7 +64,7 @@
         </RelativeLayout>
 
         <TextView
-            android:id="@+id/plancontrol_description"
+            android:id="@+id/plancontrol_secondline"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:textSize="14sp"

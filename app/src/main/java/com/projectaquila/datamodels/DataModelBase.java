@@ -8,7 +8,9 @@ import com.projectaquila.common.Event;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Base class for all data models
@@ -103,6 +105,51 @@ public abstract class DataModelBase {
                     cb.execute(params);
             }
         });
+    }
+
+    /**
+     * Load nested items in this data item. This will do the following:
+     * - resolve second level important foreign keys that are not resolved on the collection level load.
+     * - if this is also a collection (nested collection), load the collection items
+     * @param cb callback
+     */
+    protected void loadNestedItems(final Callback cb){
+        List<DataModelBase> nestedItems = getNestedItems();
+        if(nestedItems.isEmpty()){
+            cb.execute(null);
+            return;
+        }
+        for(DataModelBase nestedItem : nestedItems){
+            final DataModelBase currentItem = nestedItem;
+            currentItem.loadSelf(new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    if(currentItem instanceof CollectionModelBase){
+                        final CollectionModelBase collection = ((CollectionModelBase)currentItem);
+                        collection.loadItems(cb);
+                    }else{
+                        cb.execute(null);
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Load this data item individually
+     * @param cb load callback
+     */
+    protected void loadSelf(final Callback cb){
+        cb.execute(null);
+    }
+
+    /**
+     * Get a list of nested items to load separately. This is empty by default.
+     * If there are nested items, this should be overridden.
+     * @return nested items
+     */
+    protected List<DataModelBase> getNestedItems(){
+        return new ArrayList<>();
     }
 
     /**

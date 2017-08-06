@@ -13,6 +13,7 @@ import com.projectaquila.common.CallbackParams;
 import com.projectaquila.datamodels.Plan;
 import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.datamodels.PlanCollection;
+import com.projectaquila.datamodels.User;
 import com.projectaquila.services.HelperService;
 import com.projectaquila.views.PlanDetailView;
 import com.squareup.picasso.Picasso;
@@ -39,7 +40,7 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
     /**
      * Load the whole plans set for the current view
      */
-    public void load(final Callback cb){
+    public void loadItems(final Callback cb){
         if(mType == PlanCollectionType.ENROLLED){
             // if load is called on an adapter that is viewing enrolled collection,
             // we can directly load the items to the array because data has been loaded in the context
@@ -49,7 +50,7 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
             if(cb != null) cb.execute(null);
         }else {
             AppContext.getCurrent().getActivity().showLoadingScreen();
-            mPlans.load(new Callback() {
+            mPlans.loadItems(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     clear();
@@ -66,7 +67,7 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
      * @param partNum part number
      * @param take number of plans to take
      */
-    public void loadPart(int partNum, int take, final Callback cb){
+    public void loadItemsPart(int partNum, int take, final Callback cb){
         if(mType == PlanCollectionType.ENROLLED){
             // if load is called on an adapter that is viewing enrolled collection,
             // we get the data from the app context instead of from a server request
@@ -76,7 +77,7 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
             if(cb != null) cb.execute(null);
         }else {
             AppContext.getCurrent().getActivity().showLoadingScreen();
-            mPlans.loadPart(partNum * take, take, new Callback() {
+            mPlans.loadItemsPart(partNum * take, take, new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     clear();
@@ -135,7 +136,9 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
      */
     private void updateCardView(Plan plan, View convertView){
         ((TextView)convertView.findViewById(R.id.plancontrol_name)).setText(plan.getName());
-        ((TextView)convertView.findViewById(R.id.plancontrol_description)).setText(plan.getDescription());
+        User creator = plan.getCreator();
+        String createdByLine = getContext().getString(R.string.plancontrol_createdby).replace("{name}", creator.getFirstName() + " " + creator.getLastName());
+        ((TextView)convertView.findViewById(R.id.plancontrol_secondline)).setText(createdByLine);
         convertView.findViewById(R.id.plancontrol_draft_label).setVisibility(plan.getState() == 0 ? View.VISIBLE : View.GONE);
         convertView.findViewById(R.id.plancontrol_private_label).setVisibility(plan.getState() == 1 ? View.VISIBLE : View.GONE);
 

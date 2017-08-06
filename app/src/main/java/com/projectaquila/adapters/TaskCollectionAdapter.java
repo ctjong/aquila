@@ -50,7 +50,7 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
         if(refreshCache || mControlsMap == null){
             mControlsMap = new HashMap<>();
             AppContext.getCurrent().getActivity().showLoadingScreen();
-            mTasks.load(new Callback() {
+            mTasks.loadItems(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     expandControlsMap();

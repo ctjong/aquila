@@ -6,8 +6,6 @@ import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.common.Callback;
-import com.projectaquila.common.CallbackParams;
-import com.projectaquila.datamodels.PlanEnrollment;
 import com.projectaquila.datamodels.PlanEnrollmentCollection;
 import com.projectaquila.datamodels.User;
 import com.projectaquila.services.AuthService;
@@ -56,7 +54,6 @@ public class AppContext {
     private HashMap<String, String> mDebugConfig;
     private MainActivity mMainActivity;
     private User mActiveUser;
-    private int mActiveDataLoadingCount;
 
     // list of plan enrollments
     // this is initialized when view changes (see ViewBase.onStart())
@@ -159,30 +156,7 @@ public class AppContext {
 
     public void loadEnrollments(final Callback cb){
         mEnrollments = new PlanEnrollmentCollection();
-        mActiveDataLoadingCount = 0;
-        mEnrollments.load(new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                for(PlanEnrollment e : mEnrollments.getItems()){
-                    mActiveDataLoadingCount++;
-                    e.getPlan().load(new Callback() {
-                        @Override
-                        public void execute(CallbackParams params) {
-                            mActiveDataLoadingCount--;
-                            System.out.println("[AppContext.loadEnrollments] active data loading = " + mActiveDataLoadingCount);
-                            if(mActiveDataLoadingCount <= 0){
-                                System.out.println("[AppContext.loadEnrollments] executing callback");
-                                cb.execute(null);
-                            }
-                        }
-                    });
-                }
-                System.out.println("[AppContext.loadEnrollments] active data loading = " + mActiveDataLoadingCount);                            if(mActiveDataLoadingCount <= 0){
-                    System.out.println("[AppContext.loadEnrollments] executing callback");
-                    cb.execute(null);
-                }
-            }
-        });
+        mEnrollments.loadItems(cb);
     }
 
     public SharedPreferences getLocalSettings(){

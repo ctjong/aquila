@@ -1,5 +1,7 @@
 package com.projectaquila.datamodels;
 
+import com.projectaquila.common.ApiTaskMethod;
+import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.contexts.AppContext;
@@ -17,23 +19,23 @@ import java.util.HashMap;
  * A plan object, which is also a collection of plan tasks.
  */
 public class Plan extends CollectionModelBase<PlanTask> {
-    private String mOwnerId;
     private int mState;
     private String mName;
     private String mDescription;
     private String mImageUrl;
+    private User mCreator;
     private TaskDate mCreatedTime;
 
     /**
      * Instantiate a new plan
      */
-    public Plan(String id, String ownerId, int state, String name, String description, String imageUrl, TaskDate createdTime){
+    public Plan(String id, int state, String name, String description, String imageUrl, User creator, TaskDate createdTime){
         super(id);
-        mOwnerId = ownerId;
         mState = state;
         mName = name;
         mDescription = description;
         mImageUrl = imageUrl;
+        mCreator = creator;
         mCreatedTime = createdTime;
     }
 
@@ -49,17 +51,22 @@ public class Plan extends CollectionModelBase<PlanTask> {
         JSONObject json = (JSONObject)object;
         try{
             String id = json.getString("id");
-            String ownerId = json.getString("ownerid");
             int state = json.getInt("state");
             String name = json.getString("name");
             String description = json.getString("description");
             String imageUrl = json.getString("imageurl");
             TaskDate createdTime = new TaskDate(json.getLong("createdtime"));
-            if(id == null || ownerId == null || name == null){
+            if(id == null || name == null){
                 System.err.println("[Plan.parse] failed to parse plan");
                 return null;
             }
-            return new Plan(id, ownerId, state, name, description, imageUrl, createdTime);
+            User creator = null;
+            if(json.has("owner")){
+                creator = User.parse(json.getJSONObject("owner"));
+            }else{
+                System.err.println("[Plan.parse] owner info doesn't exist in plan data. deferring its load.");
+            }
+            return new Plan(id, state, name, description, imageUrl, creator, createdTime);
         }catch(JSONException e){
             System.err.println("[Task.parse] received JSONException.");
             e.printStackTrace();
@@ -68,11 +75,11 @@ public class Plan extends CollectionModelBase<PlanTask> {
     }
 
     /**
-     * Get the plan creator user id
-     * @return creator user id
+     * Get the plan creator user
+     * @return creator user
      */
-    public String getOwnerId(){
-        return mOwnerId;
+    public User getCreator(){
+        return mCreator;
     }
 
     /**
@@ -124,7 +131,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
      * @param name new name
      */
     public void setName(String name){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
+        if(AppContext.getCurrent().getActiveUser().getId().equals(mCreator.getId())){
             mName = name;
         }
     }
@@ -134,7 +141,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
      * @param description new description
      */
     public void setDescription(String description){
-        if(AppContext.getCurrent().getActiveUser().getId().equals(mOwnerId)){
+        if(AppContext.getCurrent().getActiveUser().getId().equals(mCreator.getId())){
             mDescription = description;
         }
     }
@@ -173,6 +180,30 @@ public class Plan extends CollectionModelBase<PlanTask> {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected void loadSelf(final Callback cb){
+        String loadSelfUrl = "/data/plan/public/findbyid/" + getId();
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, loadSelfUrl, null, new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                JSONArray items = params.getApiResult().getItems();
+                if(items.length() == 0){
+                    System.err.println("[Plan.loadSelf] loadSelf returns no data");
+                    return;
+                }
+                try {
+                    Object obj = items.get(0);
+                    Plan plan = Plan.parse(obj);
+                    mCreator = plan.getCreator();
+                }catch(JSONException e){
+                    System.err.println("[Plan.loadSelf] an error occurred");
+                    e.printStackTrace();
+                }
+                cb.execute(null);
+            }
+        });
     }
 
     @Override

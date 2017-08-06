@@ -6,8 +6,6 @@ import com.projectaquila.common.PlanCollectionType;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.List;
-
 /**
  * A collection of plan enrollments
  */

@@ -1,6 +1,8 @@
 package com.projectaquila.common;
 
+import com.projectaquila.R;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.services.HelperService;
 
 import java.util.HashMap;
 
@@ -27,9 +29,16 @@ public class DrawerItem {
 
     public void invoke(){
         if(mIsLogoutMenu){
-            AppContext.getCurrent().getAuthService().logOut();
+            HelperService.showAlert(R.string.prompt_logout_title, R.string.prompt_logout_msg, new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    AppContext.getCurrent().getAuthService().logOut();
+                }
+            }, null);
         }
-        AppContext.getCurrent().getNavigationService().navigate(mTarget, mNavParams);
+        if(mTarget != null) {
+            AppContext.getCurrent().getNavigationService().navigate(mTarget, mNavParams);
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.projectaquila.datamodels;
 
 import com.projectaquila.common.ApiTaskMethod;
+import com.projectaquila.common.AsyncTaskPool;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
@@ -17,7 +18,6 @@ import java.util.List;
 public abstract class CollectionModelBase<T extends DataModelBase> extends DataModelBase {
     private List<T> mItems;
     private List<T> mRemoveList;
-    private int mOngoingRequestCount;
 
     /**
      * Construct a new collection data model
@@ -93,23 +93,13 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
      * Load items in this collection
      * @param cb callback to execute after it's done
      */
-    public void load(final Callback cb){
+    public void loadItems(final Callback cb){
         String urlFormat = getItemsUrlFormat();
         if(urlFormat == null) {
             if (cb != null) cb.execute(null);
             return;
         }
-        AppContext.getCurrent().getDataService().requestAll(urlFormat, new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                if(params == null) {
-                    if(cb != null) cb.execute(null);
-                }
-                setupItems(params);
-                if(cb != null)
-                    cb.execute(params);
-            }
-        });
+        AppContext.getCurrent().getDataService().requestAll(urlFormat, getLoadCallback(cb));
     }
 
     /**
@@ -118,24 +108,14 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
      * @param take number of items to load
      * @param cb callback to execute after it's done
      */
-    public void loadPart(int partNum, int take, final Callback cb){
+    public void loadItemsPart(int partNum, int take, final Callback cb){
         String urlFormat = getItemsUrlFormat();
         if(urlFormat == null) {
             if (cb != null) cb.execute(null);
             return;
         }
         String url = urlFormat.replace("{skip}", HelperService.toString(partNum * take)).replace("{take}", HelperService.toString(take));
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, url, null, new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                if(params == null) {
-                    if(cb != null) cb.execute(null);
-                }
-                setupItems(params);
-                if(cb != null)
-                    cb.execute(params);
-            }
-        });
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, url, null, getLoadCallback(cb));
     }
 
     /**
@@ -150,37 +130,59 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
         super.write(method, url, data, new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                if(getItems().size() == 0) {
-                    System.out.println("[CollectionModelBase.write] collection has no item. skipping item submits.");
-                    cb.execute(null);
-                    return;
-                }
-                Callback itemCallback = new Callback(){
-                    @Override
-                    public void execute(CallbackParams params) {
-                        mOngoingRequestCount--;
-                        System.out.println("[CollectionModelBase.write] one request completed. ongoing=" + mOngoingRequestCount);
-                        if(mOngoingRequestCount <= 0) {
-                            System.out.println("[CollectionModelBase.write] all requests completed. executing callback.");
-                            cb.execute(null);
-                        }
-                    }
-                };
-                mOngoingRequestCount = 0;
+                AsyncTaskPool pool = new AsyncTaskPool(cb);
                 for(T item : getItems()){
-                    mOngoingRequestCount++;
-                    if(method == ApiTaskMethod.DELETE){
-                        item.submitDelete(itemCallback);
-                    }else{
-                        item.submitUpdate(itemCallback);
-                    }
+                    final T currentItem = item;
+                    pool.addTask(new Callback() {
+                        @Override
+                        public void execute(CallbackParams params) {
+                            if(method == ApiTaskMethod.DELETE){
+                                currentItem.submitDelete((Callback)params.get("cb"));
+                            }else{
+                                currentItem.submitUpdate((Callback)params.get("cb"));
+                            }
+                        }
+                    });
                 }
                 for(T item : mRemoveList){
-                    mOngoingRequestCount++;
-                    item.submitDelete(itemCallback);
+                    final T currentItem = item;
+                    mRemoveList.remove(item);
+                    pool.addTask(new Callback() {
+                        @Override
+                        public void execute(CallbackParams params) {
+                            currentItem.submitDelete((Callback)params.get("cb"));
+                        }
+                    });
                 }
-                System.out.println("[CollectionModelBase.write] all requests submitted, total=" + mOngoingRequestCount);
+                pool.execute();
             }
         });
+    }
+
+    /**
+     * Get callback for items load
+     * @return callback
+     */
+    private Callback getLoadCallback(final Callback cb){
+        return new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                if(params == null) {
+                    if(cb != null) cb.execute(null);
+                }
+                setupItems(params);
+                AsyncTaskPool pool = new AsyncTaskPool(cb);
+                for(T item : mItems){
+                    final T currentItem = item;
+                    pool.addTask(new Callback() {
+                        @Override
+                        public void execute(CallbackParams params) {
+                            currentItem.loadNestedItems((Callback)params.get("cb"));
+                        }
+                    });
+                }
+                pool.execute();
+            }
+        };
     }
 }

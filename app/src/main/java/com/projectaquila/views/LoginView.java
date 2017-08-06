@@ -55,7 +55,7 @@ public class LoginView extends ViewBase {
         });
 
         // check if logged in on launch
-        if(authService.isUserLoggedIn()){
+        if(AppContext.getCurrent().getActiveUser() != null){
             AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, null);
             mViewLoadAborted = true;
             return;

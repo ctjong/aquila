@@ -37,14 +37,6 @@ public class AuthService {
     }
 
     /**
-     * Check login status
-     * @return true if logged in, false otherwise
-     */
-    public boolean isUserLoggedIn(){
-        return AppContext.getCurrent().getActiveUser() != null;
-    }
-
-    /**
      * Invoked on FB activity result event
      * @param requestCode request code
      * @param resultCode result code

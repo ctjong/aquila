@@ -102,7 +102,9 @@ public class MainActivity extends ShellActivity {
             mDrawer.setAdapter(mDrawerAdapter);
         }
         mDrawerAdapter.clear();
-        if(AppContext.getCurrent().getAuthService().isUserLoggedIn()){
+        if(AppContext.getCurrent().getActiveUser() != null){
+            String userHello = getString(R.string.menu_userhello).replace("{name}", AppContext.getCurrent().getActiveUser().getFirstName());
+            mDrawerAdapter.add(new DrawerItem(userHello, null, false, null));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TaskCollectionView.class, false, null));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_enrolled_plans), PlanCollectionView.class, false,
                     HelperService.getSinglePairMap("mode", PlanCollectionType.ENROLLED.toString())));

@@ -1,12 +1,15 @@
 package com.projectaquila.datamodels;
 
+import com.projectaquila.common.Callback;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A single plan enrollment information
@@ -87,6 +90,13 @@ public class PlanEnrollment extends DataModelBase {
      */
     public void setCompletedDays(int completedDays){
         mCompletedDays = completedDays;
+    }
+
+    @Override
+    protected List<DataModelBase> getNestedItems(){
+        List<DataModelBase> items = new ArrayList<>();
+        items.add(mPlan);
+        return items;
     }
 
     @Override

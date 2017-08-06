@@ -51,30 +51,30 @@ public class PlanCollectionView extends ViewBase {
             final Callback loadCallback = getLoadCallback();
             if (mMode == PlanCollectionType.BROWSE) {
                 //TODO pagination
-                mAdapter.load(loadCallback);
+                mAdapter.loadItems(loadCallback);
             } else if (mMode == PlanCollectionType.CREATED) {
                 Button addBtn = (Button) findViewById(R.id.view_plans_add);
                 addBtn.setVisibility(View.VISIBLE);
                 addBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Plan plan = new Plan(null, AppContext.getCurrent().getActiveUser().getId(), 0, null, null, null, null);
+                        Plan plan = new Plan(null, 0, null, null, null, AppContext.getCurrent().getActiveUser(), null);
                         AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
                         plan.addChangedHandler(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
-                                mAdapter.load(loadCallback);
+                                mAdapter.loadItems(loadCallback);
                             }
                         });
                     }
                 });
-                mAdapter.load(loadCallback);
+                mAdapter.loadItems(loadCallback);
             } else {
-                mAdapter.load(loadCallback);
+                mAdapter.loadItems(loadCallback);
                 AppContext.getCurrent().getEnrollments().addChangedHandler(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        mAdapter.load(loadCallback);
+                        mAdapter.loadItems(loadCallback);
                     }
                 });
             }

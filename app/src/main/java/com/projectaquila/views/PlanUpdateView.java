@@ -68,7 +68,7 @@ public class PlanUpdateView extends ViewBase {
 
         if(mPlan.getId() != null) {
             AppContext.getCurrent().getActivity().showLoadingScreen();
-            mPlan.load(new Callback() {
+            mPlan.loadItems(new Callback() {
                 @Override
                 public void execute(CallbackParams params) {
                     updateView();

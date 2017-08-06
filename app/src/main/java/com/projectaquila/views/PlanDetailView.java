@@ -96,7 +96,7 @@ public class PlanDetailView extends ViewBase {
         });
 
         // load plan tasks and update view after that
-        mPlan.load(new Callback() {
+        mPlan.loadItems(new Callback() {
             @Override
             public void execute(CallbackParams params) {
                 updateView();
@@ -117,7 +117,7 @@ public class PlanDetailView extends ViewBase {
         mUnenrollBtn.setVisibility(View.GONE);
         mEnrollBtn.setVisibility(View.GONE);
         if(mEnrollment == null) {
-            if (mPlan.getOwnerId().equals(AppContext.getCurrent().getActiveUser().getId())) {
+            if (mPlan.getCreator().getId().equals(AppContext.getCurrent().getActiveUser().getId())) {
                 mEditBtn.setVisibility(View.VISIBLE);
                 if (mPlan.getState() == 0) {
                     mDeleteBtn.setVisibility(View.VISIBLE);

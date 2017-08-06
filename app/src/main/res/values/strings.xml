@@ -35,7 +35,10 @@
     <string name="prompt_enrollplan_msg">This will be added to your daily tasks starting from today.</string>
     <string name="prompt_unenrollplan_title">Un-enroll from this plan?</string>
     <string name="prompt_unenrollplan_msg">You can enroll back later, but you will lose the completion record.</string>
+    <string name="prompt_logout_title">Logout?</string>
+    <string name="prompt_logout_msg">Log out from this device?</string>
 
+    <string name="menu_userhello">Hello {name}!</string>
     <string name="menu_tasks">Tasks</string>
     <string name="menu_enrolled_plans">Enrolled plans</string>
     <string name="menu_browse_plans">Browse plans</string>
@@ -102,6 +105,7 @@
     <string name="plans_browse_null">No plan found with the given criteria.</string>
 
     <string name="plancontrol_img_alttext">Plan image</string>
+    <string name="plancontrol_createdby">Created by {name}</string>
     <string name="plantaskcontrol_label_format">Day #{day}</string>
 
     <string name="plandetail_title">Plan detail</string>
