@@ -107,11 +107,11 @@ public class MainActivity extends ShellActivity {
             mDrawerAdapter.add(new DrawerItem(userHello, null, false, null));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_tasks), TaskCollectionView.class, false, null));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_enrolled_plans), PlanCollectionView.class, false,
-                    HelperService.getSinglePairMap("mode", PlanCollectionType.ENROLLED.toString())));
+                    HelperService.getSinglePairMap("mode", PlanCollectionType.ENROLLED)));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_browse_plans), PlanCollectionView.class, false,
-                    HelperService.getSinglePairMap("mode", PlanCollectionType.BROWSE.toString())));
+                    HelperService.getSinglePairMap("mode", PlanCollectionType.BROWSE)));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_created_plans), PlanCollectionView.class, false,
-                    HelperService.getSinglePairMap("mode", PlanCollectionType.CREATED.toString())));
+                    HelperService.getSinglePairMap("mode", PlanCollectionType.CREATED)));
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_logout), LoginView.class, true, null));
         }else{
             mDrawerAdapter.add(new DrawerItem(getString(R.string.menu_login), LoginView.class, false, null));

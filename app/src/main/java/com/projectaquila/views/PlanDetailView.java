@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.common.PlanTaskComparator;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.contexts.AppContext;
@@ -312,7 +313,14 @@ public class PlanDetailView extends ViewBase {
                     @Override
                     public void execute(CallbackParams params) {
                         System.out.println("[PlanDetailView.getDeleteButtonClickHandler] deleting");
-                        //TODO
+                        AppContext.getCurrent().getNavigationService().goToMainActivity();
+                        AppContext.getCurrent().getActivity().showLoadingScreen();
+                        mPlan.submitDelete(new Callback() {
+                            @Override
+                            public void execute(CallbackParams params) {
+                                AppContext.getCurrent().getNavigationService().navigate(PlanCollectionView.class, HelperService.getSinglePairMap("mode", PlanCollectionType.CREATED));
+                            }
+                        });
                     }
                 }, null);
             }

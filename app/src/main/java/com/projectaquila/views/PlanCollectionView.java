@@ -40,9 +40,8 @@ public class PlanCollectionView extends ViewBase {
     @Override
     protected void initializeView(){
         try {
-            final String modeStr = getNavArgStr("mode");
-            System.out.println("[PlanCollectionView.initializeView] mode=" + modeStr);
-            mMode = PlanCollectionType.parse(modeStr);
+            mMode = (PlanCollectionType)getNavArgObj("mode");
+            System.out.println("[PlanCollectionView.initializeView] mode=" + mMode);
             mAdapter = new PlanCollectionAdapter(mMode);
             mList = (ListView) findViewById(R.id.view_plans_list);
             mNullText = (TextView) findViewById(R.id.view_plans_null_text);

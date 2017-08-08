@@ -35,8 +35,7 @@ public class DrawerItem {
                     AppContext.getCurrent().getAuthService().logOut();
                 }
             }, null);
-        }
-        if(mTarget != null) {
+        }else if(mTarget != null) {
             AppContext.getCurrent().getNavigationService().navigate(mTarget, mNavParams);
         }
     }
