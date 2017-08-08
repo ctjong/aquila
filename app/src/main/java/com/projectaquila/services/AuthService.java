@@ -110,8 +110,8 @@ public class AuthService {
      */
     public void logOut(){
         LoginManager.getInstance().logOut();
-        mAuthStateChange.invoke(null);
         AppContext.getCurrent().setActiveUser(null);
+        mAuthStateChange.invoke(null);
     }
 
     /**

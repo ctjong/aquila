@@ -35,9 +35,9 @@ public class TaskDetailView extends ViewBase {
     protected void initializeView(){
         final Task task = (Task)getNavArgObj("task");
         final String activeDateKey = getNavArgStr("activedatekey");
-
-        // task details
         final TaskDate activeDate = TaskDate.parseDateKey(activeDateKey);
+
+        // set view values
         ((TextView)findViewById(R.id.taskdetail_taskname)).setText(task.getName());
         ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(activeDate.getFriendlyString());
 
@@ -105,7 +105,7 @@ public class TaskDetailView extends ViewBase {
             public void onClick(View v) {
                 HashMap<String, Object> navParams = new HashMap<>();
                 navParams.put("task", task);
-                navParams.put("activedatekey", activeDateKey);
+                navParams.put("date", activeDate);
                 AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, navParams);
             }
         });
@@ -133,7 +133,7 @@ public class TaskDetailView extends ViewBase {
             @Override
             public void onClick(View v) {
                 if(occurrenceDate == null){
-                    HelperService.showAlert(R.string.prompt_completetask_series_title, R.string.prompt_completetask_series_msg, new Callback() {
+                    HelperService.showAlert(R.string.prompt_completeseries_title, R.string.prompt_completeseries_msg, new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
                             AppContext.getCurrent().getNavigationService().goToMainActivity();
@@ -142,7 +142,9 @@ public class TaskDetailView extends ViewBase {
                         }
                     }, null);
                 }else{
-                    HelperService.showAlert(R.string.prompt_completetask_title, R.string.prompt_completetask_msg, new Callback() {
+                    int promptTitle = task.getRecurrence() != null ? R.string.prompt_completeocc_title : R.string.prompt_completetask_title;
+                    int promptMsg = task.getRecurrence() != null ? R.string.prompt_completeocc_msg : R.string.prompt_completetask_msg;
+                    HelperService.showAlert(promptTitle, promptMsg, new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
                             AppContext.getCurrent().getNavigationService().goToMainActivity();

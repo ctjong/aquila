@@ -1,6 +1,5 @@
 package com.projectaquila.activities;
 
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.projectaquila.contexts.AppContext;
@@ -19,14 +18,19 @@ public class ChildActivity extends ShellActivity {
     }
 
     /**
+     * Get the toolbar icon resource id
+     */
+    @Override
+    public int getToolbarIconResId(){
+        return android.R.drawable.ic_menu_close_clear_cancel;
+    }
+
+    /**
      * To be executed after the activity is created
      */
     @Override
     public void onAfterCreate() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.shell_toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(android.R.drawable.ic_menu_close_clear_cancel);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();

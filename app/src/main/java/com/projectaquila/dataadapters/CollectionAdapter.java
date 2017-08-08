@@ -1,4 +1,4 @@
-package com.projectaquila.adapters;
+package com.projectaquila.dataadapters;
 
 import android.widget.ArrayAdapter;
 

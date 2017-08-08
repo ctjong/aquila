@@ -138,7 +138,9 @@ public class TaskControl {
         return new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                HelperService.showAlert(R.string.prompt_completetask_title, R.string.prompt_completetask_msg, new Callback() {
+                int promptTitle = (mTask != null && mTask.getRecurrence() != null) ? R.string.prompt_completeocc_title : R.string.prompt_completetask_title;
+                int promptMsg = (mTask != null && mTask.getRecurrence() != null) ? R.string.prompt_completeocc_msg : R.string.prompt_completetask_msg;
+                HelperService.showAlert(promptTitle, promptMsg, new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
                         if(mTask == null) {

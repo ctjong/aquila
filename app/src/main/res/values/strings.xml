@@ -20,9 +20,11 @@
     <string name="shell_error_unauthorized">You don\'t have permission to do the requested operation</string>
 
     <string name="prompt_completetask_title">Mark task as complete?</string>
-    <string name="prompt_completetask_msg">This task will not be available to view anymore and this action cannot be undone.</string>
-    <string name="prompt_completetask_series_title">Mark series as complete?</string>
-    <string name="prompt_completetask_series_msg">The series will not be available to view anymore and this action cannot be undone.</string>
+    <string name="prompt_completetask_msg">This will remove the task from your list.</string>
+    <string name="prompt_completeocc_title">Mark occurrence as complete?</string>
+    <string name="prompt_completeocc_msg">This will remove just this occurrence from your list. The next tasks in the series will remain.</string>
+    <string name="prompt_completeseries_title">Mark series as complete?</string>
+    <string name="prompt_completeseries_msg">This will remove the whole series from your list and it will not be available to view anymore. This action cannot be undone.</string>
     <string name="prompt_postponetask_title">Postpone task?</string>
     <string name="prompt_postponetask_msg">This will move the task to the next day.</string>
     <string name="prompt_deleteplan_title">Delete plan draft?</string>

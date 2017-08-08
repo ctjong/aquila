@@ -76,10 +76,10 @@ public class TaskUpdateView extends ViewBase {
         mTask = (Task)getNavArgObj("task");
         if(mTask.getId() != null){
             System.out.println("[TaskUpdateView.initializeView] mode=update, id=" + mTask.getId());
-            mActiveDate = TaskDate.parseDateKey(getNavArgStr("activedatekey"));
+            mActiveDate = (TaskDate)getNavArgObj("date");
         }else{
             System.out.println("[TaskUpdateView.initializeView] mode=create");
-            mActiveDate = TaskDate.parseDateKey(getNavArgStr("date"));
+            mActiveDate = mTask.getDate();
         }
     }
 

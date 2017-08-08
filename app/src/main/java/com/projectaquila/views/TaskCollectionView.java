@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.projectaquila.R;
 import com.projectaquila.controls.DatePickerClickListener;
 import com.projectaquila.controls.SwipeListener;
-import com.projectaquila.adapters.TaskCollectionAdapter;
+import com.projectaquila.dataadapters.TaskCollectionAdapter;
 import com.projectaquila.common.Callback;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.common.CallbackParams;
@@ -91,11 +91,13 @@ public class TaskCollectionView extends ViewBase {
         return new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().getActivity().showLoadingScreen();
                 EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
+                String taskName = taskNameCtrl.getText().toString();
+                if(taskName.equals("")) return;
+                AppContext.getCurrent().getActivity().showLoadingScreen();
 
                 // get changes
-                mNewTask.setName(taskNameCtrl.getText().toString());
+                mNewTask.setName(taskName);
                 taskNameCtrl.setText("");
 
                 // save to server
@@ -120,6 +122,7 @@ public class TaskCollectionView extends ViewBase {
 
                 // get changes
                 mNewTask.setName(taskNameCtrl.getText().toString());
+                mNewTask.setDate(mCurrentDate);
                 taskNameCtrl.setText("");
 
                 AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, HelperService.getSinglePairMap("task",mNewTask));

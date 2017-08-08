@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,12 @@ public abstract class ShellActivity extends AppCompatActivity {
     private View mErrorScreen;
     private Event mActivityResultEvent;
     private View mCurrentView;
+    protected Toolbar mToolbar;
+
+    /**
+     * Get the toolbar icon resource id
+     */
+    public abstract int getToolbarIconResId();
 
     /**
      * To be executed before the activity is created
@@ -68,6 +75,11 @@ public abstract class ShellActivity extends AppCompatActivity {
                 AppContext.getCurrent().getNavigationService().navigate(LoginView.class, null);
             }
         });
+
+        // init toolbar
+        mToolbar = (Toolbar) findViewById(R.id.shell_toolbar);
+        setSupportActionBar(mToolbar);
+        mToolbar.setNavigationIcon(getToolbarIconResId());
 
         onAfterCreate();
     }
@@ -153,6 +165,18 @@ public abstract class ShellActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
             actionBar.setTitle(getString(stringId));
+        }
+    }
+
+    /**
+     * Show/hide the icon on the toolbar
+     * @param show true to show the icon, false to hide
+     */
+    public void toggleToolbarIcon(boolean show){
+        if(show) {
+            mToolbar.setNavigationIcon(getToolbarIconResId());
+        }else{
+            mToolbar.setNavigationIcon(null);
         }
     }
 

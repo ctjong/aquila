@@ -1,4 +1,4 @@
-package com.projectaquila.adapters;
+package com.projectaquila.dataadapters;
 
 import android.support.annotation.NonNull;
 import android.view.View;
