@@ -15,7 +15,7 @@ public abstract class DrawerItem {
     private int mFgColorResId;
 
     protected DrawerItem(){
-        mContentHeight = 40;
+        mContentHeight = 50;
         mBgColorResId = R.color.white;
         mFgColorResId = R.color.gray;
     }

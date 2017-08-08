@@ -100,7 +100,7 @@
             android:id="@+id/planupdate_save_btn"
             android:layout_width="100dp"
             android:layout_height="30dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/darkgreen"
             android:text="@string/common_save"
             android:textColor="@color/white" />
 
@@ -111,7 +111,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/red"
             android:text="@string/common_cancel"
             android:textColor="@color/white" />
     </LinearLayout>

@@ -9,6 +9,7 @@
     <string name="common_enroll">Enroll</string>
     <string name="common_unenroll">Un-enroll</string>
     <string name="common_description">Description</string>
+    <string name="common_createdby">by {name}</string>
 
     <string name="shell_drawer_open">Open left nav</string>
     <string name="shell_drawer_close">Close left nav</string>
@@ -107,7 +108,6 @@
     <string name="plans_browse_null">No plan found with the given criteria.</string>
 
     <string name="plancontrol_img_alttext">Plan image</string>
-    <string name="plancontrol_createdby">Created by {name}</string>
     <string name="plantaskcontrol_label_format">Day #{day}</string>
 
     <string name="plandetail_title">Plan detail</string>
@@ -130,8 +130,11 @@
     <string name="plantaskupdate_desc_label">Task description</string>
     <string name="plantaskupdate_desc_hint">Short description for this task</string>
 
-    <string name="plantaskdetail_planintro">This is day {day} task in plan:</string>
+    <string name="plantaskdetail_day">This is day {day} task in plan:</string>
     <string name="plantaskdetail_planlink"><u>{planName}</u></string>
-    <string name="plantaskdetail_completedisabled">You must complete the previous tasks in the plan first before you can complete this task.</string>
+    <string name="plantaskdetail_completedisabled">You must complete the previous tasks in the plan before you can complete this task.</string>
     <string name="plantaskdetail_complete">Mark this task as complete</string>
+    <string name="plantaskdetail_enrollstatus_ontrack">You are on track!</string>
+    <string name="plantaskdetail_enrollstatus_missed">You missed {numdays} days in this plan.</string>
+    <string name="plantaskdetail_shifttasksbtn">Click here to shift tasks forward.</string>
 </resources>

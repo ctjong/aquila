@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:text="Test Plan Name"/>
+                android:text="Plan Task Name"/>
 
             <LinearLayout
                 android:id="@+id/plantaskdetail_desc"
@@ -52,12 +52,12 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/plantaskdetail_planintro"
+                    android:id="@+id/plantaskdetail_day"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    android:text="@string/plantaskdetail_planintro"/>
+                    android:text="@string/plantaskdetail_day"/>
 
                 <TextView
                     android:id="@+id/plantaskdetail_planlink"
@@ -66,6 +66,23 @@
                     android:textColor="@color/colorPrimary"
                     android:textSize="16sp"
                     android:text="@string/plantaskdetail_planlink"/>
+
+                <TextView
+                    android:id="@+id/plantaskdetail_enrollstatustext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:text="@string/plantaskdetail_enrollstatus_missed"/>
+
+                <TextView
+                    android:id="@+id/plantaskdetail_shifttasksbtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:text="@string/plantaskdetail_shifttasksbtn"/>
 
                 <LinearLayout
                     android:id="@+id/plantaskdetail_completedisabled"

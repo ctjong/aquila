@@ -126,7 +126,7 @@ public class TaskDetailView extends ViewBase {
         final Callback cb = new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, HelperService.getSinglePairMap("date", activeDateKey));
+                AppContext.getCurrent().getNavigationService().goToMainActivity(TaskCollectionView.class, "date", activeDateKey);
             }
         };
         return new View.OnClickListener() {
@@ -136,7 +136,6 @@ public class TaskDetailView extends ViewBase {
                     HelperService.showAlert(R.string.prompt_completeseries_title, R.string.prompt_completeseries_msg, new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
-                            AppContext.getCurrent().getNavigationService().goToMainActivity();
                             AppContext.getCurrent().getActivity().showLoadingScreen();
                             task.complete(cb);
                         }
@@ -147,7 +146,6 @@ public class TaskDetailView extends ViewBase {
                     HelperService.showAlert(promptTitle, promptMsg, new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
-                            AppContext.getCurrent().getNavigationService().goToMainActivity();
                             AppContext.getCurrent().getActivity().showLoadingScreen();
                             task.completeOccurrence(occurrenceDate, cb);
                         }

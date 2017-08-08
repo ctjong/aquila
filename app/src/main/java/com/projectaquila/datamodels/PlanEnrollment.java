@@ -92,6 +92,14 @@ public class PlanEnrollment extends DataModelBase {
         mCompletedDays = completedDays;
     }
 
+    /**
+     * Set the start date of this enrollment
+     * @param startDate start date
+     */
+    public void setStartDate(TaskDate startDate){
+        mStartDate = startDate;
+    }
+
     @Override
     protected List<DataModelBase> getNestedItems(){
         List<DataModelBase> items = new ArrayList<>();

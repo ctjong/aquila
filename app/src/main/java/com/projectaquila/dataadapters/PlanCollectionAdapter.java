@@ -137,7 +137,7 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
     private void updateCardView(Plan plan, View convertView){
         ((TextView)convertView.findViewById(R.id.plancontrol_name)).setText(plan.getName());
         User creator = plan.getCreator();
-        String createdByLine = getContext().getString(R.string.plancontrol_createdby).replace("{name}", creator.getFirstName() + " " + creator.getLastName());
+        String createdByLine = getContext().getString(R.string.common_createdby).replace("{name}", creator.getFirstName() + " " + creator.getLastName());
         ((TextView)convertView.findViewById(R.id.plancontrol_secondline)).setText(createdByLine);
         convertView.findViewById(R.id.plancontrol_draft_label).setVisibility(plan.getState() == 0 ? View.VISIBLE : View.GONE);
         convertView.findViewById(R.id.plancontrol_private_label).setVisibility(plan.getState() == 1 ? View.VISIBLE : View.GONE);

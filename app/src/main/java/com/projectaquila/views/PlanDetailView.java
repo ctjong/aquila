@@ -11,6 +11,7 @@ import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.common.PlanTaskComparator;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.controls.EnrollmentProgressControl;
 import com.projectaquila.controls.PlanTaskControl;
 import com.projectaquila.datamodels.Plan;
 import com.projectaquila.datamodels.PlanEnrollment;
@@ -36,6 +37,7 @@ public class PlanDetailView extends ViewBase {
     private View mPublishBtn;
     private View mEditBtn;
     private View mDeleteBtn;
+    private EnrollmentProgressControl mProgressControl;
 
     /**
      * Get layout id
@@ -63,8 +65,17 @@ public class PlanDetailView extends ViewBase {
         AppContext.getCurrent().getActivity().showLoadingScreen();
         mPlan = (Plan)getNavArgObj("plan");
         Object enrollmentObj = getNavArgObj("enrollment");
-        mEnrollment = enrollmentObj == null ? null : (PlanEnrollment)enrollmentObj;
+        if(enrollmentObj != null){
+            mEnrollment = (PlanEnrollment) enrollmentObj;
+        } else {
+            for(PlanEnrollment e : AppContext.getCurrent().getEnrollments().getItems()){
+                if(!e.getPlan().getId().equals(mPlan.getId())) continue;
+                mEnrollment = e;
+                break;
+            }
+        }
         System.out.println("[PlanDetailView.initializeView] starting. planId=" + HelperService.safePrint(mPlan.getId()));
+        System.out.println("[PlanDetailView.initializeView] enrollment=" + (mEnrollment == null ? "null" : mEnrollment.getId()));
 
         // get UI elements
         mItemsList = (LinearLayout)findViewById(R.id.plandetail_items);
@@ -81,6 +92,11 @@ public class PlanDetailView extends ViewBase {
         mDeleteBtn= findViewById(R.id.plandetail_delete_btn);
         mSubmitBtn = findViewById(R.id.plandetail_submit_btn);
         mPublishBtn = findViewById(R.id.plandetail_publish_btn);
+        mProgressControl = new EnrollmentProgressControl(mEnrollment, (TextView) findViewById(R.id.plandetail_enrollstatustext), findViewById(R.id.plandetail_shifttasksbtn));
+
+        // show plan creator
+        String creatorTextFormat = AppContext.getCurrent().getActivity().getString(R.string.common_createdby);
+        ((TextView)findViewById(R.id.plandetail_creator)).setText(creatorTextFormat.replace("{name}", mPlan.getCreator().getFirstName() + " " + mPlan.getCreator().getLastName()));
 
         // setup event handlers
         mEditBtn.setOnClickListener(getEditButtonClickHandler());
@@ -110,29 +126,29 @@ public class PlanDetailView extends ViewBase {
      * Update the view elements based on current plan data
      */
     private void updateView(){
-        // initialize buttons if this is not in enrollment view mode
+        mProgressControl.updateView();
+
+        // initialize buttons
         mEditBtn.setVisibility(View.GONE);
         mDeleteBtn.setVisibility(View.GONE);
         mSubmitBtn.setVisibility(View.GONE);
         mPublishBtn.setVisibility(View.GONE);
         mUnenrollBtn.setVisibility(View.GONE);
         mEnrollBtn.setVisibility(View.GONE);
-        if(mEnrollment == null) {
-            if (mPlan.getCreator().getId().equals(AppContext.getCurrent().getActiveUser().getId())) {
-                mEditBtn.setVisibility(View.VISIBLE);
-                if (mPlan.getState() == 0) {
-                    mDeleteBtn.setVisibility(View.VISIBLE);
-                    mSubmitBtn.setVisibility(View.VISIBLE);
-                } else if (mPlan.getState() == 1) {
-                    mPublishBtn.setVisibility(View.VISIBLE);
-                }
+        if (mPlan.getCreator().getId().equals(AppContext.getCurrent().getActiveUser().getId())) {
+            mEditBtn.setVisibility(View.VISIBLE);
+            if (mPlan.getState() == 0) {
+                mDeleteBtn.setVisibility(View.VISIBLE);
+                mSubmitBtn.setVisibility(View.VISIBLE);
+            } else if (mPlan.getState() == 1) {
+                mPublishBtn.setVisibility(View.VISIBLE);
             }
-            if (mPlan.getState() > 0) {
-                if (AppContext.getCurrent().getEnrollments().containsPlan(mPlan.getId())) {
-                    mUnenrollBtn.setVisibility(View.VISIBLE);
-                } else {
-                    mEnrollBtn.setVisibility(View.VISIBLE);
-                }
+        }
+        if (mPlan.getState() > 0) {
+            if (mEnrollment != null) {
+                mUnenrollBtn.setVisibility(View.VISIBLE);
+            } else {
+                mEnrollBtn.setVisibility(View.VISIBLE);
             }
         }
 
@@ -313,12 +329,11 @@ public class PlanDetailView extends ViewBase {
                     @Override
                     public void execute(CallbackParams params) {
                         System.out.println("[PlanDetailView.getDeleteButtonClickHandler] deleting");
-                        AppContext.getCurrent().getNavigationService().goToMainActivity();
                         AppContext.getCurrent().getActivity().showLoadingScreen();
                         mPlan.submitDelete(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
-                                AppContext.getCurrent().getNavigationService().navigate(PlanCollectionView.class, HelperService.getSinglePairMap("mode", PlanCollectionType.CREATED));
+                                AppContext.getCurrent().getNavigationService().goToMainActivity(PlanCollectionView.class, "mode", PlanCollectionType.CREATED);
                             }
                         });
                     }

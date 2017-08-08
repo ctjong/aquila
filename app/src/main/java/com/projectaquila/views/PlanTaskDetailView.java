@@ -7,9 +7,12 @@ import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.controls.EnrollmentProgressControl;
 import com.projectaquila.datamodels.PlanEnrollment;
 import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.services.HelperService;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
@@ -24,6 +27,7 @@ public class PlanTaskDetailView extends ViewBase {
     private TextView mPlanLink;
     private View mCompleteDisabled;
     private View mCompleteBtn;
+    private EnrollmentProgressControl mProgressControl;
 
     /**
      * Get layout id
@@ -58,10 +62,11 @@ public class PlanTaskDetailView extends ViewBase {
         mDescView = findViewById(R.id.plantaskdetail_desc);
         mDescText = (TextView)findViewById(R.id.plantaskdetail_desctext);
         mEnrollmentSection = findViewById(R.id.plantaskdetail_enrollment);
-        mPlanIntro = (TextView)findViewById(R.id.plantaskdetail_planintro);
+        mPlanIntro = (TextView)findViewById(R.id.plantaskdetail_day);
         mPlanLink= (TextView)findViewById(R.id.plantaskdetail_planlink);
         mCompleteDisabled = findViewById(R.id.plantaskdetail_completedisabled);
         mCompleteBtn = findViewById(R.id.plantaskdetail_completebtn);
+        mProgressControl = new EnrollmentProgressControl(mEnrollment, (TextView) findViewById(R.id.plantaskdetail_enrollstatustext), findViewById(R.id.plantaskdetail_shifttasksbtn));
 
         // setup event handlers
         mPlanTask.addChangedHandler(new Callback() {
@@ -81,10 +86,12 @@ public class PlanTaskDetailView extends ViewBase {
      * Update the view elements based on current plan task data
      */
     private void updateView(){
+        mProgressControl.updateView();
+
         // for enrollment view mode, we want to show enrollment details, completion buttons, and link to parent plan
         if(mEnrollment != null) {
             mEnrollmentSection.setVisibility(View.VISIBLE);
-            String introText = AppContext.getCurrent().getActivity().getString(R.string.plantaskdetail_planintro);
+            String introText = AppContext.getCurrent().getActivity().getString(R.string.plantaskdetail_day);
             introText = introText.replace("{day}", HelperService.toString(mPlanTask.getDay()));
             mPlanIntro.setText(introText);
             mPlanLink.setText(mPlanTask.getParent().getName());
