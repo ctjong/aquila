@@ -17,7 +17,6 @@ import java.util.Stack;
  * A service that handles navigation between views
  */
 public class NavigationService {
-    private HashMap<String, ViewBase> mViews;
     private Map<String, Object> mParamsPendingLoad;
     private ViewBase mViewPendingLoad;
     private Stack<ChildActivity> mChildStack;
@@ -26,7 +25,6 @@ public class NavigationService {
      * Instantiate a new navigation service
      */
     public NavigationService(){
-        mViews = new HashMap<>();
         mChildStack = new Stack<>();
     }
 
@@ -108,20 +106,13 @@ public class NavigationService {
      */
     private void updateCurrentView(Class viewClass, Map<String, Object> parameters){
         System.out.println("[NavigationService.updateCurrentView] " + viewClass.getName());
-        ViewBase view;
-        if(mViews.containsKey(viewClass.getName())){
-            view = mViews.get(viewClass.getName());
-        }else{
-            try {
-                view = (ViewBase)viewClass.newInstance();
-                mViews.put(viewClass.getName(), view);
-            } catch (Exception e) {
-                System.err.println("[NavigationService.updateCurrentView] failed to instantiate view");
-                e.printStackTrace();
-                return;
-            }
+        try {
+            mViewPendingLoad = (ViewBase)viewClass.newInstance();
+            mParamsPendingLoad = parameters;
+        } catch (Exception e) {
+            System.err.println("[NavigationService.updateCurrentView] failed to instantiate view");
+            e.printStackTrace();
+            return;
         }
-        mViewPendingLoad = view;
-        mParamsPendingLoad = parameters;
     }
 }

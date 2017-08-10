@@ -3,6 +3,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/view_plans_filter"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/plans_filter_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/overlaybgtop"
+        android:padding="5dp"
+        android:elevation="20dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+        
+        <SearchView
+            android:id="@+id/view_plans_search"
+            android:layout_width="match_parent"
+            android:queryHint="@string/plans_searchhint"
+            android:iconifiedByDefault="false"
+            android:layout_height="30dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/plans_sortby"/>
+
+            <Spinner
+                android:id="@+id/view_plans_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/view_plans_list"
         android:layout_width="match_parent"

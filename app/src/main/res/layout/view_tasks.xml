@@ -43,7 +43,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/bottomoverlaybg"
+        android:background="@drawable/overlaybgbottom"
         android:elevation="20dp">
 
         <EditText

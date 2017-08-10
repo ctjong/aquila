@@ -101,7 +101,7 @@ public class TaskUpdateView extends ViewBase {
     private void initializeRecControls(){
         // recurrence mode controls
         mRecModeSpinner = (Spinner) findViewById(R.id.taskupdate_recspinner);
-        mRecModeSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_recspinneritem);
+        mRecModeSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_spinneritem);
         mRecModeSpinner.setAdapter(mRecModeSpinnerAdapter);
         mRecModeSpinnerAdapter.add(RecurrenceMode.None);
         mRecModeSpinnerAdapter.add(RecurrenceMode.Daily);
@@ -113,7 +113,7 @@ public class TaskUpdateView extends ViewBase {
 
         // recurrence end controls
         mRecEndSpinner = (Spinner) findViewById(R.id.taskupdate_recend_spinner);
-        ArrayAdapter<String> recEndSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_recspinneritem);
+        ArrayAdapter<String> recEndSpinnerAdapter = new ArrayAdapter<>(AppContext.getCurrent().getActivity(), R.layout.control_spinneritem);
         mRecEndSpinner.setAdapter(recEndSpinnerAdapter);
         recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskrecurrence_end_forever));
         recEndSpinnerAdapter.add(AppContext.getCurrent().getActivity().getString(R.string.taskrecurrence_end_date));

@@ -115,7 +115,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/bottomoverlaybg"
+        android:background="@drawable/overlaybgbottom"
         android:elevation="20dp"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
