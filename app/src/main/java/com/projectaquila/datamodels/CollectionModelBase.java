@@ -16,6 +16,7 @@ import java.util.List;
  * @param <T> type of item in the collection
  */
 public abstract class CollectionModelBase<T extends DataModelBase> extends DataModelBase {
+    private int mTotalCount;
     private List<T> mItems;
     private List<T> mRemoveList;
 
@@ -119,6 +120,14 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
     }
 
     /**
+     * Check whether all items have been retrieved
+     * @return true if all items have been retrieved, false otherwise
+     */
+    public boolean isAllLoaded(){
+        return mItems.size() == mTotalCount;
+    }
+
+    /**
      * Submit this model data to the server
      * @param method request method
      * @param url target server URL
@@ -170,7 +179,10 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
                 if(params == null) {
                     if(cb != null) cb.execute(null);
                 }
+                mTotalCount = params.getApiResult().getCount();
                 setupItems(params);
+
+                // load nested items
                 AsyncTaskPool pool = new AsyncTaskPool(cb);
                 for(T item : mItems){
                     final T currentItem = item;
