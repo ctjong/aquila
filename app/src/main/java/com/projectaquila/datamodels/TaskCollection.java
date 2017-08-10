@@ -5,6 +5,9 @@ import com.projectaquila.common.CallbackParams;
 
 import org.json.JSONArray;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TaskCollection extends CollectionModelBase<Task> {
     public TaskCollection(){
         super(null);
@@ -16,15 +19,15 @@ public class TaskCollection extends CollectionModelBase<Task> {
     }
 
     @Override
-    protected void setupItems(CallbackParams params) {
+    protected List<Task> processServerResponse(CallbackParams params) {
+        List<Task> list = new ArrayList<>();
         JSONArray items = params.getApiResult().getItems();
-        getItems().clear();
         for(int i=0; i<items.length(); i++){
             try {
                 Object taskObj = items.get(i);
                 final Task task = Task.parse(taskObj);
                 if(task == null){
-                    System.err.println("[TaskCollection.setupItems] failed to parse task object. skipping.");
+                    System.err.println("[TaskCollection.processServerResponse] failed to parse task object. skipping.");
                     continue;
                 }
                 task.addChangedHandler(new Callback() {
@@ -35,11 +38,12 @@ public class TaskCollection extends CollectionModelBase<Task> {
                         }
                     }
                 });
-                getItems().add(task);
+                list.add(task);
             } catch (Exception e) {
-                System.err.println("[TaskCollection.setupItems] an exception occurred. skipping.");
+                System.err.println("[TaskCollection.processServerResponse] an exception occurred. skipping.");
                 e.printStackTrace();
             }
         }
+        return list;
     }
 }

@@ -16,6 +16,7 @@ public abstract class PlanCollectionView extends ViewBase {
     protected PlanCollectionAdapter mAdapter;
     protected TextView mNullText;
     protected View mNullView;
+    protected Callback mLoadCallback;
 
     protected abstract PlanCollection getPlans();
     protected abstract int getNullTextStringId();
@@ -29,19 +30,20 @@ public abstract class PlanCollectionView extends ViewBase {
         mList = (ListView) findViewById(R.id.view_plans_list);
         mNullText = (TextView) findViewById(R.id.view_plans_null_text);
         mNullView = findViewById(R.id.view_plans_null);
+        mLoadCallback = getLoadCallback();
         try{
             mAdapter = new PlanCollectionAdapter(getPlans());
             mList.setAdapter(mAdapter);
             return true;
         }catch(UnsupportedOperationException e){
-            System.err.println("[PlanCollection.initializeView] exception");
+            System.err.println("[PlanCollection.tryInitVars] exception");
             e.printStackTrace();
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
             return false;
         }
     }
 
-    protected Callback getLoadCallback(){
+    private Callback getLoadCallback(){
         return new Callback(){
             @Override
             public void execute(CallbackParams params) {

@@ -35,7 +35,6 @@ public class CreatedPlanCollectionView extends PlanCollectionView {
     protected void initializeView(){
         System.out.println("[CreatedPlanCollectionView.initializeView] started");
         if(!tryInitVars()) return;
-        final Callback loadCallback = getLoadCallback();
         Button addBtn = (Button) findViewById(R.id.view_plans_add);
         addBtn.setVisibility(View.VISIBLE);
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -46,12 +45,12 @@ public class CreatedPlanCollectionView extends PlanCollectionView {
                 plan.addChangedHandler(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        mPlans.loadItems(loadCallback);
+                        mPlans.loadItems(mLoadCallback);
                     }
                 });
             }
         });
         AppContext.getCurrent().getActivity().showLoadingScreen();
-        mPlans.loadItems(loadCallback);
+        mPlans.loadItems(mLoadCallback);
     }
 }

@@ -13,7 +13,9 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A plan object, which is also a collection of plan tasks.
@@ -168,18 +170,19 @@ public class Plan extends CollectionModelBase<PlanTask> {
     }
 
     @Override
-    protected void setupItems(CallbackParams params) {
+    protected List<PlanTask> processServerResponse(CallbackParams params) {
+        List<PlanTask> list = new ArrayList<>();
         JSONArray items = params.getApiResult().getItems();
-        getItems().clear();
         for(int i=0; i<items.length(); i++){
             try {
                 PlanTask planTask = PlanTask.parse(this, items.get(i));
-                getItems().add(planTask);
+                list.add(planTask);
             }catch(JSONException e){
                 System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);
                 e.printStackTrace();
             }
         }
+        return list;
     }
 
     @Override

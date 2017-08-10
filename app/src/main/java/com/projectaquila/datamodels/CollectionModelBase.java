@@ -37,10 +37,11 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
     protected abstract String getItemsUrlFormat();
 
     /**
-     * Set up the items in this collection from the given response from the server
+     * Get data items from the given response from the server
      * @param params callback params containing data from server
+     * @return data items
      */
-    protected abstract void setupItems(CallbackParams params);
+    protected abstract List<T> processServerResponse(CallbackParams params);
 
     /**
      * Get the items in the collection
@@ -77,20 +78,6 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
     }
 
     /**
-     * Check whether or not this collection has an item with the given id
-     * @param id item id
-     * @return true if found, false otherwise
-     */
-    public boolean contains(String id){
-        for(int i=0; i<mItems.size(); i++){
-            if(mItems.get(i).getId().equals(id)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Load items in this collection
      * @param cb callback to execute after it's done
      */
@@ -100,7 +87,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
             if (cb != null) cb.execute(null);
             return;
         }
-        AppContext.getCurrent().getDataService().requestAll(urlFormat, getLoadCallback(cb));
+        AppContext.getCurrent().getDataService().requestAll(urlFormat, getLoadCallback(cb, true));
     }
 
     /**
@@ -116,7 +103,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
             return;
         }
         String url = urlFormat.replace("{skip}", HelperService.toString(partNum * take)).replace("{take}", HelperService.toString(take));
-        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, url, null, getLoadCallback(cb));
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, url, null, getLoadCallback(cb, false));
     }
 
     /**
@@ -172,19 +159,28 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
      * Get callback for items load
      * @return callback
      */
-    private Callback getLoadCallback(final Callback cb){
+    private Callback getLoadCallback(final Callback cb, final boolean clean){
         return new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                if(params == null) {
+                if(params == null || params.getApiResult() == null) {
                     if(cb != null) cb.execute(null);
                 }
+                assert params != null;
                 mTotalCount = params.getApiResult().getCount();
-                setupItems(params);
+                final List<T> newItems = processServerResponse(params);
 
                 // load nested items
-                AsyncTaskPool pool = new AsyncTaskPool(cb);
-                for(T item : mItems){
+                AsyncTaskPool pool = new AsyncTaskPool(new Callback() {
+                    @Override
+                    public void execute(CallbackParams params) {
+                        if(clean) mItems.clear();
+                        mItems.addAll(newItems);
+                        assert cb != null;
+                        cb.execute(null);
+                    }
+                });
+                for(T item : newItems){
                     final T currentItem = item;
                     pool.addTask(new Callback() {
                         @Override

@@ -5,6 +5,9 @@ import com.projectaquila.common.CallbackParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A collection of plan enrollments
  */
@@ -46,21 +49,22 @@ public class PlanEnrollmentCollection extends CollectionModelBase<PlanEnrollment
     }
 
     @Override
-    protected void setupItems(CallbackParams params) {
+    protected List<PlanEnrollment> processServerResponse(CallbackParams params) {
+        List<PlanEnrollment> list = new ArrayList<>();
         JSONArray items = params.getApiResult().getItems();
-        getItems().clear();
         for(int i=0; i<items.length(); i++){
             try {
                 PlanEnrollment enrollment = PlanEnrollment.parse(items.get(i));
                 if(enrollment != null){
-                    getItems().add(enrollment);
+                    list.add(enrollment);
                 }else{
-                    System.err.println("[PlanEnrollmentCollections.setupItems] failed to parse plan enrollment");
+                    System.err.println("[PlanEnrollmentCollections.processServerResponse] failed to parse plan enrollment");
                 }
             }catch(JSONException e){
-                System.err.println("[PlanEnrollmentCollections.setupItems] an error occurred while trying to get plan at index " + i);
+                System.err.println("[PlanEnrollmentCollections.processServerResponse] an error occurred while trying to get plan at index " + i);
                 e.printStackTrace();
             }
         }
+        return list;
     }
 }
