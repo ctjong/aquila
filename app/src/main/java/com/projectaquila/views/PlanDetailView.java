@@ -7,7 +7,6 @@ import android.widget.TextView;
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.common.PlanTaskComparator;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.contexts.AppContext;
@@ -333,7 +332,7 @@ public class PlanDetailView extends ViewBase {
                         mPlan.submitDelete(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
-                                AppContext.getCurrent().getNavigationService().goToMainActivity(PlanCollectionView.class, "mode", PlanCollectionType.CREATED);
+                                AppContext.getCurrent().getNavigationService().goToMainActivity(CreatedPlanCollectionView.class, null);
                             }
                         });
                     }

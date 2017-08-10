@@ -126,7 +126,7 @@ public class TaskDetailView extends ViewBase {
         final Callback cb = new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                AppContext.getCurrent().getNavigationService().goToMainActivity(TaskCollectionView.class, "date", activeDateKey);
+                AppContext.getCurrent().getNavigationService().goToMainActivity(TaskCollectionView.class, HelperService.getSinglePairMap("date", activeDateKey));
             }
         };
         return new View.OnClickListener() {

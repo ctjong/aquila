@@ -2,13 +2,11 @@ package com.projectaquila.services;
 
 import android.content.Intent;
 
-import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.activities.ChildActivity;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.views.PlanCollectionView;
 import com.projectaquila.views.ViewBase;
 
 import java.util.HashMap;
@@ -88,9 +86,9 @@ public class NavigationService {
     /**
      * Exit all child activities, go to main, and load the given view with the given nav params
      */
-    public void goToMainActivity(Class viewClass, String paramKey, Object paramVal){
+    public void goToMainActivity(Class viewClass, HashMap<String, Object> viewParams){
         goToMainActivity();
-        navigate(viewClass, HelperService.getSinglePairMap(paramKey, paramVal));
+        navigate(viewClass, viewParams);
     }
 
     /**

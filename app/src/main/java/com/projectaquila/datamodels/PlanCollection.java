@@ -1,42 +1,33 @@
 package com.projectaquila.datamodels;
 
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.common.PlanCollectionType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PlanCollection extends CollectionModelBase<Plan> {
-    private PlanCollectionType mType;
-
-    public PlanCollection(PlanCollectionType type){
+/**
+ * A collection of plans
+ */
+public abstract class PlanCollection extends CollectionModelBase<Plan> {
+    /**
+     * Instantate a new plan collection
+     */
+    public PlanCollection(){
         super(null);
-        mType = type;
     }
 
-    @Override
-    protected String getItemsUrlFormat() {
-        if(mType == PlanCollectionType.BROWSE){
-            return "/data/plan/public/findall/id/{skip}/{take}";
-        }else if(mType == PlanCollectionType.CREATED){
-            return "/data/plan/private/findall/id/{skip}/{take}";
-        }else{
-            return null;
-        }
-    }
-
+    /**
+     * Set up the items in this collection from the given response from the server
+     * @param params callback params containing data from server
+     */
     @Override
     protected void setupItems(CallbackParams params) {
         JSONArray items = params.getApiResult().getItems();
         getItems().clear();
         for(int i=0; i<items.length(); i++){
             try {
-                Object planJson = items.get(i);
-                if(mType == PlanCollectionType.ENROLLED && planJson instanceof JSONObject){
-                    planJson = ((JSONObject)planJson).getJSONObject("plan");
-                }
-                Plan plan = Plan.parse(planJson);
+                Plan plan = Plan.parse(getPlanJson(items.get(i)));
                 if(plan != null){
                     getItems().add(plan);
                 }else{
@@ -47,5 +38,14 @@ public class PlanCollection extends CollectionModelBase<Plan> {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Get plan JSON from the given raw object
+     * @param rawObj raw object
+     * @return plan JSON object
+     */
+    protected JSONObject getPlanJson(Object rawObj){
+        return (JSONObject)rawObj;
     }
 }

@@ -10,10 +10,10 @@ import android.widget.TextView;
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.contexts.AppContext;
-import com.projectaquila.services.HelperService;
-import com.projectaquila.views.PlanCollectionView;
+import com.projectaquila.views.CreatedPlanCollectionView;
+import com.projectaquila.views.EnrolledPlanCollectionView;
+import com.projectaquila.views.PublicPlanCollectionView;
 import com.projectaquila.views.TaskCollectionView;
 import com.squareup.picasso.Picasso;
 
@@ -92,9 +92,9 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>{
             if(getCount() == 0) {
                 add(new UserDrawerItem());
                 add(new NavDrawerItem(R.string.menu_tasks, null, TaskCollectionView.class, null));
-                add(new NavDrawerItem(R.string.menu_enrolled_plans, null, PlanCollectionView.class, HelperService.getSinglePairMap("mode", PlanCollectionType.ENROLLED)));
-                add(new NavDrawerItem(R.string.menu_browse_plans, null, PlanCollectionView.class, HelperService.getSinglePairMap("mode", PlanCollectionType.BROWSE)));
-                add(new NavDrawerItem(R.string.menu_created_plans, null, PlanCollectionView.class, HelperService.getSinglePairMap("mode", PlanCollectionType.CREATED)));
+                add(new NavDrawerItem(R.string.menu_enrolled_plans, null, EnrolledPlanCollectionView.class, null));
+                add(new NavDrawerItem(R.string.menu_browse_plans, null, PublicPlanCollectionView.class, null));
+                add(new NavDrawerItem(R.string.menu_created_plans, null, CreatedPlanCollectionView.class, null));
                 add(new LogoutDrawerItem());
             }
             AppContext.getCurrent().getActivity().toggleToolbarIcon(true);

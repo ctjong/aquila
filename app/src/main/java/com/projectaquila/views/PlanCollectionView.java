@@ -1,107 +1,60 @@
 package com.projectaquila.views;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.dataadapters.PlanCollectionAdapter;
-import com.projectaquila.common.PlanCollectionType;
-import com.projectaquila.datamodels.Plan;
-import com.projectaquila.services.HelperService;
+import com.projectaquila.datamodels.PlanCollection;
 
-public class PlanCollectionView extends ViewBase {
-    private ListView mList;
-    private PlanCollectionAdapter mAdapter;
-    private PlanCollectionType mMode;
-    private TextView mNullText;
-    private View mNullView;
+public abstract class PlanCollectionView extends ViewBase {
+    protected ListView mList;
+    protected PlanCollectionAdapter mAdapter;
+    protected TextView mNullText;
+    protected View mNullView;
+
+    protected abstract PlanCollection getPlans();
+    protected abstract int getNullTextStringId();
 
     @Override
     protected int getLayoutId() {
         return R.layout.view_plans;
     }
 
-    @Override
-    protected int getTitleBarStringId() {
-        if(mMode == PlanCollectionType.ENROLLED){
-            return R.string.menu_enrolled_plans;
-        }else if(mMode == PlanCollectionType.BROWSE) {
-            return R.string.menu_browse_plans;
-        }else{
-            return R.string.menu_created_plans;
-        }
-    }
-
-    @Override
-    protected void initializeView(){
-        try {
-            mMode = (PlanCollectionType)getNavArgObj("mode");
-            System.out.println("[PlanCollectionView.initializeView] mode=" + mMode);
-            mAdapter = new PlanCollectionAdapter(mMode);
-            mList = (ListView) findViewById(R.id.view_plans_list);
-            mNullText = (TextView) findViewById(R.id.view_plans_null_text);
-            mNullView = findViewById(R.id.view_plans_null);
+    protected boolean tryInitVars(){
+        mList = (ListView) findViewById(R.id.view_plans_list);
+        mNullText = (TextView) findViewById(R.id.view_plans_null_text);
+        mNullView = findViewById(R.id.view_plans_null);
+        try{
+            mAdapter = new PlanCollectionAdapter(getPlans());
             mList.setAdapter(mAdapter);
-            final Callback loadCallback = getLoadCallback();
-            if (mMode == PlanCollectionType.BROWSE) {
-                //TODO pagination
-                mAdapter.loadItems(loadCallback);
-            } else if (mMode == PlanCollectionType.CREATED) {
-                Button addBtn = (Button) findViewById(R.id.view_plans_add);
-                addBtn.setVisibility(View.VISIBLE);
-                addBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Plan plan = new Plan(null, 0, null, null, null, AppContext.getCurrent().getActiveUser(), null);
-                        AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
-                        plan.addChangedHandler(new Callback() {
-                            @Override
-                            public void execute(CallbackParams params) {
-                                mAdapter.loadItems(loadCallback);
-                            }
-                        });
-                    }
-                });
-                mAdapter.loadItems(loadCallback);
-            } else {
-                mAdapter.loadItems(loadCallback);
-                AppContext.getCurrent().getEnrollments().addChangedHandler(new Callback() {
-                    @Override
-                    public void execute(CallbackParams params) {
-                        mAdapter.loadItems(loadCallback);
-                    }
-                });
-            }
+            return true;
         }catch(UnsupportedOperationException e){
-            System.err.println("[PlanCollectionView.initializeView] exception");
+            System.err.println("[PlanCollection.initializeView] exception");
             e.printStackTrace();
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
+            return false;
         }
     }
 
-    private Callback getLoadCallback(){
+    protected Callback getLoadCallback(){
         return new Callback(){
             @Override
             public void execute(CallbackParams params) {
+                mAdapter.sync();
                 if(mAdapter.getCount() == 0) {
                     mList.setVisibility(View.GONE);
-                    if(mMode == PlanCollectionType.ENROLLED) {
-                        mNullText.setText(R.string.plans_enrolled_null);
-                    }else if(mMode == PlanCollectionType.CREATED) {
-                        mNullText.setText(R.string.plans_created_null);
-                    }else{
-                        mNullText.setText(R.string.plans_browse_null);
-                    }
+                    mNullText.setText(getNullTextStringId());
                     mNullView.setVisibility(View.VISIBLE);
                 }else{
                     mList.setVisibility(View.VISIBLE);
                     mNullView.setVisibility(View.GONE);
                 }
+                AppContext.getCurrent().getActivity().hideLoadingScreen();
             }
         };
     }

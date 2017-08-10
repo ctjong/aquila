@@ -11,7 +11,6 @@ import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.datamodels.Plan;
-import com.projectaquila.common.PlanCollectionType;
 import com.projectaquila.datamodels.PlanCollection;
 import com.projectaquila.datamodels.User;
 import com.projectaquila.services.HelperService;
@@ -22,71 +21,29 @@ import com.squareup.picasso.Picasso;
  * Adapter for listing out plans data on a View
  */
 public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
-    private PlanCollectionType mType;
     private PlanCollection mPlans;
 
     /**
      * Initialize new plans adapter
-     * @param type collection type to view
+     * @param plans plan collection to view
      */
-    public PlanCollectionAdapter(PlanCollectionType type) throws UnsupportedOperationException {
+    public PlanCollectionAdapter(PlanCollection plans) throws UnsupportedOperationException {
         super(R.layout.control_plancontrol);
-        mType = type;
-        if (type != PlanCollectionType.ENROLLED) {
-            mPlans = new PlanCollection(type);
-        }
+        mPlans = plans;
+        mPlans.addChangedHandler(new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                sync();
+            }
+        });
     }
 
     /**
-     * Load the whole plans set for the current view
+     * Sync the adapter's items list with the data model
      */
-    public void loadItems(final Callback cb){
-        if(mType == PlanCollectionType.ENROLLED){
-            // if load is called on an adapter that is viewing enrolled collection,
-            // we can directly load the items to the array because data has been loaded in the context
-            mPlans = AppContext.getCurrent().getEnrollments().getPlans();
-            clear();
-            addAll(mPlans.getItems());
-            if(cb != null) cb.execute(null);
-        }else {
-            AppContext.getCurrent().getActivity().showLoadingScreen();
-            mPlans.loadItems(new Callback() {
-                @Override
-                public void execute(CallbackParams params) {
-                    clear();
-                    addAll(mPlans.getItems());
-                    if (cb != null) cb.execute(params);
-                    AppContext.getCurrent().getActivity().hideLoadingScreen();
-                }
-            });
-        }
-    }
-
-    /**
-     * Load a part of the whole plans set
-     * @param partNum part number
-     * @param take number of plans to take
-     */
-    public void loadItemsPart(int partNum, int take, final Callback cb){
-        if(mType == PlanCollectionType.ENROLLED){
-            // if load is called on an adapter that is viewing enrolled collection,
-            // we get the data from the app context instead of from a server request
-            mPlans = AppContext.getCurrent().getEnrollments().getPlans();
-            clear();
-            addAll(mPlans.getItems());
-            if(cb != null) cb.execute(null);
-        }else {
-            AppContext.getCurrent().getActivity().showLoadingScreen();
-            mPlans.loadItemsPart(partNum * take, take, new Callback() {
-                @Override
-                public void execute(CallbackParams params) {
-                    clear();
-                    addAll(mPlans.getItems());
-                    if (cb != null) cb.execute(params);
-                    AppContext.getCurrent().getActivity().hideLoadingScreen();
-                }
-            });
-        }
+    public void sync(){
+        clear();
+        addAll(mPlans.getItems());
     }
 
     /**

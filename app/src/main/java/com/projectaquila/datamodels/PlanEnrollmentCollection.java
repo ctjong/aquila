@@ -1,7 +1,6 @@
 package com.projectaquila.datamodels;
 
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.common.PlanCollectionType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +21,7 @@ public class PlanEnrollmentCollection extends CollectionModelBase<PlanEnrollment
      * @return enrolled plans collection
      */
     public PlanCollection getPlans(){
-        PlanCollection plans = new PlanCollection(PlanCollectionType.ENROLLED);
+        PlanCollection plans = new EnrolledPlanCollection();
         for(PlanEnrollment enrollment : getItems()){
             plans.getItems().add(enrollment.getPlan());
         }
