@@ -5,14 +5,13 @@ import com.projectaquila.contexts.AppContext;
 
 public class UserDrawerItem extends DrawerItem {
     public UserDrawerItem(){
-        super(80, R.color.colorPrimary, R.color.white);
+        super(R.dimen.draweritem_user_height, R.color.colorPrimary, R.color.white);
     }
 
     @Override
     public String getLine1String() {
         String hello = AppContext.getCurrent().getActivity().getString(R.string.menu_userhello);
-        String userHello = hello.replace("{name}", AppContext.getCurrent().getActiveUser().getFirstName());
-        return userHello;
+        return hello.replace("{name}", AppContext.getCurrent().getActiveUser().getFirstName());
     }
 
     @Override

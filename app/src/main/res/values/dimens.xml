@@ -2,4 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="draweritem_user_height">60dp</dimen>
+    <dimen name="draweritem_nav_height">40dp</dimen>
+    <dimen name="draweritem_logout_height">40dp</dimen>
 </resources>

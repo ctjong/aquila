@@ -1,7 +1,5 @@
 package com.projectaquila.drawer;
 
-import android.view.View;
-
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
@@ -10,6 +8,10 @@ import com.projectaquila.services.HelperService;
 import com.projectaquila.views.LoginView;
 
 public class LogoutDrawerItem extends DrawerItem {
+    public LogoutDrawerItem(){
+        super(R.dimen.draweritem_logout_height, R.color.white, R.color.gray);
+    }
+
     @Override
     public String getLine1String() {
         return AppContext.getCurrent().getActivity().getString(R.string.menu_logout);

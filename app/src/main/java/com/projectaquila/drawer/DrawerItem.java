@@ -10,18 +10,12 @@ import com.projectaquila.R;
 import com.projectaquila.contexts.AppContext;
 
 public abstract class DrawerItem {
-    private int mContentHeight;
+    private int mContentHeightResId;
     private int mBgColorResId;
     private int mFgColorResId;
 
-    protected DrawerItem(){
-        mContentHeight = 50;
-        mBgColorResId = R.color.white;
-        mFgColorResId = R.color.gray;
-    }
-
-    protected DrawerItem(int height, int bgColorResId, int fgColorResId){
-        mContentHeight = height;
+    protected DrawerItem(int heightResId, int bgColorResId, int fgColorResId){
+        mContentHeightResId = heightResId;
         mBgColorResId = bgColorResId;
         mFgColorResId = fgColorResId;
     }
@@ -32,12 +26,12 @@ public abstract class DrawerItem {
     public abstract void invoke();
 
     public void updateLayout(View layout) {
+        Context ctx = AppContext.getCurrent().getActivity();
         View contentView = layout.findViewById(R.id.draweritem_content);
         ViewGroup.LayoutParams params = contentView.getLayoutParams();
-        params.height = mContentHeight;
+        params.height = (int)ctx.getResources().getDimension(mContentHeightResId);
         contentView.setLayoutParams(params);
 
-        Context ctx = AppContext.getCurrent().getActivity();
         int bcColor = ContextCompat.getColor(ctx, mBgColorResId);
         int fgColor = ContextCompat.getColor(ctx, mFgColorResId);
 

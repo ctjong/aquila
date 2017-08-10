@@ -1,6 +1,6 @@
 package com.projectaquila.drawer;
-import android.view.View;
 
+import com.projectaquila.R;
 import com.projectaquila.contexts.AppContext;
 
 import java.util.HashMap;
@@ -12,6 +12,7 @@ public class NavDrawerItem extends DrawerItem{
     private HashMap<String, Object> mNavParams;
 
     public NavDrawerItem(int titleStringId, String imageUrl, Class target, HashMap<String, Object> navParams){
+        super(R.dimen.draweritem_nav_height, R.color.white, R.color.gray);
         mTitle = AppContext.getCurrent().getActivity().getString(titleStringId);
         mImageUrl = imageUrl;
         mTarget = target;
