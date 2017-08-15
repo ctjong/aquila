@@ -9,7 +9,7 @@
     <string name="common_enroll">Enroll</string>
     <string name="common_unenroll">Un-enroll</string>
     <string name="common_description">Description</string>
-    <string name="common_createdby">by {name}</string>
+    <string name="common_createdby"><u>by {name}</u></string>
 
     <string name="shell_drawer_open">Open left nav</string>
     <string name="shell_drawer_close">Close left nav</string>
@@ -106,6 +106,9 @@
     <string name="plans_enrolled_null">You have not enrolled to any plan. Go to "Browse plans" on the side menu to get started.</string>
     <string name="plans_created_null">You have not created any plan. Click the add button below to create one.</string>
     <string name="plans_browse_null">No plan found with the given criteria.</string>
+    <string name="plans_user_null">This user has not authored any plan.</string>
+    <string name="plans_user_title">User profile</string>
+    <string name="plans_user_label">Authored plans:</string>
     <string name="plans_sortby">Sort by:</string>
     <string name="plans_searchhint">What plan are you looking for?</string>
     <string name="plans_sort_createdtime">Date added</string>

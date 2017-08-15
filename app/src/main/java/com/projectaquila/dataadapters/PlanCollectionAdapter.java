@@ -15,6 +15,7 @@ import com.projectaquila.datamodels.PlanCollection;
 import com.projectaquila.datamodels.User;
 import com.projectaquila.services.HelperService;
 import com.projectaquila.views.PlanDetailView;
+import com.projectaquila.views.UserPlanCollectionView;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -91,13 +92,22 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
      * @param plan Plan data
      * @param convertView control view
      */
-    private void updateCardView(Plan plan, View convertView){
+    private void updateCardView(final Plan plan, View convertView){
         ((TextView)convertView.findViewById(R.id.plancontrol_name)).setText(plan.getName());
-        User creator = plan.getCreator();
-        String createdByLine = getContext().getString(R.string.common_createdby).replace("{name}", creator.getFirstName() + " " + creator.getLastName());
-        ((TextView)convertView.findViewById(R.id.plancontrol_secondline)).setText(createdByLine);
         convertView.findViewById(R.id.plancontrol_draft_label).setVisibility(plan.getState() == 0 ? View.VISIBLE : View.GONE);
         convertView.findViewById(R.id.plancontrol_private_label).setVisibility(plan.getState() == 1 ? View.VISIBLE : View.GONE);
+
+        // set author line
+        final User creator = plan.getCreator();
+        String createdByLine = getContext().getString(R.string.common_createdby).replace("{name}", creator.getFirstName() + " " + creator.getLastName());
+        TextView userLine = ((TextView)convertView.findViewById(R.id.plancontrol_secondline));
+        userLine.setText(createdByLine);
+        userLine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppContext.getCurrent().getNavigationService().navigateChild(UserPlanCollectionView.class, HelperService.getSinglePairMap("user", creator));
+            }
+        });
 
         // update image
         String imageUrl = plan.getImageUrl();

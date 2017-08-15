@@ -95,7 +95,14 @@ public class PlanDetailView extends ViewBase {
 
         // show plan creator
         String creatorTextFormat = AppContext.getCurrent().getActivity().getString(R.string.common_createdby);
-        ((TextView)findViewById(R.id.plandetail_creator)).setText(creatorTextFormat.replace("{name}", mPlan.getCreator().getFirstName() + " " + mPlan.getCreator().getLastName()));
+        TextView creatorLine = ((TextView)findViewById(R.id.plandetail_creator));
+        creatorLine.setText(creatorTextFormat.replace("{name}", mPlan.getCreator().getFirstName() + " " + mPlan.getCreator().getLastName()));
+        creatorLine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppContext.getCurrent().getNavigationService().navigateChild(UserPlanCollectionView.class, HelperService.getSinglePairMap("user", mPlan.getCreator()));
+            }
+        });
 
         // setup event handlers
         mEditBtn.setOnClickListener(getEditButtonClickHandler());
