@@ -1,9 +1,11 @@
 package com.projectaquila.services;
 
+import com.projectaquila.R;
 import com.projectaquila.common.ApiResult;
 import com.projectaquila.common.ApiTaskMethod;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.contexts.AppContext;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,7 +65,11 @@ public class DataServiceBatchRequest {
                 int count = res.getCount();
                 System.out.println("[DataServiceBatchRequest.retrievePart] retrieved " + mDownloadCount + "/" + count);
                 mResult.add(res.getItems());
-                if(mDownloadCount < count){
+                if(count > 0 && mDownloadCount == 0){
+                    System.err.println("[DataServiceBatchRequest.retrievePart] retrieval failed");
+                    AppContext.getCurrent().getNavigationService().goToMainActivity();
+                    AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
+                }else if(mDownloadCount < count){
                     retrievePart(partNum + 1);
                 }else{
                     JSONArray allitems = new JSONArray();

@@ -16,9 +16,8 @@ import com.projectaquila.datamodels.PublicPlanCollection;
 
 public class PublicPlanCollectionView extends PlanCollectionView implements AbsListView.OnScrollListener {
     private static final int ITEMS_PER_PART = 20;
-    private PlanCollection mPlans;
+    private PublicPlanCollection mPlans;
     private int mLoadPartCount;
-    private SearchView mSearchView;
 
     @Override
     protected int getTitleBarStringId() {
@@ -51,8 +50,8 @@ public class PublicPlanCollectionView extends PlanCollectionView implements AbsL
         mList.setLayoutParams(params);
 
         // init filter controls
-        mSearchView = (SearchView)findViewById(R.id.view_plans_search);
-        mSearchView.setOnSearchClickListener(getSearchClickHandler());
+        SearchView searchView = (SearchView)findViewById(R.id.view_plans_search);
+        searchView.setOnQueryTextListener(getSearchHandler());
         ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(shell, R.layout.control_spinneritem);
         sortAdapter.add(shell.getString(R.string.plans_sort_createdtime));
         sortAdapter.add(shell.getString(R.string.plans_sort_name));
@@ -66,8 +65,7 @@ public class PublicPlanCollectionView extends PlanCollectionView implements AbsL
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         int lastItem = firstVisibleItem + visibleItemCount;
         int threshold = (mLoadPartCount + 1) * ITEMS_PER_PART;
-        if(lastItem == totalItemCount && totalItemCount == threshold && !mPlans.isAllLoaded())
-        {
+        if(lastItem == totalItemCount && totalItemCount == threshold && !mPlans.isAllLoaded()) {
             mLoadPartCount++;
             System.out.println("[PublicPlanCollectionView.onScroll] scrolled to last item. loading part " + mLoadPartCount);
             mPlans.loadItemsPart(mLoadPartCount, ITEMS_PER_PART, mLoadCallback);
@@ -78,12 +76,24 @@ public class PublicPlanCollectionView extends PlanCollectionView implements AbsL
     public void onScrollStateChanged(AbsListView view, int scrollState) {
     }
 
-    private View.OnClickListener getSearchClickHandler(){
-        return new View.OnClickListener() {
+    private SearchView.OnQueryTextListener getSearchHandler(){
+        return new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View v) {
-                String query = mSearchView.getQuery().toString();
-                //TODO handle query
+            public boolean onQueryTextSubmit(String query) {
+                System.out.println("[PublicPlanCollectionView.getSearchHandler] searching: " + query);
+                mPlans.setSearchQuery(query);
+                loadFirstPart();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.equals("")){
+                    System.out.println("[PublicPlanCollectionView.getSearchHandler] clearing search query");
+                    mPlans.setSearchQuery(null);
+                    loadFirstPart();
+                }
+                return true;
             }
         };
     }
@@ -100,19 +110,23 @@ public class PublicPlanCollectionView extends PlanCollectionView implements AbsL
                 }else{
                     newSortByField = "ownerid";
                 }
-                PublicPlanCollection plans = (PublicPlanCollection)mPlans;
-                if(plans.getSortByField().equals(newSortByField)) return;
-                plans.setSortByField(newSortByField);
-                AppContext.getCurrent().getActivity().showLoadingScreen();
-                mLoadPartCount = 0;
-                mList.smoothScrollToPosition(0);
-                mPlans.getItems().clear();
-                mPlans.loadItemsPart(mLoadPartCount, ITEMS_PER_PART, mLoadCallback);
+                if(mPlans.getSortByField().equals(newSortByField)) return;
+                System.out.println("[PublicPlanCollectionView.getSortSpinnerHandler] sorting by: " + newSortByField);
+                mPlans.setSortByField(newSortByField);
+                loadFirstPart();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         };
+    }
+
+    private void loadFirstPart(){
+        AppContext.getCurrent().getActivity().showLoadingScreen();
+        mLoadPartCount = 0;
+        mList.smoothScrollToPosition(0);
+        mPlans.getItems().clear();
+        mPlans.loadItemsPart(mLoadPartCount, ITEMS_PER_PART, mLoadCallback);
     }
 }

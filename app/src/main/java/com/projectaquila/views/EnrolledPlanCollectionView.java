@@ -28,5 +28,6 @@ public class EnrolledPlanCollectionView extends PlanCollectionView {
         System.out.println("[EnrolledPlanCollectionView.initializeView] started");
         if(!tryInitVars()) return;
         mAdapter.sync();
+        mLoadCallback.execute(null);
     }
 }
