@@ -105,7 +105,8 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
         if(imageUrl != null && !imageUrl.equals("") && !imageUrl.equals("null")) {
             Picasso.with(getContext()).load(plan.getImageUrl()).into(planImg);
         }else{
-            planImg.setImageResource(R.drawable.noimage);
+            planImg.setVisibility(View.GONE);
+            //TODO planImg.setImageResource(R.drawable.noimage);
         }
     }
 }
