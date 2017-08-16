@@ -2,6 +2,7 @@ package com.projectaquila.datamodels;
 
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.TaskDate;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;
@@ -110,6 +111,7 @@ public class PlanEnrollment extends DataModelBase {
     @Override
     protected HashMap<String, String> getCreateDataMap() {
         HashMap<String, String> data = new HashMap<>();
+        data.put("ownerid", AppContext.getCurrent().getActiveUser().getId());
         data.put("planid", mPlan.getId());
         data.put("startdate", mStartDate.toDateKey());
         return data;
