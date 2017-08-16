@@ -17,7 +17,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
         android:src="@drawable/checkmark"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"

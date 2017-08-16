@@ -18,19 +18,24 @@ import com.projectaquila.views.PlanDetailView;
 import com.projectaquila.views.UserPlanCollectionView;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+
 /**
  * Adapter for listing out plans data on a View
  */
 public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
     private PlanCollection mPlans;
+    private boolean mDisableUserLink;
 
     /**
      * Initialize new plans adapter
      * @param plans plan collection to view
+     * @param disableUserLink whether or not we should disable user link
      */
-    public PlanCollectionAdapter(PlanCollection plans) throws UnsupportedOperationException {
+    public PlanCollectionAdapter(PlanCollection plans, boolean disableUserLink) throws UnsupportedOperationException {
         super(R.layout.control_plancontrol);
         mPlans = plans;
+        mDisableUserLink = disableUserLink;
         mPlans.addChangedHandler(new Callback() {
             @Override
             public void execute(CallbackParams params) {
@@ -81,7 +86,9 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppContext.getCurrent().getNavigationService().navigateChild(PlanDetailView.class, HelperService.getSinglePairMap("plan", plan));
+                HashMap<String, Object> navParams = HelperService.getSinglePairMap("plan", plan);
+                navParams.put("disableUserLink", mDisableUserLink);
+                AppContext.getCurrent().getNavigationService().navigateChild(PlanDetailView.class, navParams);
             }
         });
         return convertView;
@@ -98,16 +105,20 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
         convertView.findViewById(R.id.plancontrol_private_label).setVisibility(plan.getState() == 1 ? View.VISIBLE : View.GONE);
 
         // set author line
-        final User creator = plan.getCreator();
-        String createdByLine = getContext().getString(R.string.common_createdby).replace("{name}", creator.getFirstName() + " " + creator.getLastName());
-        TextView userLine = ((TextView)convertView.findViewById(R.id.plancontrol_secondline));
-        userLine.setText(createdByLine);
-        userLine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppContext.getCurrent().getNavigationService().navigateChild(UserPlanCollectionView.class, HelperService.getSinglePairMap("user", creator));
-            }
-        });
+        TextView userLine = ((TextView) convertView.findViewById(R.id.plancontrol_secondline));
+        if(mDisableUserLink) {
+            userLine.setVisibility(View.GONE);
+        } else {
+            final User creator = plan.getCreator();
+            String createdByLine = getContext().getString(R.string.common_createdby).replace("{name}", creator.getFirstName() + " " + creator.getLastName());
+            userLine.setText(createdByLine);
+            userLine.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppContext.getCurrent().getNavigationService().navigateChild(UserPlanCollectionView.class, HelperService.getSinglePairMap("user", creator));
+                }
+            });
+        }
 
         // update image
         String imageUrl = plan.getImageUrl();

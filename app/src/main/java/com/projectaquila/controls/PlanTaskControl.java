@@ -68,14 +68,18 @@ public class PlanTaskControl extends LinearLayout {
         }
 
         // show/hide completion check mark
+        View checkImage = findViewById(R.id.plantaskcontrol_check);
         if(isEditable) {
-            //TODO show delete, move up, move down buttons
+            checkImage.setVisibility(GONE);
+        }else if(enrollment == null){
+            checkImage.setVisibility(GONE);
+        }else if(enrollment.getPlan().getId().equals(mPlanTask.getParent().getId()) && mPlanTask.getDay() <= enrollment.getCompletedDays()){
+            checkImage.setVisibility(VISIBLE);
         }else{
-            //TODO hide delete, move up, move down buttons
-            if(enrollment != null && enrollment.getPlan().getId().equals(mPlanTask.getParent().getId()) && mPlanTask.getDay() <= enrollment.getCompletedDays()){
-                findViewById(R.id.plantaskcontrol_check).setVisibility(VISIBLE);
-            }
+            checkImage.setVisibility(INVISIBLE);
         }
+
+        //TODO show/hide delete, move up, move down buttons based on isEditable
     }
 
     /**

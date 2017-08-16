@@ -1,10 +1,12 @@
 package com.projectaquila.views;
 
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.projectaquila.R;
+import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.common.PlanTaskComparator;
@@ -64,6 +66,8 @@ public class PlanDetailView extends ViewBase {
         AppContext.getCurrent().getActivity().showLoadingScreen();
         mPlan = (Plan)getNavArgObj("plan");
         Object enrollmentObj = getNavArgObj("enrollment");
+        boolean disableUserLink = (boolean)getNavArgObj("disableUserLink");
+        final ShellActivity ctx = AppContext.getCurrent().getActivity();
         if(enrollmentObj != null){
             mEnrollment = (PlanEnrollment) enrollmentObj;
         } else {
@@ -94,15 +98,20 @@ public class PlanDetailView extends ViewBase {
         mProgressControl = new EnrollmentProgressControl(mEnrollment, (TextView) findViewById(R.id.plandetail_enrollstatustext), findViewById(R.id.plandetail_shifttasksbtn));
 
         // show plan creator
-        String creatorTextFormat = AppContext.getCurrent().getActivity().getString(R.string.common_createdby);
-        TextView creatorLine = ((TextView)findViewById(R.id.plandetail_creator));
+        String creatorTextFormat = ctx.getString(R.string.common_createdby);
+        TextView creatorLine = ((TextView) findViewById(R.id.plandetail_creator));
         creatorLine.setText(creatorTextFormat.replace("{name}", mPlan.getCreator().getFirstName() + " " + mPlan.getCreator().getLastName()));
-        creatorLine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AppContext.getCurrent().getNavigationService().navigateChild(UserPlanCollectionView.class, HelperService.getSinglePairMap("user", mPlan.getCreator()));
-            }
-        });
+        if(disableUserLink){
+            creatorLine.setTextColor(ContextCompat.getColor(ctx, R.color.gray));
+        }else {
+            creatorLine.setTextColor(ContextCompat.getColor(ctx, R.color.colorPrimary));
+            creatorLine.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppContext.getCurrent().getNavigationService().navigateChild(UserPlanCollectionView.class, HelperService.getSinglePairMap("user", mPlan.getCreator()));
+                }
+            });
+        }
 
         // setup event handlers
         mEditBtn.setOnClickListener(getEditButtonClickHandler());
@@ -123,7 +132,7 @@ public class PlanDetailView extends ViewBase {
             @Override
             public void execute(CallbackParams params) {
                 updateView();
-                AppContext.getCurrent().getActivity().hideLoadingScreen();
+                ctx.hideLoadingScreen();
             }
         });
     }

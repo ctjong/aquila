@@ -7,23 +7,16 @@ import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.dataadapters.PlanCollectionAdapter;
 import com.projectaquila.datamodels.CreatedPlanCollection;
 import com.projectaquila.datamodels.Plan;
 import com.projectaquila.datamodels.PlanCollection;
 import com.projectaquila.services.HelperService;
 
 public class CreatedPlanCollectionView extends PlanCollectionView {
-    private PlanCollection mPlans;
-
     @Override
     protected int getTitleBarStringId() {
         return R.string.menu_created_plans;
-    }
-
-    @Override
-    protected PlanCollection getPlans() {
-        if(mPlans == null) mPlans = new CreatedPlanCollection();
-        return mPlans;
     }
 
     @Override
@@ -32,9 +25,10 @@ public class CreatedPlanCollectionView extends PlanCollectionView {
     }
 
     @Override
-    protected void initializeView(){
-        System.out.println("[CreatedPlanCollectionView.initializeView] started");
-        if(!tryInitVars()) return;
+    protected void setupPlanCollectionView() throws UnsupportedOperationException {
+        System.out.println("[CreatedPlanCollectionView.setupPlanCollectionView] started");
+        final PlanCollection plans = new CreatedPlanCollection();
+        mAdapter = new PlanCollectionAdapter(plans, true);
         Button addBtn = (Button) findViewById(R.id.view_plans_add);
         addBtn.setVisibility(View.VISIBLE);
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -45,12 +39,12 @@ public class CreatedPlanCollectionView extends PlanCollectionView {
                 plan.addChangedHandler(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        mPlans.loadItems(mLoadCallback);
+                        plans.loadItems(mLoadCallback);
                     }
                 });
             }
         });
         AppContext.getCurrent().getActivity().showLoadingScreen();
-        mPlans.loadItems(mLoadCallback);
+        plans.loadItems(mLoadCallback);
     }
 }

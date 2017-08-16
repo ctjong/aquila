@@ -4,14 +4,14 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
 
 import com.projectaquila.R;
 import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.contexts.AppContext;
-import com.projectaquila.datamodels.PlanCollection;
+import com.projectaquila.dataadapters.PlanCollectionAdapter;
 import com.projectaquila.datamodels.PublicPlanCollection;
 
 public class PublicPlanCollectionView extends PlanCollectionView implements AbsListView.OnScrollListener {
@@ -25,27 +25,22 @@ public class PublicPlanCollectionView extends PlanCollectionView implements AbsL
     }
 
     @Override
-    protected PlanCollection getPlans() {
-        if(mPlans == null) mPlans = new PublicPlanCollection();
-        return mPlans;
-    }
-
-    @Override
     protected int getNullTextStringId() {
         return R.string.plans_browse_null;
     }
 
     @Override
-    protected void initializeView(){
-        System.out.println("[PublicPlanCollectionView.initializeView] started");
-        if(!tryInitVars()) return;
+    protected void setupPlanCollectionView() throws UnsupportedOperationException {
+        System.out.println("[PublicPlanCollectionView.setupPlanCollectionView] started");
+        mPlans = new PublicPlanCollection();
+        mAdapter = new PlanCollectionAdapter(mPlans, false);
         mList.setOnScrollListener(this);
 
         // show filter controls
         ShellActivity shell = AppContext.getCurrent().getActivity();
         findViewById(R.id.view_plans_filter).setVisibility(View.VISIBLE);
         int filterHeight = (int)shell.getResources().getDimension(R.dimen.plans_filter_height);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mList.getLayoutParams();
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mList.getLayoutParams();
         params.setMargins(params.leftMargin, params.topMargin + filterHeight, params.rightMargin, params.bottomMargin);
         mList.setLayoutParams(params);
 
