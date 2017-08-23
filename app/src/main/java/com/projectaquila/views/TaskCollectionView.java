@@ -1,6 +1,5 @@
 package com.projectaquila.views;
 
-import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.projectaquila.common.TaskDate;
 import com.projectaquila.controls.DailyTasksControl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class TaskCollectionView extends ViewBase implements ViewPager.OnPageChangeListener {
@@ -102,7 +100,8 @@ public class TaskCollectionView extends ViewBase implements ViewPager.OnPageChan
 
         @Override
         public int getItemPosition(Object object){
-            return mViews.indexOf(object);
+            DailyTasksControl view = (DailyTasksControl)object;
+            return mViews.indexOf(view);
         }
 
         @Override

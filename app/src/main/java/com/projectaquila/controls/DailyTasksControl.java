@@ -71,14 +71,6 @@ public class DailyTasksControl extends RelativeLayout {
         mTasksList = (ListView)findViewById(R.id.dailytasks_list);
         mTasksList.setAdapter(mAdapter);
 
-        /*
-        Callback incrementDateAction = getDateUpdateAction(1);
-        Callback decrementDateAction = getDateUpdateAction(-1);
-        View draggableView = findViewById(R.id.dailytasks);
-        SwipeListener.listen(draggableView, draggableView, incrementDateAction, decrementDateAction, null, DragMinX);
-        SwipeListener.listen(mTasksList, draggableView, incrementDateAction, decrementDateAction, null, DragMinX);
-        */
-
         // listen to adapter changes
         mAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
