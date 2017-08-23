@@ -67,6 +67,7 @@
 
     <string name="taskcontrol_postpone_alttext">Postpone</string>
     <string name="taskcontrol_complete_alttext">Complete</string>
+    <string name="taskcontrol_plantask">Plan#{planId}: {planTaskName}</string>
 
     <string name="taskdetail_title">Task detail</string>
     <string name="taskdetail_complete_btn_text">Mark as completed</string>
@@ -119,6 +120,7 @@
     <string name="plantaskcontrol_label_format">Day #{day}</string>
 
     <string name="plandetail_title">Plan detail</string>
+    <string name="plandetail_id">Plan #{id}</string>
     <string name="plandetail_draft">DRAFT</string>
     <string name="plandetail_private">PRIVATE</string>
     <string name="plandetail_submit">Submit draft</string>
@@ -139,7 +141,7 @@
     <string name="plantaskupdate_desc_hint">Short description for this task</string>
 
     <string name="plantaskdetail_day">This is day {day} task in plan:</string>
-    <string name="plantaskdetail_planlink"><u>{planName}</u></string>
+    <string name="plantaskdetail_planlink"><u>Plan#{planId}. {planName}</u></string>
     <string name="plantaskdetail_completedisabled">You must complete the previous tasks in the plan before you can complete this task.</string>
     <string name="plantaskdetail_complete">Mark this task as complete</string>
     <string name="plantaskdetail_enrollstatus_ontrack">You are on track!</string>

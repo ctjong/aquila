@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.projectaquila.R;
+import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
@@ -28,6 +29,7 @@ public class PlanTaskDetailView extends ViewBase {
     private View mCompleteDisabled;
     private View mCompleteBtn;
     private EnrollmentProgressControl mProgressControl;
+    private ShellActivity mShell;
 
     /**
      * Get layout id
@@ -56,6 +58,7 @@ public class PlanTaskDetailView extends ViewBase {
         Object enrollmentObj = getNavArgObj("enrollment");
         mEnrollment = enrollmentObj == null ? null : (PlanEnrollment)enrollmentObj;
         System.out.println("[PlanTaskDetailView.initializeView] starting. planTaskId=" + HelperService.safePrint(mPlanTask.getId()));
+        mShell = AppContext.getCurrent().getActivity();
 
         // get UI elements
         mNameText = (TextView)findViewById(R.id.plantaskdetail_name);
@@ -91,10 +94,13 @@ public class PlanTaskDetailView extends ViewBase {
         // for enrollment view mode, we want to show enrollment details, completion buttons, and link to parent plan
         if(mEnrollment != null) {
             mEnrollmentSection.setVisibility(View.VISIBLE);
-            String introText = AppContext.getCurrent().getActivity().getString(R.string.plantaskdetail_day);
+            String introText = mShell.getString(R.string.plantaskdetail_day);
             introText = introText.replace("{day}", HelperService.toString(mPlanTask.getDay()));
             mPlanIntro.setText(introText);
-            mPlanLink.setText(mPlanTask.getParent().getName());
+            String planLink = mShell.getString(R.string.plantaskdetail_planlink)
+                    .replace("{planId}", mPlanTask.getParent().getId())
+                    .replace("{planName}", mPlanTask.getParent().getName());
+            mPlanLink.setText(planLink);
             if(mPlanTask.isReadyToComplete(mEnrollment)){
                 mCompleteDisabled.setVisibility(View.GONE);
                 mCompleteBtn.setVisibility(View.VISIBLE);
@@ -129,14 +135,14 @@ public class PlanTaskDetailView extends ViewBase {
                     public void execute(CallbackParams params) {
                         System.out.println("[PlanTaskDetailView.getCompleteClickListener] completing plan task " + mPlanTask.getId());
                         AppContext.getCurrent().getNavigationService().goToMainActivity();
-                        AppContext.getCurrent().getActivity().showLoadingScreen();
+                        mShell.showLoadingScreen();
                         mEnrollment.setCompletedDays(mPlanTask.getDay());
                         final String returnDateKey = mEnrollment.getStartDate().getModified(mPlanTask.getDay() - 1).toDateKey();
                         mEnrollment.submitUpdate(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
                                 AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, HelperService.getSinglePairMap("date", returnDateKey));
-                                AppContext.getCurrent().getActivity().hideLoadingScreen();
+                                mShell.hideLoadingScreen();
                             }
                         });
                     }

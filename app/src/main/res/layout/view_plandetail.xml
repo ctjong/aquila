@@ -21,6 +21,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/plandetail_private"
                 android:visibility="gone"/>
 
@@ -30,8 +31,16 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/red"
                 android:textSize="14sp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/plandetail_draft"
                 android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/plandetail_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="@string/plandetail_id"/>
 
             <TextView
                 android:id="@+id/plandetail_name"

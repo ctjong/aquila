@@ -187,6 +187,12 @@ public class Plan extends CollectionModelBase<PlanTask> {
 
     @Override
     protected void loadSelf(final Callback cb){
+        if(getState() == 1) {
+            System.out.println("[Plan.loadSelf] called on a private plan. setting creator to current user.");
+            mCreator = AppContext.getCurrent().getActiveUser();
+            cb.execute(null);
+            return;
+        }
         String loadSelfUrl = "/data/plan/public/findbyid/" + getId();
         AppContext.getCurrent().getDataService().request(ApiTaskMethod.GET, loadSelfUrl, null, new Callback() {
             @Override
@@ -194,6 +200,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
                 JSONArray items = params.getApiResult().getItems();
                 if(items.length() == 0){
                     System.err.println("[Plan.loadSelf] loadSelf returns no data");
+                    cb.execute(null);
                     return;
                 }
                 try {

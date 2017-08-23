@@ -2,6 +2,7 @@ package com.projectaquila.views;
 
 import android.view.View;
 
+import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
@@ -37,24 +38,36 @@ public abstract class ViewBase {
      * @param navArgs navigation arguments
      */
     public void onStart(final Map<String, Object> navArgs) {
-        mViewLoadAborted = false;
-        Callback cb = new Callback(){
-            @Override
-            public void execute(CallbackParams params) {
-                mNavArgs = navArgs;
-                AppContext.getCurrent().getActivity().loadView(getLayoutId());
-                AppContext.getCurrent().getActivity().hideLoadingScreen();
-                initializeView();
-                if(mViewLoadAborted) return;
-                int titleBarStringId = getTitleBarStringId();
-                AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
+        try {
+            mViewLoadAborted = false;
+            Callback cb = new Callback() {
+                @Override
+                public void execute(CallbackParams params) {
+                    try {
+                        mNavArgs = navArgs;
+                        AppContext.getCurrent().getActivity().loadView(getLayoutId());
+                        AppContext.getCurrent().getActivity().hideLoadingScreen();
+                        initializeView();
+                        if (mViewLoadAborted) return;
+                        int titleBarStringId = getTitleBarStringId();
+                        AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
+                    }catch(Exception e){
+                        System.err.println("[ViewBase.onStart] exception in inner logic");
+                        e.printStackTrace();
+                        AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
+                    }
+                }
+            };
+            if (AppContext.getCurrent().getActiveUser() != null && AppContext.getCurrent().getEnrollments() == null) {
+                AppContext.getCurrent().getActivity().showLoadingScreen();
+                AppContext.getCurrent().loadEnrollments(cb);
+            } else {
+                cb.execute(null);
             }
-        };
-        if(AppContext.getCurrent().getActiveUser() != null && AppContext.getCurrent().getEnrollments() == null){
-            AppContext.getCurrent().getActivity().showLoadingScreen();
-            AppContext.getCurrent().loadEnrollments(cb);
-        }else{
-            cb.execute(null);
+        }catch(Exception e){
+            System.err.println("[ViewBase.onStart] exception in outer logic");
+            e.printStackTrace();
+            AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
         }
     }
 

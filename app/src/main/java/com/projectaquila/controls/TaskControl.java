@@ -73,7 +73,9 @@ public class TaskControl {
         if(mTask != null) {
             text.setText(mTask.getName());
         }else{
-            text.setText(mPlanTask.getName());
+            String str = AppContext.getCurrent().getActivity().getString(R.string.taskcontrol_plantask);
+            str = str.replace("{planId}", mPlanTask.getParent().getId()).replace("{planTaskName}", mPlanTask.getName());
+            text.setText(str);
         }
 
         // set the background color

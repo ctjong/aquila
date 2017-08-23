@@ -63,11 +63,11 @@ public class PlanDetailView extends ViewBase {
      */
     @Override
     protected void initializeView(){
-        AppContext.getCurrent().getActivity().showLoadingScreen();
+        final ShellActivity ctx = AppContext.getCurrent().getActivity();
+        ctx.showLoadingScreen();
         mPlan = (Plan)getNavArgObj("plan");
         Object enrollmentObj = getNavArgObj("enrollment");
-        boolean disableUserLink = (boolean)getNavArgObj("disableUserLink");
-        final ShellActivity ctx = AppContext.getCurrent().getActivity();
+        boolean disableUserLink = getNavArgObj("disableUserLink") != null && (boolean)getNavArgObj("disableUserLink");
         if(enrollmentObj != null){
             mEnrollment = (PlanEnrollment) enrollmentObj;
         } else {
@@ -96,6 +96,9 @@ public class PlanDetailView extends ViewBase {
         mSubmitBtn = findViewById(R.id.plandetail_submit_btn);
         mPublishBtn = findViewById(R.id.plandetail_publish_btn);
         mProgressControl = new EnrollmentProgressControl(mEnrollment, (TextView) findViewById(R.id.plandetail_enrollstatustext), findViewById(R.id.plandetail_shifttasksbtn));
+
+        // plan id
+        ((TextView)findViewById(R.id.plandetail_id)).setText(ctx.getString(R.string.plandetail_id).replace("{id}", mPlan.getId()));
 
         // show plan creator
         String creatorTextFormat = ctx.getString(R.string.common_createdby);
