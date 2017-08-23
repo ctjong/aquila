@@ -1,6 +1,9 @@
 package com.projectaquila.views;
 
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -177,7 +180,8 @@ public class PlanDetailView extends ViewBase {
         // update name and descriptions
         mNameText.setText(mPlan.getName());
         if(mPlan.getDescription() != null && !mPlan.getDescription().equals("")){
-            mDescText.setText(mPlan.getDescription());
+            mDescText.setText(HelperService.fromHtml(mPlan.getDescription()));
+            mDescText.setMovementMethod(LinkMovementMethod.getInstance());
             mDescParent.setVisibility(View.VISIBLE);
         }else{
             mDescParent.setVisibility(View.GONE);

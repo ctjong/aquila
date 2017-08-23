@@ -64,7 +64,7 @@ public class ChildActivity extends ShellActivity {
     public void onBackPressed(){
         if(mLoadingScreen.getVisibility() == View.VISIBLE) return;
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_left);
+        overridePendingTransition(R.anim.slide_stay, R.anim.slide_out_right);
         mBackPressed.invoke(null);
     }
 }

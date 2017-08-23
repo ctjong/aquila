@@ -22,6 +22,8 @@ import java.util.HashMap;
  * A control to view task data
  */
 public class TaskControl {
+    private static final int DragMinX = 250;
+
     // variables to store non-plan task data
     private Task mTask;
     private TaskDate mDate;
@@ -68,6 +70,8 @@ public class TaskControl {
         Callback completeTaskAction = getCompleteTaskAction();
         Callback postponeTaskAction = getPostponeTaskAction();
         View slider = view.findViewById(R.id.taskcontrol_slider);
+        View postponeLabel = view.findViewById(R.id.taskcontrol_postpone_label);
+        View completeLabel = view.findViewById(R.id.taskcontrol_complete_label);
 
         // render the text shown on the control
         if(mTask != null) {
@@ -91,14 +95,20 @@ public class TaskControl {
         if (mTask != null) {
             if(mTask.getRecurrence() == null) {
                 // non-plan task, non recurred
-                SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction);
+                postponeLabel.setVisibility(View.VISIBLE);
+                completeLabel.setVisibility(View.VISIBLE);
+                SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction, DragMinX);
             }else{
                 // non-plan task, recurred
-                SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction);
+                postponeLabel.setVisibility(View.GONE);
+                completeLabel.setVisibility(View.VISIBLE);
+                SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction, DragMinX);
             }
         } else {
             // plan task
-            SwipeListener.listen(slider, slider, null, null, openTaskAction);
+            postponeLabel.setVisibility(View.GONE);
+            completeLabel.setVisibility(View.GONE);
+            SwipeListener.listen(slider, slider, null, null, openTaskAction, DragMinX);
         }
     }
 

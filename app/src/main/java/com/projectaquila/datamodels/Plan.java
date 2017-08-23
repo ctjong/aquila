@@ -161,7 +161,9 @@ public class Plan extends CollectionModelBase<PlanTask> {
     @Override
     protected String getItemsUrlFormat() {
         try {
-            return "/data/plantask/private/findbycondition/id/{skip}/{take}/" + URLEncoder.encode("planid=" + getId(), "UTF-8");
+            String idParam = URLEncoder.encode("planid=" + getId(), "UTF-8");
+            String accessType = mState == 1 ? "private" : "public";
+            return "/data/plantask/" + accessType + "/findbycondition/id/{skip}/{take}/" + idParam;
         }catch(UnsupportedEncodingException e){
             System.err.println("[Plan.getItemsUrlFormat] encoding error");
             e.printStackTrace();

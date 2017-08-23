@@ -1,5 +1,6 @@
 package com.projectaquila.views;
 
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -115,7 +116,8 @@ public class PlanTaskDetailView extends ViewBase {
         // update name and description
         mNameText.setText(mPlanTask.getName());
         if(!mPlanTask.getDescription().equals("")) {
-            mDescText.setText(mPlanTask.getDescription());
+            mDescText.setText(HelperService.fromHtml(mPlanTask.getDescription()));
+            mDescText.setMovementMethod(LinkMovementMethod.getInstance());
             mDescView.setVisibility(View.VISIBLE);
         }else{
             mDescView.setVisibility(View.GONE);

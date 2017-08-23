@@ -4,8 +4,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.projectaquila.R;
+import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.controls.DatePickerClickListener;
 import com.projectaquila.controls.SwipeListener;
 import com.projectaquila.dataadapters.TaskCollectionAdapter;
@@ -17,8 +19,11 @@ import com.projectaquila.common.TaskDate;
 import com.projectaquila.services.HelperService;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class TaskCollectionView extends ViewBase {
+    private static final int DragMinX = 500;
+
     private ListView mTasksList;
     private View mNullView;
     private Task mNewTask;
@@ -26,6 +31,7 @@ public class TaskCollectionView extends ViewBase {
     private TextView mCurrentMonthText;
     private TaskCollectionAdapter mTaskCollectionAdapter;
     private TaskDate mCurrentDate;
+    private ShellActivity mShell;
 
     @Override
     protected int getLayoutId() {
@@ -43,6 +49,7 @@ public class TaskCollectionView extends ViewBase {
         mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
         mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
         mTaskCollectionAdapter = new TaskCollectionAdapter();
+        mShell = AppContext.getCurrent().getActivity();
 
         String dateArg = getNavArgStr("date");
         if(dateArg != null){
@@ -69,8 +76,8 @@ public class TaskCollectionView extends ViewBase {
         Callback incrementDateAction = getDateUpdateAction(1);
         Callback decrementDateAction = getDateUpdateAction(-1);
         View draggableView = findViewById(R.id.view_tasks);
-        SwipeListener.listen(draggableView, draggableView, incrementDateAction, decrementDateAction, null);
-        SwipeListener.listen(mTasksList, draggableView, incrementDateAction, decrementDateAction, null);
+        SwipeListener.listen(draggableView, draggableView, incrementDateAction, decrementDateAction, null, DragMinX);
+        SwipeListener.listen(mTasksList, draggableView, incrementDateAction, decrementDateAction, null, DragMinX);
         mTasksList.setAdapter(mTaskCollectionAdapter);
         refresh(false);
     }
@@ -109,7 +116,7 @@ public class TaskCollectionView extends ViewBase {
                 EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
                 String taskName = taskNameCtrl.getText().toString();
                 if(taskName.equals("")) return;
-                AppContext.getCurrent().getActivity().showLoadingScreen();
+                mShell.showLoadingScreen();
 
                 // get changes
                 mNewTask.setName(taskName);
@@ -140,7 +147,9 @@ public class TaskCollectionView extends ViewBase {
                 mNewTask.setDate(mCurrentDate);
                 taskNameCtrl.setText("");
 
-                AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, HelperService.getSinglePairMap("task",mNewTask));
+                HashMap<String, Object> navParams = HelperService.getSinglePairMap("task",mNewTask);
+                navParams.put("date", mCurrentDate);
+                AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, navParams);
             }
         };
     }

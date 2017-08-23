@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.text.Html;
+import android.text.Spanned;
 
 import com.projectaquila.common.Callback;
 import com.projectaquila.contexts.AppContext;
@@ -80,5 +82,18 @@ public class HelperService {
             })
             .setIcon(android.R.drawable.ic_dialog_alert)
             .show();
+    }
+
+    /**
+     * Return a spanned element containing a HTML text
+     * @param raw raw HTML text
+     * @return span element containing HTML parsed text
+     */
+    public static Spanned fromHtml(String raw){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(raw, Html.FROM_HTML_MODE_COMPACT);
+        }else{
+            return Html.fromHtml(raw);
+        }
     }
 }
