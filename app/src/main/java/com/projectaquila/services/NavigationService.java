@@ -20,6 +20,7 @@ public class NavigationService {
     private Map<String, Object> mParamsPendingLoad;
     private ViewBase mViewPendingLoad;
     private Stack<ChildActivity> mChildStack;
+    private ViewBase mActiveView;
 
     /**
      * Instantiate a new navigation service
@@ -34,8 +35,10 @@ public class NavigationService {
      * @param parameters navigation parameters
      */
     public void navigate(Class viewClass, Map<String, Object> parameters){
+        if(mActiveView != null) mActiveView.onNavigatedFrom();
         updateCurrentView(viewClass, parameters);
         mViewPendingLoad.onStart(mParamsPendingLoad);
+        mActiveView = mViewPendingLoad;
         mViewPendingLoad = null;
         mParamsPendingLoad = null;
     }
@@ -46,6 +49,7 @@ public class NavigationService {
      * @param parameters navigation parameters
      */
     public void navigateChild(Class viewClass, Map<String, Object> parameters){
+        if(mActiveView != null) mActiveView.onNavigatedFrom();
         updateCurrentView(viewClass, parameters);
         Intent intent = new Intent(AppContext.getCurrent().getActivity(), ChildActivity.class);
         AppContext.getCurrent().getActivity().startActivity(intent);
@@ -58,6 +62,7 @@ public class NavigationService {
     public void onChildActivityLoad(ChildActivity activity){
         mChildStack.push(activity);
         mViewPendingLoad.onStart(mParamsPendingLoad);
+        mActiveView = mViewPendingLoad;
         mViewPendingLoad = null;
         mParamsPendingLoad = null;
         activity.addBackPressedHandler(new Callback() {

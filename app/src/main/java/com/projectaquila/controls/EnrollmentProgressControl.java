@@ -54,7 +54,7 @@ public class EnrollmentProgressControl {
                 mEnrollment.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        AppContext.getCurrent().getNavigationService().goToMainActivity(TaskCollectionView.class, HelperService.getSinglePairMap("date", new TaskDate().toDateKey()));
+                        AppContext.getCurrent().getNavigationService().goToMainActivity(TaskCollectionView.class, HelperService.getSinglePairMap("date", new TaskDate()));
                     }
                 });
             }

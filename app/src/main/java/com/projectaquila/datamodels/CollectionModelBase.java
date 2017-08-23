@@ -176,6 +176,7 @@ public abstract class CollectionModelBase<T extends DataModelBase> extends DataM
                     public void execute(CallbackParams params) {
                         if(clean) mItems.clear();
                         mItems.addAll(newItems);
+                        notifyListeners();
                         assert cb != null;
                         cb.execute(null);
                     }

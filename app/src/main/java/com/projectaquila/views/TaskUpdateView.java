@@ -164,8 +164,8 @@ public class TaskUpdateView extends ViewBase {
                 mTask.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        String returnDateKey = mTask.getRecurrence() != null ? mActiveDate.toDateKey() : mTask.getDateKey();
-                        AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, HelperService.getSinglePairMap("date", returnDateKey));
+                        TaskDate returnDate = mTask.getRecurrence() != null ? mActiveDate : mTask.getDate();
+                        AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, HelperService.getSinglePairMap("date", returnDate));
                     }
                 });
             }

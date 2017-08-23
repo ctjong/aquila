@@ -1,37 +1,27 @@
 package com.projectaquila.views;
 
+import android.content.Context;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.ViewFlipper;
+import android.view.ViewGroup;
 
 import com.projectaquila.R;
 import com.projectaquila.activities.ShellActivity;
-import com.projectaquila.controls.DatePickerClickListener;
-import com.projectaquila.controls.SwipeListener;
-import com.projectaquila.dataadapters.TaskCollectionAdapter;
 import com.projectaquila.common.Callback;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.common.CallbackParams;
-import com.projectaquila.datamodels.Task;
 import com.projectaquila.common.TaskDate;
-import com.projectaquila.services.HelperService;
+import com.projectaquila.controls.DailyTasksControl;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class TaskCollectionView extends ViewBase {
-    private static final int DragMinX = 500;
-
-    private ListView mTasksList;
-    private View mNullView;
-    private Task mNewTask;
-    private TextView mCurrentDateText;
-    private TextView mCurrentMonthText;
-    private TaskCollectionAdapter mTaskCollectionAdapter;
-    private TaskDate mCurrentDate;
+public class TaskCollectionView extends ViewBase implements ViewPager.OnPageChangeListener {
     private ShellActivity mShell;
+    private ViewPager mPager;
+    private TasksPagerAdapter mAdapter;
 
     @Override
     protected int getLayoutId() {
@@ -45,129 +35,97 @@ public class TaskCollectionView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        mNewTask = new Task(null, new TaskDate(), "", null);
-        mCurrentDateText = (TextView)findViewById(R.id.view_tasks_date);
-        mCurrentMonthText = (TextView)findViewById(R.id.view_tasks_month);
-        mTaskCollectionAdapter = new TaskCollectionAdapter();
         mShell = AppContext.getCurrent().getActivity();
+        Object dateObj = getNavArgObj("date");
+        final TaskDate startDate = dateObj != null ? (TaskDate)dateObj : new TaskDate();
+        mAdapter = new TasksPagerAdapter();
+        mPager = (ViewPager)findViewById(R.id.view_tasks_pager);
+        mPager.setAdapter(mAdapter);
+        mPager.addOnPageChangeListener(this);
 
-        String dateArg = getNavArgStr("date");
-        if(dateArg != null){
-            mCurrentDate = TaskDate.parseDateKey(dateArg);
-        }else{
-            mCurrentDate = new TaskDate();
+        mShell.showLoadingScreen();
+        AppContext.getCurrent().getTasks().loadItems(new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                mAdapter.push(new DailyTasksControl(mShell, null, startDate.getModified(-1)));
+                mAdapter.push(new DailyTasksControl(mShell, null, startDate));
+                mAdapter.push(new DailyTasksControl(mShell, null, startDate.getModified(1)));
+                mPager.setCurrentItem(1);
+                mShell.hideLoadingScreen();
+            }
+        });
+    }
+
+    @Override
+    public void onNavigatedFrom(){
+        AppContext.getCurrent().getTasks().removeChangedHandlers();
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        TaskDate currentDate = mAdapter.getItem(position).getCurrentDate();
+        if(position == 0){
+            mAdapter.pushToFront(new DailyTasksControl(mShell, null, currentDate.getModified(-1)));
+        }else if(position == mAdapter.getCount() - 1){
+            mAdapter.push(new DailyTasksControl(mShell, null, currentDate.getModified(1)));
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+    }
+
+    private class TasksPagerAdapter extends PagerAdapter {
+        private List<DailyTasksControl> mViews;
+
+        public TasksPagerAdapter(){
+            mViews = new ArrayList<>();
         }
 
-        View.OnClickListener datePickerClickHandler = new DatePickerClickListener(mCurrentDate, new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                mCurrentDate = (TaskDate)params.get("retval");
-                refresh(false);
-            }
-        });
-        mCurrentDateText.setOnClickListener(datePickerClickHandler);
-        mCurrentMonthText.setOnClickListener(datePickerClickHandler);
+        public DailyTasksControl getItem(int position){
+            return mViews.get(position);
+        }
 
-        findViewById(R.id.view_tasks_add_save).setOnClickListener(getAddSaveClickListener());
-        findViewById(R.id.view_tasks_add_edit).setOnClickListener(getAddEditClickListener());
+        public void push(DailyTasksControl view){
+            mViews.add(view);
+            notifyDataSetChanged();
+        }
 
-        mNullView = findViewById(R.id.view_tasks_null);
-        mTasksList = (ListView)findViewById(R.id.view_tasks_list);
-        Callback incrementDateAction = getDateUpdateAction(1);
-        Callback decrementDateAction = getDateUpdateAction(-1);
-        View draggableView = findViewById(R.id.view_tasks);
-        SwipeListener.listen(draggableView, draggableView, incrementDateAction, decrementDateAction, null, DragMinX);
-        SwipeListener.listen(mTasksList, draggableView, incrementDateAction, decrementDateAction, null, DragMinX);
-        mTasksList.setAdapter(mTaskCollectionAdapter);
-        refresh(false);
-    }
+        public void pushToFront(DailyTasksControl view){
+            mViews.add(0, view);
+            notifyDataSetChanged();
+        }
 
-    /**
-     * Refresh current view for the current date
-     * @param clearCache true to clear in-memory cache
-     */
-    private void refresh(boolean clearCache){
-        // update date
-        mCurrentDateText.setText(TaskDate.format("EEE dd", mCurrentDate));
-        mCurrentMonthText.setText(TaskDate.format("MMMM yyyy", mCurrentDate));
+        @Override
+        public int getItemPosition(Object object){
+            return mViews.indexOf(object);
+        }
 
-        // update tasks list
-        mTaskCollectionAdapter.loadDate(mCurrentDate, clearCache, new Callback() {
-            @Override
-            public void execute(CallbackParams params) {
-                if(mTaskCollectionAdapter.getCount() == 0){
-                    mNullView.setVisibility(View.VISIBLE);
-                    mTasksList.setVisibility(View.GONE);
-                }else{
-                    mNullView.setVisibility(View.GONE);
-                    mTasksList.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-    }
+        @Override
+        public int getCount() {
+            return mViews.size();
+        }
 
-    /**
-     * Get a click handler for the add-save button
-     */
-    private View.OnClickListener getAddSaveClickListener(){
-        return new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
-                String taskName = taskNameCtrl.getText().toString();
-                if(taskName.equals("")) return;
-                mShell.showLoadingScreen();
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
 
-                // get changes
-                mNewTask.setName(taskName);
-                taskNameCtrl.setText("");
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            DailyTasksControl view = mViews.get(position);
+            container.addView(view);
+            return view;
+        }
 
-                // save to server
-                mNewTask.submitUpdate(new Callback() {
-                    @Override
-                    public void execute(CallbackParams params) {
-                        refresh(true);
-                    }
-                });
-            }
-        };
-    }
-
-    /**
-     * Get a click handler for the add-edit button
-     */
-    private View.OnClickListener getAddEditClickListener(){
-        return new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                EditText taskNameCtrl = ((EditText)findViewById(R.id.view_tasks_add_text));
-
-                // get changes
-                mNewTask.setName(taskNameCtrl.getText().toString());
-                mNewTask.setDate(mCurrentDate);
-                taskNameCtrl.setText("");
-
-                HashMap<String, Object> navParams = HelperService.getSinglePairMap("task",mNewTask);
-                navParams.put("date", mCurrentDate);
-                AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, navParams);
-            }
-        };
-    }
-
-    /**
-     * Get an action that updates the current date by adding/substracting it with the given number of days
-     * @param numDays number of days
-     */
-    private Callback getDateUpdateAction(final int numDays) {
-        return new Callback(){
-            @Override
-            public void execute(CallbackParams params) {
-                Calendar c = Calendar.getInstance();
-                c.setTime(mCurrentDate);
-                c.add(Calendar.DATE, numDays);
-                mCurrentDate = new TaskDate(c.getTime());
-                refresh(false);
-            }
-        };
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            DailyTasksControl view = mViews.get(position);
+            container.removeView(view);
+        }
     }
 }

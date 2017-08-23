@@ -81,6 +81,12 @@ public abstract class ViewBase {
     }
 
     /**
+     * Invoked when we are navigating away from this view
+     */
+    public void onNavigatedFrom(){
+    }
+
+    /**
      * Get navigation argument string with the given key
      * @param key navigation argument key
      * @return navigation argument string value, or null if not found

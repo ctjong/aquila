@@ -72,7 +72,7 @@ public class TaskDate extends java.util.Date {
     }
 
     /**
-     * Parse the given date key string into a date objecy
+     * Parse the given date key string into a date object
      * @param dateKey date key string
      * @return date object, or null on failure
      */
@@ -90,5 +90,10 @@ public class TaskDate extends java.util.Date {
     @Override
     public boolean equals(Object other){
         return other instanceof TaskDate && toDateKey().equals(((TaskDate)other).toDateKey());
+    }
+
+    @Override
+    public String toString(){
+        return toDateKey();
     }
 }

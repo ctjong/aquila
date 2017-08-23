@@ -45,6 +45,13 @@ public abstract class DataModelBase {
     }
 
     /**
+     * Remove all changed event handlers
+     */
+    public void removeChangedHandlers(){
+        mChangedEvent.removeAllHandlers();
+    }
+
+    /**
      * Notify all listeners to the changed event
      */
     public void notifyListeners(){

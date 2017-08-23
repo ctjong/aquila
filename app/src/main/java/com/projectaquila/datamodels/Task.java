@@ -58,10 +58,6 @@ public class Task extends DataModelBase {
         }
     }
 
-    public String getDateKey(){
-        return mDate.toDateKey();
-    }
-
     public TaskDate getDate(){
         return mDate;
     }
@@ -110,7 +106,7 @@ public class Task extends DataModelBase {
         System.out.println("[Task.completeOccurrence] completing recurrence task " + getId() + " at " + occDateKey);
         if(mDate.toDateKey().equals(occDateKey)){
             if(mRecurrence.shiftToNextOccurrence()){
-                System.out.println("[Task.completeOccurrence] shifting recurrence series to " + getDateKey());
+                System.out.println("[Task.completeOccurrence] shifting recurrence series to " + getDate());
                 submitUpdate(cb);
             }else{
                 System.out.println("[Task.completeOccurrence] completing recurrence series " + getId());

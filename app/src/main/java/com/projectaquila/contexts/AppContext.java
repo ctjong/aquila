@@ -7,6 +7,7 @@ import com.projectaquila.activities.MainActivity;
 import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.common.Callback;
 import com.projectaquila.datamodels.PlanEnrollmentCollection;
+import com.projectaquila.datamodels.TaskCollection;
 import com.projectaquila.datamodels.User;
 import com.projectaquila.services.AuthService;
 import com.projectaquila.services.DataService;
@@ -60,6 +61,10 @@ public class AppContext {
     // and nullified when active user is set to null (see setActiveUser())
     private PlanEnrollmentCollection mEnrollments;
 
+    // list of owned tasks
+    // this is initialized whenever TaskCollectionView is initiated.
+    private TaskCollection mTasks;
+
     // services
     private AuthService mAuthService;
     private DataService mDataService;
@@ -71,6 +76,7 @@ public class AppContext {
 
     private AppContext(MainActivity mainActivity) {
         mMainActivity = mainActivity;
+        mTasks = new TaskCollection();
         initActiveUser();
         initDebugConfig();
 
@@ -104,6 +110,10 @@ public class AppContext {
 
     public PlanEnrollmentCollection getEnrollments(){
         return mEnrollments;
+    }
+
+    public TaskCollection getTasks(){
+        return mTasks;
     }
 
     /*----------------------------------

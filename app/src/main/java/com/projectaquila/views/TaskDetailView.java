@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TaskDetailView extends ViewBase {
+    private Task mTask;
+    private TaskDate mActiveDate;
+
     @Override
     protected int getLayoutId() {
         return R.layout.view_taskdetail;
@@ -33,18 +36,17 @@ public class TaskDetailView extends ViewBase {
 
     @Override
     protected void initializeView(){
-        final Task task = (Task)getNavArgObj("task");
-        final String activeDateKey = getNavArgStr("activedatekey");
-        final TaskDate activeDate = TaskDate.parseDateKey(activeDateKey);
+        mTask = (Task)getNavArgObj("task");
+        mActiveDate = TaskDate.parseDateKey(getNavArgStr("activedatekey"));
 
         // set view values
-        ((TextView)findViewById(R.id.taskdetail_taskname)).setText(task.getName());
-        ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(activeDate.getFriendlyString());
+        ((TextView)findViewById(R.id.taskdetail_taskname)).setText(mTask.getName());
+        ((TextView)findViewById(R.id.taskdetail_taskdate)).setText(mActiveDate.getFriendlyString());
 
         // task recurrence
-        if(task.getRecurrence() != null){
+        if(mTask.getRecurrence() != null){
             findViewById(R.id.taskdetail_recurrence_box).setVisibility(View.VISIBLE);
-            TaskRecurrence rec = task.getRecurrence();
+            TaskRecurrence rec = mTask.getRecurrence();
             RecurrenceMode mode = rec.getMode();
             ((TextView)findViewById(R.id.taskdetail_recmode)).setText(mode.toString());
 
@@ -89,7 +91,7 @@ public class TaskDetailView extends ViewBase {
             }
 
             // recurrence start
-            ((TextView)findViewById(R.id.taskdetail_recstart)).setText(task.getDate().getFriendlyString());
+            ((TextView)findViewById(R.id.taskdetail_recstart)).setText(mTask.getDate().getFriendlyString());
 
             // recurrence end
             ((TextView)findViewById(R.id.taskdetail_recend)).setText(rec.getEnd().getFriendlyString());
@@ -104,50 +106,50 @@ public class TaskDetailView extends ViewBase {
             @Override
             public void onClick(View v) {
                 HashMap<String, Object> navParams = new HashMap<>();
-                navParams.put("task", task);
-                navParams.put("date", activeDate);
+                navParams.put("task", mTask);
+                navParams.put("date", mActiveDate);
                 AppContext.getCurrent().getNavigationService().navigateChild(TaskUpdateView.class, navParams);
             }
         });
         Button completeBtn = (Button)findViewById(R.id.taskdetail_complete_btn);
         Button completeOccBtn = (Button)findViewById(R.id.taskdetail_completeocc_btn);
-        if(task.getRecurrence() == null){
+        if(mTask.getRecurrence() == null){
             completeBtn.setText(R.string.taskdetail_complete_btn_text);
             completeOccBtn.setVisibility(View.GONE);
         }else{
             completeBtn.setText(R.string.taskdetail_completeser_btn_text);
             completeOccBtn.setVisibility(View.VISIBLE);
         }
-        completeBtn.setOnClickListener(getCompleteTaskAction(task, null, activeDateKey));
-        completeOccBtn.setOnClickListener(getCompleteTaskAction(task, activeDate, activeDateKey));
+        completeBtn.setOnClickListener(getCompleteTaskAction(true));
+        completeOccBtn.setOnClickListener(getCompleteTaskAction(false));
     }
 
-    private View.OnClickListener getCompleteTaskAction(final Task task, final TaskDate occurrenceDate, final String activeDateKey){
+    private View.OnClickListener getCompleteTaskAction(final boolean completeWholeTask){
         final Callback cb = new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                AppContext.getCurrent().getNavigationService().goToMainActivity(TaskCollectionView.class, HelperService.getSinglePairMap("date", activeDateKey));
+                AppContext.getCurrent().getNavigationService().goToMainActivity(TaskCollectionView.class, HelperService.getSinglePairMap("date", mActiveDate));
             }
         };
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(occurrenceDate == null){
-                    HelperService.showAlert(R.string.prompt_completeseries_title, R.string.prompt_completeseries_msg, new Callback() {
-                        @Override
-                        public void execute(CallbackParams params) {
-                            AppContext.getCurrent().getActivity().showLoadingScreen();
-                            task.complete(cb);
-                        }
-                    }, null);
-                }else{
-                    int promptTitle = task.getRecurrence() != null ? R.string.prompt_completeocc_title : R.string.prompt_completetask_title;
-                    int promptMsg = task.getRecurrence() != null ? R.string.prompt_completeocc_msg : R.string.prompt_completetask_msg;
+                if(completeWholeTask){
+                    int promptTitle = mTask.getRecurrence() != null ? R.string.prompt_completeseries_title : R.string.prompt_completetask_title;
+                    int promptMsg = mTask.getRecurrence() != null ? R.string.prompt_completeseries_msg : R.string.prompt_completetask_msg;
                     HelperService.showAlert(promptTitle, promptMsg, new Callback() {
                         @Override
                         public void execute(CallbackParams params) {
                             AppContext.getCurrent().getActivity().showLoadingScreen();
-                            task.completeOccurrence(occurrenceDate, cb);
+                            mTask.complete(cb);
+                        }
+                    }, null);
+                }else{
+                    HelperService.showAlert(R.string.prompt_completeocc_title, R.string.prompt_completeocc_msg, new Callback() {
+                        @Override
+                        public void execute(CallbackParams params) {
+                            AppContext.getCurrent().getActivity().showLoadingScreen();
+                            mTask.completeOccurrence(mActiveDate, cb);
                         }
                     }, null);
                 }

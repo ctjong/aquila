@@ -8,6 +8,7 @@ import com.projectaquila.R;
 import com.projectaquila.activities.ShellActivity;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.common.TaskDate;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.controls.EnrollmentProgressControl;
 import com.projectaquila.datamodels.PlanEnrollment;
@@ -139,11 +140,11 @@ public class PlanTaskDetailView extends ViewBase {
                         AppContext.getCurrent().getNavigationService().goToMainActivity();
                         mShell.showLoadingScreen();
                         mEnrollment.setCompletedDays(mPlanTask.getDay());
-                        final String returnDateKey = mEnrollment.getStartDate().getModified(mPlanTask.getDay() - 1).toDateKey();
+                        final TaskDate returnDate = mEnrollment.getStartDate().getModified(mPlanTask.getDay() - 1);
                         mEnrollment.submitUpdate(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
-                                AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, HelperService.getSinglePairMap("date", returnDateKey));
+                                AppContext.getCurrent().getNavigationService().navigate(TaskCollectionView.class, HelperService.getSinglePairMap("date", returnDate));
                                 mShell.hideLoadingScreen();
                             }
                         });

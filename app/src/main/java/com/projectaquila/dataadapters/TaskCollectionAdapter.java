@@ -18,57 +18,27 @@ import com.projectaquila.datamodels.Task;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.datamodels.TaskCollection;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * Adapter for populating tasks on the tasks view
  */
 public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
-    private static final int CACHE_DAYS_SPAN = 3;
-    private HashMap<String, List<TaskControl>> mControlsMap;
     private TaskDate mActiveDate;
     private TaskCollection mTasks;
 
     /**
      * Instantiate a new tasks adapter
      */
-    public TaskCollectionAdapter(){
+    public TaskCollectionAdapter(TaskDate activeDate){
         super(R.layout.control_taskcontrol);
-        mTasks = new TaskCollection();
-    }
-
-    /**
-     * Load data for the given date
-     * @param date date object
-     * @param clearCache true to clear in-memory cache
-     * @param cb load callback
-     */
-    public void loadDate(TaskDate date, boolean clearCache, final Callback cb){
-        mActiveDate = date;
-        String key = date.toDateKey();
-        if(clearCache || mControlsMap == null){
-            mControlsMap = new HashMap<>();
-            AppContext.getCurrent().getActivity().showLoadingScreen();
-            mTasks.loadItems(new Callback() {
-                @Override
-                public void execute(CallbackParams params) {
-                    expandControlsMap();
-                    AppContext.getCurrent().getActivity().hideLoadingScreen();
-                    cb.execute(null);
-                }
-            });
-        }else {
-            if (!mControlsMap.containsKey(key)) {
-                expandControlsMap();
+        mActiveDate = activeDate;
+        mTasks = AppContext.getCurrent().getTasks();
+        mTasks.addChangedHandler(new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                updateList();
             }
-            clear();
-            List<TaskControl> activeControls = mControlsMap.get(key);
-            addAll(activeControls);
-            notifyDataSetChanged();
-            cb.execute(null);
-        }
+        });
+        updateList();
     }
 
     /**
@@ -97,14 +67,7 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
         data.addChangedHandler(new Callback() {
             @Override
             public void execute(CallbackParams params) {
-                updateControlsMap(mActiveDate);
-                if(data instanceof Task){
-                    String currentKey = mActiveDate.toDateKey();
-                    Task task = (Task)data;
-                    if(!task.getDateKey().equals(currentKey)) {
-                        updateControlsMap(task.getDate());
-                    }
-                }
+                updateList();
             }
         });
         taskControl.renderView(convertView);
@@ -112,40 +75,17 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
     }
 
     /**
-     * Initialize keys for dates that are near the active date in the controls map
+     * Update task list on the tasks in the app context
      */
-    private void expandControlsMap(){
-        for(int i=-1*CACHE_DAYS_SPAN; i<=CACHE_DAYS_SPAN; i++){
-            updateControlsMap(mActiveDate.getModified(i));
-        }
-    }
-
-    /**
-     * Update the controls map based on the tasks model for the given date
-     */
-    private void updateControlsMap(TaskDate mapDate){
-        String activeKey = mActiveDate.toDateKey();
-        String mapKey = mapDate.toDateKey();
-        if(mapKey.equals(activeKey)){
-            clear();
-        }
-        mControlsMap.put(mapKey, new LinkedList<TaskControl>());
+    private void updateList(){
+        clear();
         for(Task task : mTasks.getItems()){
-            String taskKey = task.getDate().toDateKey();
-            if(task.getRecurrence() == null && taskKey.equals(mapKey) && mControlsMap.containsKey(taskKey)) {
+            if(task.getRecurrence() == null && task.getDate().equals(mActiveDate)) {
                 // add regular (non-recurred) tasks to active array
-                TaskControl control = new TaskControl(task, task.getDate());
-                mControlsMap.get(taskKey).add(control);
-                if(taskKey.equals(activeKey)) {
-                    add(control);
-                }
-            } else if(task.getRecurrence() != null && task.getRecurrence().isIncluded(mapDate)){
+                add(new TaskControl(task, task.getDate()));
+            } else if(task.getRecurrence() != null && task.getRecurrence().isIncluded(mActiveDate)){
                 // add recurred tasks to active array
-                TaskControl control = new TaskControl(task, mapDate);
-                mControlsMap.get(mapKey).add(control);
-                if(mapKey.equals(activeKey) && task.getRecurrence().isIncluded(mActiveDate)) {
-                    add(control);
-                }
+                add(new TaskControl(task, mActiveDate));
             }
         }
         // add tasks that are a part of enrolled plans to active array
@@ -155,12 +95,8 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
             for(PlanTask planTask : plan.getItems()){
                 if(planTask.getDay() <= enrollment.getCompletedDays()) continue;
                 TaskDate planTaskDate = startDate.getModified(planTask.getDay() - 1);
-                if(planTaskDate.equals(mapDate)){
-                    TaskControl control = new TaskControl(planTask, enrollment);
-                    mControlsMap.get(mapKey).add(control);
-                    if(mapKey.equals(activeKey)) {
-                        add(control);
-                    }
+                if(planTaskDate.equals(mActiveDate)){
+                    add(new TaskControl(planTask, enrollment));
                 }
             }
         }
