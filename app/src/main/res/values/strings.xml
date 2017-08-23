@@ -64,6 +64,7 @@
     <string name="login_error_invalid_login">Invalid login</string>
 
     <string name="tasks_add_hint">Add new task</string>
+    <string name="tasks_null">No task found for current date. Use the text field below to add a task to this date or go to Menu > Browse Plans to enroll on a plan.</string>
 
     <string name="taskcontrol_postpone_alttext">Postpone</string>
     <string name="taskcontrol_complete_alttext">Complete</string>

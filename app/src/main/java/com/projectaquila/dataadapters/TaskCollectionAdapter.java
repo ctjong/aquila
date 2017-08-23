@@ -42,12 +42,13 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
     /**
      * Load data for the given date
      * @param date date object
-     * @param refreshCache true to refresh in-memory cache
+     * @param clearCache true to clear in-memory cache
+     * @param cb load callback
      */
-    public void loadDate(TaskDate date, boolean refreshCache){
+    public void loadDate(TaskDate date, boolean clearCache, final Callback cb){
         mActiveDate = date;
         String key = date.toDateKey();
-        if(refreshCache || mControlsMap == null){
+        if(clearCache || mControlsMap == null){
             mControlsMap = new HashMap<>();
             AppContext.getCurrent().getActivity().showLoadingScreen();
             mTasks.loadItems(new Callback() {
@@ -55,6 +56,7 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
                 public void execute(CallbackParams params) {
                     expandControlsMap();
                     AppContext.getCurrent().getActivity().hideLoadingScreen();
+                    cb.execute(null);
                 }
             });
         }else {
@@ -65,6 +67,7 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
             List<TaskControl> activeControls = mControlsMap.get(key);
             addAll(activeControls);
             notifyDataSetChanged();
+            cb.execute(null);
         }
     }
 

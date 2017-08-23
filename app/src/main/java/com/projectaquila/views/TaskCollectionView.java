@@ -19,6 +19,8 @@ import com.projectaquila.services.HelperService;
 import java.util.Calendar;
 
 public class TaskCollectionView extends ViewBase {
+    private ListView mTasksList;
+    private View mNullView;
     private Task mNewTask;
     private TextView mCurrentDateText;
     private TextView mCurrentMonthText;
@@ -53,7 +55,7 @@ public class TaskCollectionView extends ViewBase {
             @Override
             public void execute(CallbackParams params) {
                 mCurrentDate = (TaskDate)params.get("retval");
-                refresh();
+                refresh(false);
             }
         });
         mCurrentDateText.setOnClickListener(datePickerClickHandler);
@@ -62,26 +64,39 @@ public class TaskCollectionView extends ViewBase {
         findViewById(R.id.view_tasks_add_save).setOnClickListener(getAddSaveClickListener());
         findViewById(R.id.view_tasks_add_edit).setOnClickListener(getAddEditClickListener());
 
-        ListView tasksList = (ListView)findViewById(R.id.view_tasks_list);
+        mNullView = findViewById(R.id.view_tasks_null);
+        mTasksList = (ListView)findViewById(R.id.view_tasks_list);
         Callback incrementDateAction = getDateUpdateAction(1);
         Callback decrementDateAction = getDateUpdateAction(-1);
         View draggableView = findViewById(R.id.view_tasks);
         SwipeListener.listen(draggableView, draggableView, incrementDateAction, decrementDateAction, null);
-        SwipeListener.listen(tasksList, draggableView, incrementDateAction, decrementDateAction, null);
-        tasksList.setAdapter(mTaskCollectionAdapter);
-        refresh();
+        SwipeListener.listen(mTasksList, draggableView, incrementDateAction, decrementDateAction, null);
+        mTasksList.setAdapter(mTaskCollectionAdapter);
+        refresh(false);
     }
 
     /**
      * Refresh current view for the current date
+     * @param clearCache true to clear in-memory cache
      */
-    private void refresh(){
+    private void refresh(boolean clearCache){
         // update date
         mCurrentDateText.setText(TaskDate.format("EEE dd", mCurrentDate));
         mCurrentMonthText.setText(TaskDate.format("MMMM yyyy", mCurrentDate));
 
         // update tasks list
-        mTaskCollectionAdapter.loadDate(mCurrentDate, false);
+        mTaskCollectionAdapter.loadDate(mCurrentDate, clearCache, new Callback() {
+            @Override
+            public void execute(CallbackParams params) {
+                if(mTaskCollectionAdapter.getCount() == 0){
+                    mNullView.setVisibility(View.VISIBLE);
+                    mTasksList.setVisibility(View.GONE);
+                }else{
+                    mNullView.setVisibility(View.GONE);
+                    mTasksList.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     /**
@@ -104,7 +119,7 @@ public class TaskCollectionView extends ViewBase {
                 mNewTask.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        mTaskCollectionAdapter.loadDate(mCurrentDate, true);
+                        refresh(true);
                     }
                 });
             }
@@ -142,7 +157,7 @@ public class TaskCollectionView extends ViewBase {
                 c.setTime(mCurrentDate);
                 c.add(Calendar.DATE, numDays);
                 mCurrentDate = new TaskDate(c.getTime());
-                refresh();
+                refresh(false);
             }
         };
     }
