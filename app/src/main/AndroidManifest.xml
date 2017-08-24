@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.projectaquila">
+    package="com.planmaster">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -11,19 +11,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/login_facebook_app_id"/>
-        <activity android:name=".activities.MainActivity">
+        <activity android:name="com.planmaster.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ChildActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:name="com.planmaster.activities.ChildActivity"
+            android:parentActivityName="com.planmaster.activities.MainActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="activities.MainActivity" />
+                android:value="com.planmaster.activities.MainActivity" />
         </activity>
     </application>
 

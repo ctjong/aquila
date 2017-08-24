@@ -42,7 +42,7 @@
             android:src="@android:drawable/ic_menu_my_calendar"
             android:contentDescription="@string/taskupdate_taskdate_hint" />
 
-        <com.projectaquila.controls.DateEditText
+        <com.planmaster.controls.DateEditText
             android:id="@+id/taskupdate_taskdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/taskrecurrence_days_label" />
 
-            <com.projectaquila.controls.DaysPicker
+            <com.planmaster.controls.DaysPicker
                 android:id="@+id/taskupdate_recdays_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/taskrecurrence_start_label" />
 
-            <com.projectaquila.controls.DateEditText
+            <com.planmaster.controls.DateEditText
                 android:id="@+id/taskupdate_recstart_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
                 android:spinnerMode="dropdown"
                 android:background="@drawable/border"/>
 
-            <com.projectaquila.controls.DateEditText
+            <com.planmaster.controls.DateEditText
                 android:id="@+id/taskupdate_recend_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
