@@ -1,103 +1,116 @@
-<android.support.v4.widget.DrawerLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/shell"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/shell_drawerlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_marginBottom="@dimen/shell_ad_height"
+        android:background="@color/white">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/shell_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="10dp"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ToolBarStyle"
-            app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel" />
-
-        <RelativeLayout
-            android:id="@+id/shell_loading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_centerHorizontal="true"
-                android:indeterminate="true" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:text="@string/shell_loading"
-                android:textAlignment="center"
-                android:layout_below="@+id/progressBar" />
-
-        </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/shell_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <RelativeLayout
-            android:id="@+id/shell_error"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/shell_error_text"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="20dp"
-                android:text="@string/shell_error_emoticon"
-                android:textAlignment="center"
-                android:textSize="30sp" />
-
-            <TextView
-                android:id="@+id/shell_error_text"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/shell_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:textAlignment="center" />
+                android:elevation="10dp"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="@style/ToolBarStyle"
+                app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel" />
 
-            <Button
-                android:id="@+id/shell_error_reload_btn"
-                android:layout_width="100dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/shell_error_text"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="@color/colorPrimary"
-                android:text="@string/shell_error_reload_btn_text"
-                android:textColor="@android:color/background_light" />
+            <RelativeLayout
+                android:id="@+id/shell_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="150dp"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone">
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerHorizontal="true"
+                    android:indeterminate="true" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:text="@string/shell_loading"
+                    android:textAlignment="center"
+                    android:layout_below="@+id/progressBar" />
+            </RelativeLayout>
 
-        </RelativeLayout>
+            <FrameLayout
+                android:id="@+id/shell_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-    </LinearLayout>
+            <RelativeLayout
+                android:id="@+id/shell_error"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/shell_error_text"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/shell_error_emoticon"
+                    android:textAlignment="center"
+                    android:textSize="30sp" />
+                <TextView
+                    android:id="@+id/shell_error_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textAlignment="center" />
+                <Button
+                    android:id="@+id/shell_error_reload_btn"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/shell_error_text"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/shell_error_reload_btn_text"
+                    android:textColor="@android:color/background_light" />
+            </RelativeLayout>
+        </LinearLayout>
 
-    <ListView
-        android:id="@+id/shell_drawer"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="#eee"
-        android:dividerHeight="1dp"
-        android:background="#ffffff"/>
+        <ListView
+            android:id="@+id/shell_drawer"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:choiceMode="singleChoice"
+            android:divider="#eee"
+            android:dividerHeight="1dp"
+            android:background="#ffffff"/>
 
-</android.support.v4.widget.DrawerLayout>
+    </android.support.v4.widget.DrawerLayout>
+
+    <!-- production ca-app-pub-9097042281850784/9536521740 -->
+    <!-- test ca-app-pub-3940256099942544/6300978111 -->
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/shell_adview"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/shell_ad_height"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+    </com.google.android.gms.ads.AdView>
+
+</RelativeLayout>
+
 

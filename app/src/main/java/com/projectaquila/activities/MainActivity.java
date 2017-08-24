@@ -38,7 +38,7 @@ public class MainActivity extends ShellActivity {
      */
     @Override
     public void onAfterCreate() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.shell);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.shell_drawerlayout);
         mDrawer = (ListView) findViewById(R.id.shell_drawer);
         mDrawerToggle = new DrawerToggle(mDrawerLayout, mToolbar);
         mDrawerLayout.addDrawerListener(mDrawerToggle);

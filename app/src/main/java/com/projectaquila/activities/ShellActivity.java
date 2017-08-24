@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.MobileAds;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
@@ -21,6 +22,8 @@ import com.projectaquila.common.Event;
 import com.projectaquila.views.LoginView;
 
 public abstract class ShellActivity extends AppCompatActivity {
+    private static final String AdMobAppId = "ca-app-pub-9097042281850784~3162685089";
+
     protected View mLoadingScreen;
     private FrameLayout mContentScreen;
     private View mErrorScreen;
@@ -65,6 +68,9 @@ public abstract class ShellActivity extends AppCompatActivity {
         mLoadingScreen = findViewById(R.id.shell_loading);
         mContentScreen = (FrameLayout) findViewById(R.id.shell_content);
         mActivityResultEvent = new Event();
+
+        // init admob
+        MobileAds.initialize(this, AdMobAppId);
 
         // init error screen
         Button reloadBtn = (Button)findViewById(R.id.shell_error_reload_btn);
