@@ -15,8 +15,6 @@ import com.projectaquila.datamodels.PlanEnrollment;
 import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.services.HelperService;
 
-import org.w3c.dom.Text;
-
 import java.util.HashMap;
 
 public class PlanTaskDetailView extends ViewBase {
