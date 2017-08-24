@@ -8,34 +8,10 @@
         android:layout_width="match_parent"
         android:layout_height="40dp">
 
-        <FrameLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp">
-
-            <TextView
-                android:id="@+id/taskcontrol_postpone_label"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/taskcontrol_postpone_alttext"/>
-
-            <TextView
-                android:id="@+id/taskcontrol_complete_label"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:gravity="center"
-                android:text="@string/taskcontrol_complete_alttext"/>
-
-        </FrameLayout>
-
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/taskcontrol_slider"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:background="@drawable/taskcontrol_normal"
             android:orientation="horizontal"
             android:paddingLeft="10dp"
@@ -45,12 +21,33 @@
             <TextView
                 android:id="@+id/taskcontrol_text"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textColor="@android:color/white" />
-        </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/taskcontrol_postpone"
+                android:layout_width="@dimen/taskcontrol_btn_width"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="35dp"
+                android:layout_marginRight="30dp"
+                android:hint="@string/taskcontrol_postpone_alttext"
+                android:background="@drawable/postpone" />
+
+            <ImageButton
+                android:id="@+id/taskcontrol_complete"
+                android:layout_width="@dimen/taskcontrol_btn_width"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:gravity="center_vertical"
+                android:hint="@string/taskcontrol_complete_alttext"
+                android:background="@drawable/whitecheckmark" />
+        </RelativeLayout>
 
     </RelativeLayout>
 

@@ -1,6 +1,7 @@
 package com.projectaquila.controls;
 
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.projectaquila.contexts.AppContext;
@@ -22,8 +23,6 @@ import java.util.HashMap;
  * A control to view task data
  */
 public class TaskControl {
-    private static final int DragMinX = 250;
-
     // variables to store non-plan task data
     private Task mTask;
     private TaskDate mDate;
@@ -65,15 +64,34 @@ public class TaskControl {
      * @param view view object
      */
     public void renderView(View view){
+        // get UI elements
+        View postponeBtn = view.findViewById(R.id.taskcontrol_postpone);
+        View completeBtn = view.findViewById(R.id.taskcontrol_complete);
         TextView text = (TextView) view.findViewById(R.id.taskcontrol_text);
-        Callback openTaskAction = getOpenTaskAction();
-        Callback completeTaskAction = getCompleteTaskAction();
-        Callback postponeTaskAction = getPostponeTaskAction();
-        View slider = view.findViewById(R.id.taskcontrol_slider);
-        View postponeLabel = view.findViewById(R.id.taskcontrol_postpone_label);
-        View completeLabel = view.findViewById(R.id.taskcontrol_complete_label);
 
-        // render the text shown on the control
+        // set up UI elements visibility
+        int btnWidth = (int)AppContext.getCurrent().getActivity().getResources().getDimension(R.dimen.taskcontrol_btn_width);
+        RelativeLayout.LayoutParams textLayout = (RelativeLayout.LayoutParams)text.getLayoutParams();
+        if(mTask == null || mTask.getRecurrence() != null){
+            postponeBtn.setVisibility(View.GONE);
+            if(!mPlanTask.isReadyToComplete(mEnrollment)) {
+                completeBtn.setVisibility(View.GONE);
+                textLayout.setMargins(0, 0, 0, 0);
+            }else{
+                completeBtn.setVisibility(View.VISIBLE);
+                textLayout.setMargins(0, 0, btnWidth, 0);
+            }
+        }else{
+            postponeBtn.setVisibility(View.VISIBLE);
+            textLayout.setMargins(0, 0, btnWidth * 2, 0);
+        }
+
+        // set up click handlers
+        postponeBtn.setOnClickListener(getPostponeClickHandler());
+        completeBtn.setOnClickListener(getCompleteClickHandler());
+        text.setOnClickListener(getOpenTaskClickHandler());
+
+        // show task text
         if(mTask != null) {
             text.setText(mTask.getName());
         }else{
@@ -83,6 +101,7 @@ public class TaskControl {
         }
 
         // set the background color
+        View slider = view.findViewById(R.id.taskcontrol_slider);
         if (mPlanTask != null) {
             slider.setBackgroundResource(R.drawable.taskcontrol_plantask);
         }else if (mTask.getRecurrence() == null) {
@@ -90,46 +109,26 @@ public class TaskControl {
         } else {
             slider.setBackgroundResource(R.drawable.taskcontrol_recurrence);
         }
-
-        // setup swipe/click handlers
-        if (mTask != null) {
-            if(mTask.getRecurrence() == null) {
-                // non-plan task, non recurred
-                postponeLabel.setVisibility(View.VISIBLE);
-                completeLabel.setVisibility(View.VISIBLE);
-                SwipeListener.listen(slider, slider, completeTaskAction, postponeTaskAction, openTaskAction, DragMinX);
-            }else{
-                // non-plan task, recurred
-                postponeLabel.setVisibility(View.GONE);
-                completeLabel.setVisibility(View.VISIBLE);
-                SwipeListener.listen(slider, slider, completeTaskAction, null, openTaskAction, DragMinX);
-            }
-        } else {
-            // plan task
-            postponeLabel.setVisibility(View.GONE);
-            completeLabel.setVisibility(View.GONE);
-            SwipeListener.listen(slider, slider, null, null, openTaskAction, DragMinX);
-        }
     }
 
     /**
      * Get handler for postpone action
      * @return handler callback
      */
-    private Callback getPostponeTaskAction(){
-        return new Callback() {
+    private View.OnClickListener getPostponeClickHandler(){
+        return new View.OnClickListener() {
             @Override
-            public void execute(CallbackParams params) {
+            public void onClick(View view) {
                 HelperService.showAlert(R.string.prompt_postponetask_title, R.string.prompt_postponetask_msg, new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
                         if(mTask == null) {
-                            System.err.println("[TaskListItem.getPostponeTaskAction] postponing a plan task is unsupported. aborting.");
+                            System.err.println("[TaskListItem.getPostponeClickHandler] postponing a plan task is unsupported. aborting.");
                             return;
                         }
-                        System.out.println("[TaskListItem.getPostponeTaskAction] postponing task " + mTask.getId());
+                        System.out.println("[TaskListItem.getPostponeClickHandler] postponing task " + mTask.getId());
                         if(mTask.getRecurrence() != null){
-                            System.err.println("[TaskListItem.getPostponeTaskAction] task is recurred. aborting.");
+                            System.err.println("[TaskListItem.getPostponeClickHandler] task is recurred. aborting.");
                             return;
                         }
                         TaskDate postponedDate = mTask.getDate().getModified(1);
@@ -146,24 +145,26 @@ public class TaskControl {
      * Get handler for complete action
      * @return handler callback
      */
-    private Callback getCompleteTaskAction(){
-        return new Callback() {
+    private View.OnClickListener getCompleteClickHandler(){
+        return new View.OnClickListener() {
             @Override
-            public void execute(CallbackParams params) {
+            public void onClick(View view) {
                 int promptTitle = (mTask != null && mTask.getRecurrence() != null) ? R.string.prompt_completeocc_title : R.string.prompt_completetask_title;
                 int promptMsg = (mTask != null && mTask.getRecurrence() != null) ? R.string.prompt_completeocc_msg : R.string.prompt_completetask_msg;
                 HelperService.showAlert(promptTitle, promptMsg, new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
                         if(mTask == null) {
-                            System.err.println("[TaskListItem.getCompleteTaskAction] task=null. abort.");
-                            return;
-                        }
-                        System.out.println("[TaskListItem.getCompleteTaskAction] completing task " + mTask.getId());
-                        if (mTask.getRecurrence() == null) {
-                            mTask.complete(null);
-                        } else {
-                            mTask.completeOccurrence(mDate, null);
+                            System.out.println("[TaskListItem.getCompleteClickHandler] completing plan task " + mPlanTask.getId());
+                            mEnrollment.setCompletedDays(mPlanTask.getDay());
+                            mEnrollment.submitUpdate(null);
+                        }else {
+                            System.out.println("[TaskListItem.getCompleteClickHandler] completing task " + mTask.getId());
+                            if (mTask.getRecurrence() == null) {
+                                mTask.complete(null);
+                            } else {
+                                mTask.completeOccurrence(mDate, null);
+                            }
                         }
                     }
                 }, null);
@@ -175,18 +176,18 @@ public class TaskControl {
      * Get handler for open task action
      * @return handler callback
      */
-    private Callback getOpenTaskAction(){
-        return new Callback() {
+    private View.OnClickListener getOpenTaskClickHandler(){
+        return new View.OnClickListener() {
             @Override
-            public void execute(CallbackParams params) {
+            public void onClick(View view) {
                 if(mTask != null) {
-                    System.out.println("[TaskListItem.getOpenTaskAction] opening task " + mTask.getId());
+                    System.out.println("[TaskListItem.getOpenTaskClickHandler] opening task " + mTask.getId());
                     HashMap<String, Object> navParams = new HashMap<>();
                     navParams.put("task", mTask);
                     navParams.put("activedatekey", mDate.toDateKey());
                     AppContext.getCurrent().getNavigationService().navigateChild(TaskDetailView.class, navParams);
                 }else{
-                    System.out.println("[TaskListItem.getOpenTaskAction] opening plan task " + mPlanTask.getId());
+                    System.out.println("[TaskListItem.getOpenTaskClickHandler] opening plan task " + mPlanTask.getId());
                     HashMap<String, Object> navParams = new HashMap<>();
                     navParams.put("plantask", mPlanTask);
                     navParams.put("enrollment", mEnrollment);
