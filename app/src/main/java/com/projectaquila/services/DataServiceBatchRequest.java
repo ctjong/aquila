@@ -66,7 +66,7 @@ public class DataServiceBatchRequest {
                 System.out.println("[DataServiceBatchRequest.retrievePart] retrieved " + mDownloadCount + "/" + count);
                 mResult.add(res.getItems());
                 if(count > 0 && mDownloadCount == 0){
-                    System.err.println("[DataServiceBatchRequest.retrievePart] retrieval failed");
+                    HelperService.logError("[DataServiceBatchRequest.retrievePart] retrieval failed");
                     AppContext.getCurrent().getNavigationService().goToMainActivity();
                     AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
                 }else if(mDownloadCount < count){
@@ -78,7 +78,7 @@ public class DataServiceBatchRequest {
                             try {
                                 allitems.put(arr.get(i));
                             } catch (JSONException e) {
-                                System.err.println("[DataServiceBatchRequest.retrievePart] exception");
+                                HelperService.logError("[DataServiceBatchRequest.retrievePart] exception " + e.getMessage());
                                 e.printStackTrace();
                             }
                         }

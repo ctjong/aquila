@@ -123,12 +123,12 @@ public class TaskControl {
                     @Override
                     public void execute(CallbackParams params) {
                         if(mTask == null) {
-                            System.err.println("[TaskListItem.getPostponeClickHandler] postponing a plan task is unsupported. aborting.");
+                            HelperService.logError("[TaskListItem.getPostponeClickHandler] postponing a plan task is unsupported. aborting.");
                             return;
                         }
                         System.out.println("[TaskListItem.getPostponeClickHandler] postponing task " + mTask.getId());
                         if(mTask.getRecurrence() != null){
-                            System.err.println("[TaskListItem.getPostponeClickHandler] task is recurred. aborting.");
+                            HelperService.logError("[TaskListItem.getPostponeClickHandler] task is recurred. aborting.");
                             return;
                         }
                         TaskDate postponedDate = mTask.getDate().getModified(1);

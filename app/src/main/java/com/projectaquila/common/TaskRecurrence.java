@@ -1,6 +1,7 @@
 package com.projectaquila.common;
 
 import com.projectaquila.datamodels.Task;
+import com.projectaquila.services.HelperService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,13 +30,13 @@ public class TaskRecurrence {
         // parse mode
         RecurrenceMode mode = RecurrenceMode.parse(modeInt);
         if(mode == null){
-            System.err.println("[TaskRecurrence.parse] invalid mode " + modeInt);
+            HelperService.logError("[TaskRecurrence.parse] invalid mode " + modeInt);
             return null;
         }
 
         // parse days
         if(daysStr == null || daysStr.length() < 7) {
-            System.err.println("[TaskRecurrence.parse] missing or invalid days string");
+            HelperService.logError("[TaskRecurrence.parse] missing or invalid days string");
             return null;
         }
         HashSet<Integer> days = new HashSet<>();
@@ -52,7 +53,7 @@ public class TaskRecurrence {
         if(endStr != null && endStr.length() > 0 && !endStr.equals("null")){
             end = TaskDate.parseDateKey(endStr);
             if(end == null){
-                System.err.println("[TaskRecurrence.parse] missing end date");
+                HelperService.logError("[TaskRecurrence.parse] missing end date");
                 return null;
             }
         }

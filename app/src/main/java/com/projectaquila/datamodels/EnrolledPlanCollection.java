@@ -1,5 +1,7 @@
 package com.projectaquila.datamodels;
 
+import com.projectaquila.services.HelperService;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,7 +28,7 @@ public class EnrolledPlanCollection extends PlanCollection {
         try{
             return ((JSONObject)rawObj).getJSONObject("plan");
         }catch(JSONException e){
-            System.err.println("[EnrolledPlanCollection.getPlanJson] failed to get plan json");
+            HelperService.logError("[EnrolledPlanCollection.getPlanJson] failed to get plan json");
             e.printStackTrace();
             return null;
         }

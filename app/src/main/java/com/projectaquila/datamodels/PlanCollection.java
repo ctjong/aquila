@@ -1,6 +1,7 @@
 package com.projectaquila.datamodels;
 
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,10 +35,10 @@ public abstract class PlanCollection extends CollectionModelBase<Plan> {
                 if(plan != null){
                     list.add(plan);
                 }else{
-                    System.err.println("[PlanCollection.processServerResponse] failed to parse plan, null found");
+                    HelperService.logError("[PlanCollection.processServerResponse] failed to parse plan, null found");
                 }
             } catch (JSONException e) {
-                System.err.println("[PlanCollection.processServerResponse] an error occurred while trying to get plan at index " + i);
+                HelperService.logError("[PlanCollection.processServerResponse] an error occurred while trying to get plan at index " + i);
                 e.printStackTrace();
             }
         }

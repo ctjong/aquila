@@ -7,6 +7,7 @@ import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 
+import com.projectaquila.common.ApiTaskMethod;
 import com.projectaquila.common.Callback;
 import com.projectaquila.contexts.AppContext;
 
@@ -95,5 +96,16 @@ public class HelperService {
         }else{
             return Html.fromHtml(raw);
         }
+    }
+
+    /**
+     * Log error message to the server and to the console
+     * @param errorMsg error message
+     */
+    public static void logError(String errorMsg){
+        System.err.println(errorMsg);
+        HashMap<String, String> data = new HashMap<>();
+        data.put("msg", errorMsg);
+        AppContext.getCurrent().getDataService().request(ApiTaskMethod.POST, "/error", data, null);
     }
 }

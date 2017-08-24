@@ -63,14 +63,14 @@ public class AuthService {
             @Override
             public void onCancel() {
                 logOut();
-                System.err.println("[AuthService.setupFbLoginButton] FB login cancelled");
+                HelperService.logError("[AuthService.setupFbLoginButton] FB login cancelled");
                 callback.execute(null);
             }
 
             @Override
             public void onError(FacebookException error) {
                 logOut();
-                System.err.println("[AuthService.setupFbLoginButton] FB token request error");
+                HelperService.logError("[AuthService.setupFbLoginButton] FB token request error");
                 callback.execute(null);
             }
         });
@@ -96,7 +96,7 @@ public class AuthService {
                     // pass back an empty callback params, as a sign that the conversion succeeded
                     callback.execute(new CallbackParams());
                 } catch (JSONException e) {
-                    System.err.println("[AuthService.convertFbToken] exception");
+                    HelperService.logError("[AuthService.convertFbToken] exception " + e.getMessage());
                     e.printStackTrace();
                     logOut();
                     callback.execute(null);

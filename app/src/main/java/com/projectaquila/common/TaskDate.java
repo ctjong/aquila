@@ -1,5 +1,7 @@
 package com.projectaquila.common;
 
+import com.projectaquila.services.HelperService;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -81,7 +83,7 @@ public class TaskDate extends java.util.Date {
         try {
             return new TaskDate(new SimpleDateFormat(DateKeyFormat, Locale.getDefault()).parse(dateKey));
         } catch (ParseException e) {
-            System.err.println("[TaskDate.parseDateKey] exception");
+            HelperService.logError("[TaskDate.parseDateKey] exception " + e.getMessage());
             e.printStackTrace();
             return null;
         }

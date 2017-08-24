@@ -11,6 +11,7 @@ import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.services.HelperService;
 import com.projectaquila.views.CreatedPlanCollectionView;
 import com.projectaquila.views.EnrolledPlanCollectionView;
 import com.projectaquila.views.PublicPlanCollectionView;
@@ -49,13 +50,13 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>{
         if(convertView == null || convertView instanceof TextView) {
             convertView = View.inflate(getContext(), R.layout.control_draweritem, null);
             if (convertView == null) {
-                System.err.println("[DrawerAdapter.getView] failed to get view at index" + position);
+                HelperService.logError("[DrawerAdapter.getView] failed to get view at index" + position);
                 return new TextView(getContext());
             }
         }
         final DrawerItem item = getItem(position);
         if(item == null){
-            System.err.println("[PlanCollectionAdapter.getView] failed to get plan at position " + position);
+            HelperService.logError("[PlanCollectionAdapter.getView] failed to get plan at position " + position);
             return new TextView(getContext());
         }
         item.updateLayout(convertView);

@@ -1,5 +1,7 @@
 package com.projectaquila.datamodels;
 
+import com.projectaquila.services.HelperService;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -27,7 +29,7 @@ public class UserPlanCollection extends PlanCollection {
             String condition = URLEncoder.encode("ownerid=" + mUserId, "UTF-8");
             return "/data/plan/public/findbycondition/id/{skip}/{take}/" + condition;
         } catch (UnsupportedEncodingException e) {
-            System.err.println("[UserPlanCollection.getItemsUrlFormat] exception");
+            HelperService.logError("[UserPlanCollection.getItemsUrlFormat] exception " + e.getMessage());
             e.printStackTrace();
         }
         return null;

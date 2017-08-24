@@ -9,6 +9,7 @@ import com.projectaquila.common.CallbackParams;
 import com.projectaquila.R;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.dataadapters.PlanCollectionAdapter;
+import com.projectaquila.services.HelperService;
 
 public abstract class PlanCollectionView extends ViewBase {
     protected ListView mList;
@@ -38,7 +39,7 @@ public abstract class PlanCollectionView extends ViewBase {
             setupPlanCollectionView();
             mList.setAdapter(mAdapter);
         }catch(UnsupportedOperationException e){
-            System.err.println("[PlanCollection.initializeView] exception");
+            HelperService.logError("[PlanCollection.initializeView] exception " + e.getMessage());
             e.printStackTrace();
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
         }

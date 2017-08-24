@@ -4,6 +4,7 @@ import com.projectaquila.contexts.AppContext;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.common.TaskRecurrence;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class Task extends DataModelBase {
             String dateString = json.getString("date");
             TaskDate date = TaskDate.parseDateKey(dateString);
             if(date == null){
-                System.err.println("[Task.parse] failed to parse date: " + dateString);
+                HelperService.logError("[Task.parse] failed to parse date: " + dateString);
                 return null;
             }
             String name = json.getString("name");
@@ -45,14 +46,14 @@ public class Task extends DataModelBase {
                 TaskRecurrence rec = TaskRecurrence.parse(task,recMode, json.getString("recdays"),
                         json.getInt("recinterval"), json.getString("recend"), json.getString("recholes"));
                 if(rec == null){
-                    System.err.println("[Task.parse] failed to parse recurrence");
+                    HelperService.logError("[Task.parse] failed to parse recurrence");
                     return null;
                 }
                 task.setRecurrence(rec);
             }
             return task;
         }catch(JSONException e){
-            System.err.println("[Task.parse] received JSONException.");
+            HelperService.logError("[Task.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }

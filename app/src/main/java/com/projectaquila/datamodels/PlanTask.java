@@ -53,12 +53,12 @@ public class PlanTask extends DataModelBase {
             String name = json.getString("name");
             String description = json.getString("description");
             if(id == null || name == null){
-                System.err.println("[PlanTask.parse] failed to parse plan task");
+                HelperService.logError("[PlanTask.parse] failed to parse plan task");
                 return null;
             }
             return new PlanTask(parent, id, state, day, name, description);
         }catch(JSONException e){
-            System.err.println("[PlanTask.parse] received JSONException.");
+            HelperService.logError("[PlanTask.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }

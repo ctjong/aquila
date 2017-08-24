@@ -59,18 +59,18 @@ public class Plan extends CollectionModelBase<PlanTask> {
             String imageUrl = json.getString("imageurl");
             TaskDate createdTime = new TaskDate(json.getLong("createdtime"));
             if(id == null || name == null){
-                System.err.println("[Plan.parse] failed to parse plan");
+                HelperService.logError("[Plan.parse] failed to parse plan");
                 return null;
             }
             User creator = null;
             if(json.has("owner")){
                 creator = User.parse(json.getJSONObject("owner"));
             }else{
-                System.err.println("[Plan.parse] owner info doesn't exist in plan data. deferring its load.");
+                System.out.println("[Plan.parse] owner info doesn't exist in plan data. deferring its load.");
             }
             return new Plan(id, state, name, description, imageUrl, creator, createdTime);
         }catch(JSONException e){
-            System.err.println("[Task.parse] received JSONException.");
+            HelperService.logError("[Task.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }
@@ -122,7 +122,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
      */
     public void setState(int state){
         if(state < mState) {
-            System.err.println("[Plan.setState] new state " + state + " is smaller than current " + mState + ". abort.");
+            HelperService.logError("[Plan.setState] new state " + state + " is smaller than current " + mState + ". abort.");
             return;
         }
         mState = state;
@@ -165,7 +165,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
             String accessType = mState == 1 ? "private" : "public";
             return "/data/plantask/" + accessType + "/findbycondition/id/{skip}/{take}/" + idParam;
         }catch(UnsupportedEncodingException e){
-            System.err.println("[Plan.getItemsUrlFormat] encoding error");
+            HelperService.logError("[Plan.getItemsUrlFormat] encoding error");
             e.printStackTrace();
             return null;
         }
@@ -180,7 +180,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
                 PlanTask planTask = PlanTask.parse(this, items.get(i));
                 list.add(planTask);
             }catch(JSONException e){
-                System.err.println("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);
+                HelperService.logError("[PlanCollectionAdapter.processServerResponse] an error occurred while trying to get plans at index " + i);
                 e.printStackTrace();
             }
         }
@@ -201,7 +201,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
             public void execute(CallbackParams params) {
                 JSONArray items = params.getApiResult().getItems();
                 if(items.length() == 0){
-                    System.err.println("[Plan.loadSelf] loadSelf returns no data");
+                    HelperService.logError("[Plan.loadSelf] loadSelf returns no data");
                     cb.execute(null);
                     return;
                 }
@@ -210,7 +210,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
                     Plan plan = Plan.parse(obj);
                     mCreator = plan.getCreator();
                 }catch(JSONException e){
-                    System.err.println("[Plan.loadSelf] an error occurred");
+                    HelperService.logError("[Plan.loadSelf] an error occurred");
                     e.printStackTrace();
                 }
                 cb.execute(null);

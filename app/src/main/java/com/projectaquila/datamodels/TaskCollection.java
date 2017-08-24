@@ -2,6 +2,7 @@ package com.projectaquila.datamodels;
 
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONArray;
 
@@ -27,7 +28,7 @@ public class TaskCollection extends CollectionModelBase<Task> {
                 Object taskObj = items.get(i);
                 final Task task = Task.parse(taskObj);
                 if(task == null){
-                    System.err.println("[TaskCollection.processServerResponse] failed to parse task object. skipping.");
+                    HelperService.logError("[TaskCollection.processServerResponse] failed to parse task object. skipping.");
                     continue;
                 }
                 task.addChangedHandler(new Callback() {
@@ -40,7 +41,7 @@ public class TaskCollection extends CollectionModelBase<Task> {
                 });
                 list.add(task);
             } catch (Exception e) {
-                System.err.println("[TaskCollection.processServerResponse] an exception occurred. skipping.");
+                HelperService.logError("[TaskCollection.processServerResponse] an exception occurred. skipping.");
                 e.printStackTrace();
             }
         }

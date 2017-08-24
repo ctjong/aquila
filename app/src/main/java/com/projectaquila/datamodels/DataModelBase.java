@@ -5,6 +5,7 @@ import com.projectaquila.common.ApiTaskMethod;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.common.Event;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;
 
@@ -104,7 +105,7 @@ public abstract class DataModelBase {
                     try {
                         mId = params.getApiResult().getObject().getString("value");
                     } catch (JSONException e) {
-                        System.err.println("[DataModelBase.write] failed to init model id");
+                        HelperService.logError("[DataModelBase.write] failed to init model id");
                         e.printStackTrace();
                     }
                 }
@@ -164,7 +165,7 @@ public abstract class DataModelBase {
      * @return data map
      */
     protected HashMap<String, String> getCreateDataMap() {
-        System.err.println("[DataModelBase.getCreateDataMap] not implemented");
+        HelperService.logError("[DataModelBase.getCreateDataMap] not implemented");
         return null;
     }
 
@@ -181,7 +182,7 @@ public abstract class DataModelBase {
      * @return create URL
      */
     protected String getCreateUrl() {
-        System.err.println("[DataModelBase.getCreateUrl] not implemented");
+        HelperService.logError("[DataModelBase.getCreateUrl] not implemented");
         return null;
     }
 
@@ -190,7 +191,7 @@ public abstract class DataModelBase {
      * @return create URL
      */
     protected String getUpdateUrl() {
-        System.err.println("[DataModelBase.getUpdateUrl] not implemented");
+        HelperService.logError("[DataModelBase.getUpdateUrl] not implemented");
         return null;
     }
 
@@ -199,7 +200,7 @@ public abstract class DataModelBase {
      * @return create URL
      */
     protected String getDeleteUrl() {
-        System.err.println("[DataModelBase.getDeleteUrl] not implemented");
+        HelperService.logError("[DataModelBase.getDeleteUrl] not implemented");
         return null;
     }
 }

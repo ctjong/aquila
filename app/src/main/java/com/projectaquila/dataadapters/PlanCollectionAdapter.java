@@ -65,13 +65,13 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
         if(convertView == null || convertView instanceof TextView) {
             convertView = View.inflate(getContext(), R.layout.control_plancontrol, null);
             if (convertView == null) {
-                System.err.println("[PlanCollectionAdapter.getView] failed to get view at index" + position);
+                HelperService.logError("[PlanCollectionAdapter.getView] failed to get view at index" + position);
                 return new TextView(getContext());
             }
         }
         final Plan plan = getItem(position);
         if(plan == null){
-            System.err.println("[PlanCollectionAdapter.getView] failed to get plan at position " + position);
+            HelperService.logError("[PlanCollectionAdapter.getView] failed to get plan at position " + position);
             return new TextView(getContext());
         }
 

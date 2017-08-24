@@ -1,5 +1,7 @@
 package com.projectaquila.datamodels;
 
+import com.projectaquila.services.HelperService;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -63,7 +65,7 @@ public class PublicPlanCollection extends PlanCollection {
                 String condition = URLEncoder.encode("name~" + mSearchQuery + "|description~" + mSearchQuery, "UTF-8");
                 return "/data/plan/public/findbycondition/" + mSortByField + "/{skip}/{take}/" + condition;
             } catch (UnsupportedEncodingException e) {
-                System.err.println("[PublicPlanCollection.getItemsUrlFormat] exception");
+                HelperService.logError("[PublicPlanCollection.getItemsUrlFormat] exception " + e.getMessage());
                 e.printStackTrace();
             }
         }

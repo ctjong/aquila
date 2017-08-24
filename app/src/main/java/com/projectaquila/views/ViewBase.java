@@ -6,6 +6,7 @@ import com.projectaquila.R;
 import com.projectaquila.common.Callback;
 import com.projectaquila.common.CallbackParams;
 import com.projectaquila.contexts.AppContext;
+import com.projectaquila.services.HelperService;
 
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public abstract class ViewBase {
                         int titleBarStringId = getTitleBarStringId();
                         AppContext.getCurrent().getActivity().setToolbarText(titleBarStringId);
                     }catch(Exception e){
-                        System.err.println("[ViewBase.onStart] exception in inner logic");
+                        HelperService.logError("[ViewBase.onStart] exception in inner logic");
                         e.printStackTrace();
                         AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
                     }
@@ -65,7 +66,7 @@ public abstract class ViewBase {
                 cb.execute(null);
             }
         }catch(Exception e){
-            System.err.println("[ViewBase.onStart] exception in outer logic");
+            HelperService.logError("[ViewBase.onStart] exception in outer logic");
             e.printStackTrace();
             AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
         }

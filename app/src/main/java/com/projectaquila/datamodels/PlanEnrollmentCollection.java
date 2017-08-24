@@ -1,6 +1,7 @@
 package com.projectaquila.datamodels;
 
 import com.projectaquila.common.CallbackParams;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,10 +59,10 @@ public class PlanEnrollmentCollection extends CollectionModelBase<PlanEnrollment
                 if(enrollment != null){
                     list.add(enrollment);
                 }else{
-                    System.err.println("[PlanEnrollmentCollections.processServerResponse] failed to parse plan enrollment");
+                    HelperService.logError("[PlanEnrollmentCollections.processServerResponse] failed to parse plan enrollment");
                 }
             }catch(JSONException e){
-                System.err.println("[PlanEnrollmentCollections.processServerResponse] an error occurred while trying to get plan at index " + i);
+                HelperService.logError("[PlanEnrollmentCollections.processServerResponse] an error occurred while trying to get plan at index " + i);
                 e.printStackTrace();
             }
         }

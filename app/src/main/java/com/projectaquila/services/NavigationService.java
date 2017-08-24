@@ -115,7 +115,7 @@ public class NavigationService {
             mViewPendingLoad = (ViewBase)viewClass.newInstance();
             mParamsPendingLoad = parameters;
         } catch (Exception e) {
-            System.err.println("[NavigationService.updateCurrentView] failed to instantiate view");
+            HelperService.logError("[NavigationService.updateCurrentView] failed to instantiate view");
             e.printStackTrace();
             return;
         }

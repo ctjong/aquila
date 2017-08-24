@@ -50,12 +50,12 @@ public class PlanEnrollment extends DataModelBase {
             int completedDays = json.getInt("completeddays");
             TaskDate createdTime = new TaskDate(json.getLong("createdtime"));
             if(id == null || plan == null){
-                System.err.println("[PlanEnrollment.parse] failed to parse plan enrollment");
+                HelperService.logError("[PlanEnrollment.parse] failed to parse plan enrollment");
                 return null;
             }
             return new PlanEnrollment(id, plan, startDate, completedDays, createdTime);
         }catch(JSONException e){
-            System.err.println("[PlanTask.parse] received JSONException.");
+            HelperService.logError("[PlanTask.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }

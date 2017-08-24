@@ -126,10 +126,10 @@ public class DataServiceRequest extends AsyncTask<Void, Void, ApiResult> {
             }
             return new ApiResult(responseCode, 0, null);
         }catch(SocketTimeoutException e){
-            System.err.println("[DataServiceRequest.doInBackground] timed out");
+            HelperService.logError("[DataServiceRequest.doInBackground] timed out");
             return new ApiResult(404, 0, null);
         } catch (Exception e) {
-            System.err.println("[DataServiceRequest.doInBackground] exception");
+            HelperService.logError("[DataServiceRequest.doInBackground] exception " + e.getMessage());
             e.printStackTrace();
             return new ApiResult(e);
         }

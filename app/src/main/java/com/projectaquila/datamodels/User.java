@@ -1,6 +1,7 @@
 package com.projectaquila.datamodels;
 
 import com.projectaquila.common.TaskDate;
+import com.projectaquila.services.HelperService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,12 +50,12 @@ public class User extends DataModelBase {
             String lastName = json.getString("lastname");
             TaskDate registeredTime = TaskDate.parseDateKey(json.getString("createdtime"));
             if(id == null || userName == null){
-                System.err.println("[User.parse] failed to parse user object");
+                HelperService.logError("[User.parse] failed to parse user object");
                 return null;
             }
             return new User(id, userName, email, firstName, lastName, registeredTime);
         }catch(JSONException e){
-            System.err.println("[User.parse] received JSONException.");
+            HelperService.logError("[User.parse] received JSONException.");
             e.printStackTrace();
             return null;
         }

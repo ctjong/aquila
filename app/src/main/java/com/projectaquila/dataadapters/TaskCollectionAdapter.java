@@ -17,6 +17,7 @@ import com.projectaquila.datamodels.PlanTask;
 import com.projectaquila.datamodels.Task;
 import com.projectaquila.common.TaskDate;
 import com.projectaquila.datamodels.TaskCollection;
+import com.projectaquila.services.HelperService;
 
 /**
  * Adapter for populating tasks on the tasks view
@@ -54,13 +55,13 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
         if(convertView == null || convertView instanceof TextView) {
             convertView = View.inflate(getContext(), R.layout.control_taskcontrol, null);
             if (convertView == null) {
-                System.err.println("[TaskCollectionAdapter.getView] failed to get view for task at index" + position);
+                HelperService.logError("[TaskCollectionAdapter.getView] failed to get view for task at index" + position);
                 return new TextView(getContext());
             }
         }
         final TaskControl taskControl = getItem(position);
         if(taskControl == null){
-            System.err.println("[TaskCollectionAdapter.getView] failed to get task control at position " + position);
+            HelperService.logError("[TaskCollectionAdapter.getView] failed to get task control at position " + position);
             return new TextView(getContext());
         }
         final DataModelBase data = taskControl.getData();
