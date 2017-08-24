@@ -74,7 +74,7 @@ public class TaskControl {
         RelativeLayout.LayoutParams textLayout = (RelativeLayout.LayoutParams)text.getLayoutParams();
         if(mTask == null || mTask.getRecurrence() != null){
             postponeBtn.setVisibility(View.GONE);
-            if(!mPlanTask.isReadyToComplete(mEnrollment)) {
+            if(mPlanTask != null && !mPlanTask.isReadyToComplete(mEnrollment)) {
                 completeBtn.setVisibility(View.GONE);
                 textLayout.setMargins(0, 0, 0, 0);
             }else{
@@ -134,7 +134,7 @@ public class TaskControl {
                         TaskDate postponedDate = mTask.getDate().getModified(1);
                         mTask.setDate(postponedDate);
                         mTask.submitUpdate(null);
-                        mTask.notifyListeners();
+                        AppContext.getCurrent().getTasks().notifyListeners();
                     }
                 }, null);
             }
@@ -162,10 +162,12 @@ public class TaskControl {
                             System.out.println("[TaskListItem.getCompleteClickHandler] completing task " + mTask.getId());
                             if (mTask.getRecurrence() == null) {
                                 mTask.complete(null);
+                                AppContext.getCurrent().getTasks().remove(mTask);
                             } else {
                                 mTask.completeOccurrence(mDate, null);
                             }
                         }
+                        AppContext.getCurrent().getTasks().notifyListeners();
                     }
                 }, null);
             }

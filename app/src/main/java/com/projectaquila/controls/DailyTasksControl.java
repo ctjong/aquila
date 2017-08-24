@@ -115,6 +115,7 @@ public class DailyTasksControl extends RelativeLayout {
                 mNewTask.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
+                        mNewTask = new Task(null, new TaskDate(), "", null);
                         mShell.showLoadingScreen();
                         AppContext.getCurrent().getTasks().loadItems(new Callback() {
                             @Override
