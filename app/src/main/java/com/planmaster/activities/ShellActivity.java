@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.planmaster.contexts.AppContext;
 import com.planmaster.R;
@@ -28,6 +30,7 @@ public abstract class ShellActivity extends AppCompatActivity {
     private FrameLayout mContentScreen;
     private View mErrorScreen;
     private Event mActivityResultEvent;
+    private AdView mAdView;
     private View mCurrentView;
     protected Toolbar mToolbar;
 
@@ -69,8 +72,9 @@ public abstract class ShellActivity extends AppCompatActivity {
         mContentScreen = (FrameLayout) findViewById(R.id.shell_content);
         mActivityResultEvent = new Event();
 
-        // init admob
+        // init ads
         MobileAds.initialize(this, AdMobAppId);
+        mAdView = (AdView) findViewById(R.id.shell_adview);
 
         // init error screen
         Button reloadBtn = (Button)findViewById(R.id.shell_error_reload_btn);
@@ -102,6 +106,7 @@ public abstract class ShellActivity extends AppCompatActivity {
         mCurrentView = factory.inflate(layoutId, null);
         mContentScreen.removeAllViews();
         mContentScreen.addView(mCurrentView);
+        mAdView.loadAd(new AdRequest.Builder().build());
     }
 
     /**
