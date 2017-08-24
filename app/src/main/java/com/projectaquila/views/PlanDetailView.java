@@ -1,8 +1,6 @@
 package com.projectaquila.views;
 
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
-import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -218,6 +216,7 @@ public class PlanDetailView extends ViewBase {
                             @Override
                             public void execute(CallbackParams params) {
                                 mPlan.notifyListeners();
+                                updateView();
                                 AppContext.getCurrent().getActivity().hideLoadingScreen();
                             }
                         });
@@ -245,6 +244,7 @@ public class PlanDetailView extends ViewBase {
                             @Override
                             public void execute(CallbackParams params) {
                                 mPlan.notifyListeners();
+                                updateView();
                                 AppContext.getCurrent().getActivity().hideLoadingScreen();
                             }
                         });
@@ -266,26 +266,14 @@ public class PlanDetailView extends ViewBase {
                     @Override
                     public void execute(CallbackParams params) {
                         System.out.println("[PlanDetailView.getUnenrollButtonClickHandler] un-enrolling plan " + mPlan.getId());
-                        PlanEnrollment enrollment = null;
-                        for(final PlanEnrollment e : AppContext.getCurrent().getEnrollments().getItems()){
-                            if(e.getPlan().getId().equals(mPlan.getId())) {
-                                enrollment = e;
-                                break;
-                            }
-                        }
-                        if(enrollment == null){
-                            System.out.println("[PlanDetailView.getUnenrollButtonClickHandler] failed to un-enroll, enrollment not found");
-                            return;
-                        }
                         AppContext.getCurrent().getActivity().showLoadingScreen();
-                        final PlanEnrollment toBeRemoved = enrollment;
-                        enrollment.submitDelete(new Callback() {
+                        mEnrollment.submitDelete(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
-                                mEnrollBtn.setVisibility(View.VISIBLE);
-                                mUnenrollBtn.setVisibility(View.GONE);
-                                AppContext.getCurrent().getEnrollments().getItems().remove(toBeRemoved);
+                                AppContext.getCurrent().getEnrollments().getItems().remove(mEnrollment);
                                 AppContext.getCurrent().getEnrollments().notifyListeners();
+                                mEnrollment = null;
+                                updateView();
                                 AppContext.getCurrent().getActivity().hideLoadingScreen();
                             }
                         });
@@ -308,14 +296,13 @@ public class PlanDetailView extends ViewBase {
                     public void execute(CallbackParams params) {
                         System.out.println("[PlanDetailView.getEnrollButtonClickHandler] enrolling plan " + mPlan.getId());
                         AppContext.getCurrent().getActivity().showLoadingScreen();
-                        final PlanEnrollment enrollment = new PlanEnrollment(null, mPlan, (new TaskDate()).toDateKey(), 0, null);
-                        enrollment.submitUpdate(new Callback() {
+                        mEnrollment = new PlanEnrollment(null, mPlan, (new TaskDate()).toDateKey(), 0, null);
+                        mEnrollment.submitUpdate(new Callback() {
                             @Override
                             public void execute(CallbackParams params) {
-                                mEnrollBtn.setVisibility(View.GONE);
-                                mUnenrollBtn.setVisibility(View.VISIBLE);
-                                AppContext.getCurrent().getEnrollments().getItems().add(enrollment);
+                                AppContext.getCurrent().getEnrollments().getItems().add(mEnrollment);
                                 AppContext.getCurrent().getEnrollments().notifyListeners();
+                                updateView();
                                 AppContext.getCurrent().getActivity().hideLoadingScreen();
                             }
                         });

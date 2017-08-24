@@ -1,5 +1,7 @@
 package com.projectaquila.common;
 
+import com.projectaquila.R;
+import com.projectaquila.contexts.AppContext;
 import com.projectaquila.services.HelperService;
 
 import java.text.ParseException;
@@ -48,7 +50,11 @@ public class TaskDate extends java.util.Date {
      * @return date string
      */
     public String getFriendlyString(){
-        return format(FriendlyFormat, this);
+        if(equals(MAX)){
+            return AppContext.getCurrent().getActivity().getString(R.string.taskrecurrence_end_forever);
+        }else {
+            return format(FriendlyFormat, this);
+        }
     }
 
     /**

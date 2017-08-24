@@ -50,6 +50,14 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
     public void sync(){
         clear();
         addAll(mPlans.getItems());
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Set the adapter's data model to the specified plans
+     */
+    public void setPlans(PlanCollection plans){
+        mPlans = plans;
     }
 
     /**

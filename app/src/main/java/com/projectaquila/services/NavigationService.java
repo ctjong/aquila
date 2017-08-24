@@ -49,7 +49,6 @@ public class NavigationService {
      * @param parameters navigation parameters
      */
     public void navigateChild(Class viewClass, Map<String, Object> parameters){
-        if(mActiveView != null) mActiveView.onNavigatedFrom();
         updateCurrentView(viewClass, parameters);
         Intent intent = new Intent(AppContext.getCurrent().getActivity(), ChildActivity.class);
         AppContext.getCurrent().getActivity().startActivity(intent);

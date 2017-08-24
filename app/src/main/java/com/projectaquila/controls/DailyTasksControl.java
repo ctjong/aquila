@@ -44,8 +44,8 @@ public class DailyTasksControl extends RelativeLayout {
 
         // init member variables
         mShell = AppContext.getCurrent().getActivity();
-        mNewTask = new Task(null, new TaskDate(), "", null);
         mCurrentDate = date;
+        mNewTask = new Task(null, mCurrentDate, "", null);
         mAdapter = new TaskCollectionAdapter(mCurrentDate);
 
         // current date controls
@@ -71,20 +71,27 @@ public class DailyTasksControl extends RelativeLayout {
         mTasksList = (ListView)findViewById(R.id.dailytasks_list);
         mTasksList.setAdapter(mAdapter);
 
-        // listen to adapter changes
-        mAdapter.registerDataSetObserver(new DataSetObserver() {
+        // show/hide null text and task list
+        updateVisibility();
+        mAdapter.addChangedHandler(new Callback() {
             @Override
-            public void onChanged() {
-                super.onChanged();
-                if(mAdapter.getCount() == 0){
-                    mNullView.setVisibility(View.VISIBLE);
-                    mTasksList.setVisibility(View.GONE);
-                }else{
-                    mNullView.setVisibility(View.GONE);
-                    mTasksList.setVisibility(View.VISIBLE);
-                }
+            public void execute(CallbackParams params) {
+                updateVisibility();
             }
         });
+    }
+
+    /**
+     * Update the visibility of null text and task list
+     */
+    public void updateVisibility(){
+        if(mAdapter.getCount() == 0){
+            mNullView.setVisibility(View.VISIBLE);
+            mTasksList.setVisibility(View.GONE);
+        }else{
+            mNullView.setVisibility(View.GONE);
+            mTasksList.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -115,7 +122,7 @@ public class DailyTasksControl extends RelativeLayout {
                 mNewTask.submitUpdate(new Callback() {
                     @Override
                     public void execute(CallbackParams params) {
-                        mNewTask = new Task(null, new TaskDate(), "", null);
+                        mNewTask = new Task(null, mCurrentDate, "", null);
                         mShell.showLoadingScreen();
                         AppContext.getCurrent().getTasks().loadItems(new Callback() {
                             @Override

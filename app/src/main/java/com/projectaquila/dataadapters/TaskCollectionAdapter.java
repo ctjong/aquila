@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.projectaquila.common.Event;
 import com.projectaquila.contexts.AppContext;
 import com.projectaquila.R;
 import com.projectaquila.common.Callback;
@@ -25,12 +26,14 @@ import com.projectaquila.services.HelperService;
 public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
     private TaskDate mActiveDate;
     private TaskCollection mTasks;
+    private Event mChangedEvent;
 
     /**
      * Instantiate a new tasks adapter
      */
     public TaskCollectionAdapter(TaskDate activeDate){
         super(R.layout.control_taskcontrol);
+        mChangedEvent = new Event();
         mActiveDate = activeDate;
         mTasks = AppContext.getCurrent().getTasks();
         mTasks.addChangedHandler(new Callback() {
@@ -76,6 +79,14 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
     }
 
     /**
+     * Add changed event handler
+     * @param handler event handler
+     */
+    public void addChangedHandler(Callback handler){
+        mChangedEvent.addHandler(handler);
+    }
+
+    /**
      * Update task list on the tasks in the app context
      */
     private void updateList(){
@@ -101,6 +112,7 @@ public class TaskCollectionAdapter extends CollectionAdapter<TaskControl>{
                 }
             }
         }
+        mChangedEvent.invoke(null);
         notifyDataSetChanged();
     }
 }
