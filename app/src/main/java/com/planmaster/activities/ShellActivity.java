@@ -24,7 +24,7 @@ import com.planmaster.common.Event;
 import com.planmaster.views.LoginView;
 
 public abstract class ShellActivity extends AppCompatActivity {
-    private static final String AdMobAppId = "ca-app-pub-9097042281850784~3162685089";
+    private static final String AdMobAppId = "ca-app-pub-5059401263214266~4075331566";
 
     protected View mLoadingScreen;
     private FrameLayout mContentScreen;

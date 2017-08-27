@@ -98,7 +98,7 @@
 
     </android.support.v4.widget.DrawerLayout>
 
-    <!-- production ca-app-pub-9097042281850784/9536521740 -->
+    <!-- production ca-app-pub-5059401263214266/5988492118 -->
     <!-- test ca-app-pub-3940256099942544/6300978111 -->
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -108,7 +108,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-9097042281850784/9536521740">
+        ads:adUnitId="ca-app-pub-5059401263214266/5988492118">
     </com.google.android.gms.ads.AdView>
 
 </RelativeLayout>
