@@ -34,7 +34,7 @@ public class AppContext {
     ----------------------------------*/
 
     private static final String DEBUG_CONFIG_FILENAME = "debug.xml";
-    private static final String DEFAULT_API_BASE = "http://ct-aquila.azurewebsites.net";
+    private static final String DEFAULT_API_BASE = "http://ct-orion.azurewebsites.net/aquila";
 
     /*----------------------------------
         Singleton accessor
