@@ -103,10 +103,11 @@
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/shell_adview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/shell_ad_height"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:background="@color/black"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-5059401263214266/5988492118">
     </com.google.android.gms.ads.AdView>

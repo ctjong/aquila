@@ -81,17 +81,6 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/view_plans_add"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="20dp"
-            android:background="@drawable/plans_add"
-            android:visibility="gone"/>
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -108,6 +97,17 @@
             android:layout_centerVertical="true"
             android:textAlignment="center"/>
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/view_plans_add"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/plans_add"
+        android:visibility="gone"/>
 
 </RelativeLayout>
 
