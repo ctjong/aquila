@@ -6,6 +6,6 @@
     <dimen name="draweritem_user_height">60dp</dimen>
     <dimen name="draweritem_nav_height">40dp</dimen>
     <dimen name="draweritem_logout_height">40dp</dimen>
-    <dimen name="plans_filter_height">90dp</dimen>
+    <dimen name="plans_top_height">90dp</dimen>
     <dimen name="taskcontrol_btn_width">35dp</dimen>
 </resources>

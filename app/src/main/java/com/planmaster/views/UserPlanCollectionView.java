@@ -31,6 +31,7 @@ public class UserPlanCollectionView extends PlanCollectionView {
         // show user profile
         ((TextView)findViewById(R.id.view_plans_user_name)).setText(user.getFirstName() + " " + user.getLastName());
         findViewById(R.id.view_plans_user).setVisibility(View.VISIBLE);
+        findViewById(R.id.view_plans_topmargin).setVisibility(View.VISIBLE);
 
         // load items
         AppContext.getCurrent().getActivity().showLoadingScreen();

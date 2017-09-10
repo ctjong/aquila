@@ -39,10 +39,7 @@ public class PublicPlanCollectionView extends PlanCollectionView implements AbsL
         // show filter controls
         ShellActivity shell = AppContext.getCurrent().getActivity();
         findViewById(R.id.view_plans_filter).setVisibility(View.VISIBLE);
-        int filterHeight = (int)shell.getResources().getDimension(R.dimen.plans_filter_height);
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mList.getLayoutParams();
-        params.setMargins(params.leftMargin, params.topMargin + filterHeight, params.rightMargin, params.bottomMargin);
-        mList.setLayoutParams(params);
+        findViewById(R.id.view_plans_topmargin).setVisibility(View.VISIBLE);
 
         // init filter controls
         SearchView searchView = (SearchView)findViewById(R.id.view_plans_search);
