@@ -34,7 +34,7 @@ public class CreatedPlanCollectionView extends PlanCollectionView {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Plan plan = new Plan(null, 0, null, null, null, AppContext.getCurrent().getActiveUser(), null);
+                Plan plan = new Plan(null, 0, null, null, AppContext.getCurrent().getActiveUser(), null);
                 AppContext.getCurrent().getNavigationService().navigateChild(PlanUpdateView.class, HelperService.getSinglePairMap("plan", plan));
                 plan.addChangedHandler(new Callback() {
                     @Override

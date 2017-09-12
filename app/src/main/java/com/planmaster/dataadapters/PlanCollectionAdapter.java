@@ -16,7 +16,6 @@ import com.planmaster.datamodels.User;
 import com.planmaster.services.HelperService;
 import com.planmaster.views.PlanDetailView;
 import com.planmaster.views.UserPlanCollectionView;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
@@ -126,16 +125,6 @@ public class PlanCollectionAdapter extends CollectionAdapter<Plan>{
                     AppContext.getCurrent().getNavigationService().navigateChild(UserPlanCollectionView.class, HelperService.getSinglePairMap("user", creator));
                 }
             });
-        }
-
-        // update image
-        String imageUrl = plan.getImageUrl();
-        ImageView planImg = ((ImageView)convertView.findViewById(R.id.plancontrol_img));
-        if(imageUrl != null && !imageUrl.equals("") && !imageUrl.equals("null")) {
-            Picasso.with(getContext()).load(plan.getImageUrl()).into(planImg);
-        }else{
-            planImg.setVisibility(View.GONE);
-            //TODO planImg.setImageResource(R.drawable.noimage);
         }
     }
 }

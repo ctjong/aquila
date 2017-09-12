@@ -24,19 +24,17 @@ public class Plan extends CollectionModelBase<PlanTask> {
     private int mState;
     private String mName;
     private String mDescription;
-    private String mImageUrl;
     private User mCreator;
     private TaskDate mCreatedTime;
 
     /**
      * Instantiate a new plan
      */
-    public Plan(String id, int state, String name, String description, String imageUrl, User creator, TaskDate createdTime){
+    public Plan(String id, int state, String name, String description, User creator, TaskDate createdTime){
         super(id);
         mState = state;
         mName = name;
         mDescription = description;
-        mImageUrl = imageUrl;
         mCreator = creator;
         mCreatedTime = createdTime;
     }
@@ -56,7 +54,6 @@ public class Plan extends CollectionModelBase<PlanTask> {
             int state = json.getInt("state");
             String name = json.getString("name");
             String description = json.getString("description");
-            String imageUrl = json.getString("imageurl");
             TaskDate createdTime = new TaskDate(json.getLong("createdtime"));
             if(id == null || name == null){
                 HelperService.logError("[Plan.parse] failed to parse plan");
@@ -68,7 +65,7 @@ public class Plan extends CollectionModelBase<PlanTask> {
             }else{
                 System.out.println("[Plan.parse] owner info doesn't exist in plan data. deferring its load.");
             }
-            return new Plan(id, state, name, description, imageUrl, creator, createdTime);
+            return new Plan(id, state, name, description, creator, createdTime);
         }catch(JSONException e){
             HelperService.logError("[Task.parse] received JSONException.");
             e.printStackTrace();
@@ -109,14 +106,6 @@ public class Plan extends CollectionModelBase<PlanTask> {
     }
 
     /**
-     * Get the plan image url
-     * @return plan image url
-     */
-    public String getImageUrl(){
-        return mImageUrl;
-    }
-
-    /**
      * Set the plan state. It has to greater or equal to the current one.
      * @param state new state (0-3)
      */
@@ -154,7 +143,6 @@ public class Plan extends CollectionModelBase<PlanTask> {
         data.put("name", mName);
         data.put("state", HelperService.toString(mState));
         data.put("description", mDescription);
-        data.put("imageurl", mImageUrl);
         return data;
     }
 
