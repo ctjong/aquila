@@ -1,6 +1,7 @@
 package com.planmaster.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,9 @@ import com.planmaster.views.LoginView;
 
 public abstract class ShellActivity extends AppCompatActivity {
     private static final String AdMobAppId = "ca-app-pub-5059401263214266~4075331566";
+    private static final String AdMobAdIdProd = "ca-app-pub-5059401263214266/5988492118";
+    private static final String AdMobAdIdTest = "ca-app-pub-3940256099942544/6300978111";
+    private static final String TestDeviceModel = "SM-G930F";
 
     protected View mLoadingScreen;
     private FrameLayout mContentScreen;
@@ -75,6 +79,7 @@ public abstract class ShellActivity extends AppCompatActivity {
         // init ads
         MobileAds.initialize(this, AdMobAppId);
         mAdView = (AdView) findViewById(R.id.shell_adview);
+        mAdView.setAdUnitId(Build.MODEL.equals(TestDeviceModel) ? AdMobAdIdTest : AdMobAdIdProd);
 
         // init error screen
         Button reloadBtn = (Button)findViewById(R.id.shell_error_reload_btn);
