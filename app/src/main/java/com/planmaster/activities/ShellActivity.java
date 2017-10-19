@@ -2,6 +2,7 @@ package com.planmaster.activities;
 
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -26,8 +28,6 @@ import com.planmaster.views.LoginView;
 
 public abstract class ShellActivity extends AppCompatActivity {
     private static final String AdMobAppId = "ca-app-pub-5059401263214266~4075331566";
-    private static final String AdMobAdIdProd = "ca-app-pub-5059401263214266/5988492118";
-    private static final String AdMobAdIdTest = "ca-app-pub-3940256099942544/6300978111";
     private static final String TestDeviceModel = "SM-G930F";
 
     protected View mLoadingScreen;
@@ -77,9 +77,14 @@ public abstract class ShellActivity extends AppCompatActivity {
         mActivityResultEvent = new Event();
 
         // init ads
-        MobileAds.initialize(this, AdMobAppId);
-        mAdView = (AdView) findViewById(R.id.shell_adview);
-        mAdView.setAdUnitId(Build.MODEL.equals(TestDeviceModel) ? AdMobAdIdTest : AdMobAdIdProd);
+        if(!Build.MODEL.equals(TestDeviceModel)){
+            MobileAds.initialize(this, AdMobAppId);
+            mAdView = (AdView) findViewById(R.id.shell_adview_prod);
+            mAdView.setVisibility(View.VISIBLE);
+            DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.shell_drawerlayout);
+            RelativeLayout.LayoutParams drawerLayoutParams = (RelativeLayout.LayoutParams)drawerLayout.getLayoutParams();
+            drawerLayoutParams.setMargins(0, 0, 0, mAdView.getHeight());
+        }
 
         // init error screen
         Button reloadBtn = (Button)findViewById(R.id.shell_error_reload_btn);
@@ -111,7 +116,7 @@ public abstract class ShellActivity extends AppCompatActivity {
         mCurrentView = factory.inflate(layoutId, null);
         mContentScreen.removeAllViews();
         mContentScreen.addView(mCurrentView);
-        mAdView.loadAd(new AdRequest.Builder().build());
+        if(mAdView != null) mAdView.loadAd(new AdRequest.Builder().build());
     }
 
     /**
