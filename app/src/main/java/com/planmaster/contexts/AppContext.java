@@ -166,7 +166,10 @@ public class AppContext {
 
     public void loadEnrollments(final Callback cb){
         mEnrollments = new PlanEnrollmentCollection();
-        mEnrollments.loadItems(cb);
+
+        // TODO: when we're ready to bring back plans, uncomment this line and remove cb.execute().
+        // mEnrollments.loadItems(cb);
+        cb.execute(null);
     }
 
     public SharedPreferences getLocalSettings(){

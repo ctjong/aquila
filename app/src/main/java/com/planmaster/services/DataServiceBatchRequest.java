@@ -1,11 +1,9 @@
 package com.planmaster.services;
 
-import com.planmaster.R;
 import com.planmaster.common.ApiResult;
 import com.planmaster.common.ApiTaskMethod;
 import com.planmaster.common.Callback;
 import com.planmaster.common.CallbackParams;
-import com.planmaster.contexts.AppContext;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,25 +63,21 @@ public class DataServiceBatchRequest {
                 int count = res.getCount();
                 System.out.println("[DataServiceBatchRequest.retrievePart] retrieved " + mDownloadCount + "/" + count);
                 mResult.add(res.getItems());
-                if(count > 0 && mDownloadCount == 0){
-                    HelperService.logError("[DataServiceBatchRequest.retrievePart] retrieval failed");
-                    AppContext.getCurrent().getNavigationService().goToMainActivity();
-                    AppContext.getCurrent().getActivity().showErrorScreen(R.string.shell_error_unknown);
-                }else if(mDownloadCount < count){
+                if(mDownloadCount > 0 && mDownloadCount < count){
                     retrievePart(partNum + 1);
                 }else{
-                    JSONArray allitems = new JSONArray();
+                    JSONArray allItems = new JSONArray();
                     for(JSONArray arr : mResult) {
                         for (int i = 0; i < arr.length(); i++) {
                             try {
-                                allitems.put(arr.get(i));
+                                allItems.put(arr.get(i));
                             } catch (JSONException e) {
                                 HelperService.logError("[DataServiceBatchRequest.retrievePart] exception " + e.getMessage());
                                 e.printStackTrace();
                             }
                         }
                     }
-                    mCallback.execute(new CallbackParams(new ApiResult(200, allitems.length(), allitems)));
+                    mCallback.execute(new CallbackParams(new ApiResult(200, allItems.length(), allItems)));
                 }
             }
         });

@@ -93,9 +93,13 @@ public class DrawerAdapter extends ArrayAdapter<DrawerItem>{
             if(getCount() == 0) {
                 add(new UserDrawerItem());
                 add(new NavDrawerItem(R.string.menu_tasks, null, TaskCollectionView.class, null));
+
+                /*
+                // TODO: uncomment when we're ready to bring back plans
                 add(new NavDrawerItem(R.string.menu_enrolled_plans, null, EnrolledPlanCollectionView.class, null));
                 add(new NavDrawerItem(R.string.menu_browse_plans, null, PublicPlanCollectionView.class, null));
                 add(new NavDrawerItem(R.string.menu_created_plans, null, CreatedPlanCollectionView.class, null));
+                */
                 add(new LogoutDrawerItem());
             }
             AppContext.getCurrent().getActivity().toggleToolbarIcon(true);

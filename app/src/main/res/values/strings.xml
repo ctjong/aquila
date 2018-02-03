@@ -42,7 +42,8 @@
     <string name="prompt_logout_msg">Log out from this device?</string>
 
     <string name="menu_userhello">Hello {name}!</string>
-    <string name="menu_tasks">Tasks</string>
+    <string name="menu_tasks">Today</string>
+    <string name="menu_tasks_title">Tasks</string>
     <string name="menu_enrolled_plans">Enrolled plans</string>
     <string name="menu_browse_plans">Browse plans</string>
     <string name="menu_created_plans">Created plans</string>
@@ -64,7 +65,9 @@
     <string name="login_error_invalid_login">Invalid login</string>
 
     <string name="tasks_add_hint">Add new task</string>
-    <string name="tasks_null">No task found for current date. Use the text field below to add a task to this date or go to Menu > Browse Plans to enroll on a plan.</string>
+    <!-- TODO: when we're ready to bring back plans, switch the tasks_null string below -->
+    <!-- <string name="tasks_null">No task found for current date. Use the text field below to add a task or go to Menu > Browse Plans to enroll on a plan.</string>-->
+    <string name="tasks_null">No task found for current date. Use the text field below to add a task.</string>
 
     <string name="taskcontrol_postpone_alttext">Postpone</string>
     <string name="taskcontrol_complete_alttext">Complete</string>

@@ -28,7 +28,7 @@ public class TaskCollectionView extends ViewBase implements ViewPager.OnPageChan
 
     @Override
     protected int getTitleBarStringId() {
-        return R.string.menu_tasks;
+        return R.string.menu_tasks_title;
     }
 
     @Override

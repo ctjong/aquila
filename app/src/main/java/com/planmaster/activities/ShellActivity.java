@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -69,6 +70,9 @@ public abstract class ShellActivity extends AppCompatActivity {
         // init layout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shell);
+
+        // this is to resize the activity's height when keyboard is shown
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         // init other member variables
         mErrorScreen = findViewById(R.id.shell_error);
